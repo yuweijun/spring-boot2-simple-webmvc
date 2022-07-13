@@ -9,4 +9,6 @@
  */
 
 rootProject.name = 'spring-boot2-simple-webmvc'
+include('springmvc3')
 include('v1')
+include('v2')
