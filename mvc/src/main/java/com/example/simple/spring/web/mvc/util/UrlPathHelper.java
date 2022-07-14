@@ -136,12 +136,7 @@ public class UrlPathHelper {
         return decodeRequestString(request, contextPath);
     }
 
-    /**
-     * Return the servlet path for the given request, detecting an include request URL if called within a RequestDispatcher include.
-     *
-     * @param request current HTTP request
-     * @return the servlet path
-     */
+    
     public String getOriginatingServletPath(HttpServletRequest request) {
         String servletPath = (String) request.getAttribute(WebUtils.FORWARD_SERVLET_PATH_ATTRIBUTE);
         if (servletPath == null) {
@@ -150,12 +145,7 @@ public class UrlPathHelper {
         return servletPath;
     }
 
-    /**
-     * Return the query string part of the given request's URL. If this is a forwarded request, correctly resolves to the query string of the original request.
-     *
-     * @param request current HTTP request
-     * @return the query string
-     */
+    
     public String getOriginatingQueryString(HttpServletRequest request) {
         if ((request.getAttribute(WebUtils.FORWARD_REQUEST_URI_ATTRIBUTE) != null) ||
             (request.getAttribute(WebUtils.ERROR_REQUEST_URI_ATTRIBUTE) != null)) {
@@ -171,18 +161,7 @@ public class UrlPathHelper {
         return (semicolonIndex != -1 ? uri.substring(0, semicolonIndex) : uri);
     }
 
-    /**
-     * Decode the given source string with a URLDecoder. The encoding will be taken from the request, falling back to the default "ISO-8859-1".
-     * <p>The default implementation uses <code>URLDecoder.decode(input, enc)</code>.
-     *
-     * @param request current HTTP request
-     * @param source  the String to decode
-     * @return the decoded String
-     * @see WebUtils#DEFAULT_CHARACTER_ENCODING
-     * @see javax.servlet.ServletRequest#getCharacterEncoding
-     * @see URLDecoder#decode(String, String)
-     * @see URLDecoder#decode(String)
-     */
+    
     public String decodeRequestString(HttpServletRequest request, String source) {
         if (this.urlDecode) {
             String enc = determineEncoding(request);

@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.v2.servlet;
+package com.example.simple.spring.web.mvc.v2.servlet.handler;
 
 import com.example.simple.spring.web.mvc.servlet.Controller;
 import com.example.simple.spring.web.mvc.servlet.HandlerAdapter;

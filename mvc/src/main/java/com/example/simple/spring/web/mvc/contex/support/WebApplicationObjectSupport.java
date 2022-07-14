@@ -58,6 +58,7 @@ public abstract class WebApplicationObjectSupport extends ApplicationObjectSuppo
     }
 
     public final void setServletContext(ServletContext servletContext) {
+        logger.debug("set servletContext in class : " + getClass().getSimpleName());
         if (servletContext != this.servletContext) {
             this.servletContext = servletContext;
             if (servletContext != null) {

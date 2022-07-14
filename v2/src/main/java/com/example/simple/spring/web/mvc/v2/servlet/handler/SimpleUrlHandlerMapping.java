@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
-    private final Map<String, Object> urlMap = new HashMap<String, Object>();
+    private final Map<String, Object> urlMap = new HashMap<>();
 
     public void setMappings(Properties mappings) {
         CollectionUtils.mergePropertiesIntoMap(mappings, this.urlMap);

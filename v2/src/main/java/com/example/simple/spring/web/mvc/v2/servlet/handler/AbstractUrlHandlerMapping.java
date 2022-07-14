@@ -106,8 +106,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
             Map<String, String> uriTemplateVariables = new LinkedHashMap<String, String>();
             for (String matchingPattern : matchingPatterns) {
                 if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
-                    uriTemplateVariables
-                        .putAll(getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath));
+                    uriTemplateVariables.putAll(getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath));
                 }
             }
             if (logger.isDebugEnabled()) {
@@ -122,8 +121,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
     protected void validateHandler(Object handler, HttpServletRequest request) throws Exception {
     }
 
-    protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern,
-        String pathWithinMapping, Map<String, String> uriTemplateVariables) {
+    protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern, String pathWithinMapping, Map<String, String> uriTemplateVariables) {
 
         HandlerExecutionChain chain = new HandlerExecutionChain(rawHandler);
         return chain;
@@ -134,25 +132,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping);
     }
 
-    /**
-     * Expose the URI templates variables as request attribute.
-     *
-     * @param uriTemplateVariables the URI template variables
-     * @param request              the request to expose the path to
-     * @see #PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE
-     */
     protected void exposeUriTemplateVariables(Map<String, String> uriTemplateVariables, HttpServletRequest request) {
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, uriTemplateVariables);
     }
 
-    /**
-     * Register the specified handler for the given URL paths.
-     *
-     * @param urlPaths the URLs that the bean should be mapped to
-     * @param beanName the name of the handler bean
-     * @throws BeansException        if the handler couldn't be registered
-     * @throws IllegalStateException if there is a conflicting handler registered
-     */
     protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException {
         Assert.notNull(urlPaths, "URL path array must not be null");
         for (String urlPath : urlPaths) {
@@ -160,14 +143,6 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         }
     }
 
-    /**
-     * Register the specified handler for the given URL path.
-     *
-     * @param urlPath the URL the bean should be mapped to
-     * @param handler the handler instance or handler bean name String (a bean name will automatically be resolved into the corresponding handler bean)
-     * @throws BeansException        if the handler couldn't be registered
-     * @throws IllegalStateException if there is a conflicting handler registered
-     */
     protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException {
         Assert.notNull(urlPath, "URL path must not be null");
         Assert.notNull(handler, "Handler object must not be null");
@@ -185,8 +160,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         if (mappedHandler != null) {
             if (mappedHandler != resolvedHandler) {
                 throw new IllegalStateException(
-                    "Cannot map " + getHandlerDescription(handler) + " to URL path [" + urlPath +
-                        "]: There is already " + getHandlerDescription(mappedHandler) + " mapped.");
+                    "Cannot map " + getHandlerDescription(handler) + " to URL path [" + urlPath + "]: There is already " + getHandlerDescription(mappedHandler) + " mapped.");
             }
         } else {
             if (urlPath.equals("/")) {
@@ -212,12 +186,6 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         return "handler " + (handler instanceof String ? "'" + handler + "'" : "of type [" + handler.getClass() + "]");
     }
 
-    /**
-     * Return the registered handlers as an unmodifiable Map, with the registered path as key and the handler object (or handler bean name in case of a lazy-init handler) as
-     * value.
-     *
-     * @see #getDefaultHandler()
-     */
     public final Map<String, Object> getHandlerMap() {
         return Collections.unmodifiableMap(this.handlerMap);
     }

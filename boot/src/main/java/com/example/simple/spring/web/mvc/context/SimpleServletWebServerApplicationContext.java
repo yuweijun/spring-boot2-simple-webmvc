@@ -1,5 +1,6 @@
 package com.example.simple.spring.web.mvc.context;
 
+import com.example.simple.spring.boot.config.SimpleWebApplicationContextServletContextAwareProcessor;
 import com.example.simple.spring.web.mvc.context.support.WebApplicationContextUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +52,8 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
 
     @Override
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-        // beanFactory.addBeanPostProcessor(new WebApplicationContextServletContextAwareProcessor(this));
+        final SimpleWebApplicationContextServletContextAwareProcessor beanPostProcessor = new SimpleWebApplicationContextServletContextAwareProcessor(this);
+        beanFactory.addBeanPostProcessor(beanPostProcessor);
         beanFactory.ignoreDependencyInterface(ServletContextAware.class);
         registerWebApplicationScopes();
     }

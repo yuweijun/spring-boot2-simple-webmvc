@@ -18,7 +18,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-@SuppressWarnings("serial")
 public abstract class HttpServletBean extends HttpServlet {
 
     protected final Log logger = LogFactory.getLog(getClass());

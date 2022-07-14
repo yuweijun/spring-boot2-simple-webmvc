@@ -3,8 +3,10 @@ package com.example.simple.spring.web.mvc.v2.config;
 import com.example.simple.spring.web.mvc.config.annotation.RequestMappingHandlerMapping;
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.servlet.HandlerMapping;
-import com.example.simple.spring.web.mvc.v2.servlet.SimpleControllerHandlerAdapter;
+import com.example.simple.spring.web.mvc.v2.servlet.handler.SimpleControllerHandlerAdapter;
 import com.example.simple.spring.web.mvc.v2.servlet.handler.AbstractHandlerMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -19,21 +21,23 @@ import java.util.List;
 
 public abstract class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private ServletContext servletContext;
 
     private ApplicationContext applicationContext;
 
     private List<Object> interceptors;
 
-    // private List<HttpMessageConverter<?>> messageConverters;
-
     @Override
     public void setServletContext(ServletContext servletContext) {
+        logger.debug("set servletContext in WebMvcConfigurationSupport");
         this.servletContext = servletContext;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        logger.debug("set applicationContext in WebMvcConfigurationSupport");
         this.applicationContext = applicationContext;
     }
 
@@ -53,6 +57,7 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     }
 
     protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable("dispatcherServlet");
     }
 
     @Bean
@@ -71,7 +76,6 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     }
 
     private final static class EmptyHandlerMapping extends AbstractHandlerMapping {
-
         @Override
         protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
             return null;

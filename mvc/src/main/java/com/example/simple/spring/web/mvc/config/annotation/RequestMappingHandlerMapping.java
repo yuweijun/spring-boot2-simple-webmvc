@@ -1,6 +1,8 @@
 package com.example.simple.spring.web.mvc.config.annotation;
 
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Controller;
 
@@ -9,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RequestMappingHandlerMapping {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerMapping.class);
 
     private boolean useSuffixPatternMatch = true;
 
@@ -48,10 +52,12 @@ public class RequestMappingHandlerMapping {
     }
 
     private Map<String, Object> createRequestMappingInfo(RequestMapping annotation, Method customCondition) {
+        LOGGER.debug("createRequestMappingInfo by method : {}", annotation);
         return new HashMap<>();
     }
 
     private Map<String, Object> createRequestMappingInfo(RequestMapping annotation, Class<?> handlerType) {
+        LOGGER.debug("createRequestMappingInfo by class : {}", annotation);
         return new HashMap<>();
     }
 

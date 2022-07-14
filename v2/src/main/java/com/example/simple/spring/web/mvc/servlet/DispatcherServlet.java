@@ -7,29 +7,21 @@ import com.example.simple.spring.web.mvc.util.WebUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.OrderComparator;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.ui.context.ThemeSource;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 public class DispatcherServlet extends FrameworkServlet {
@@ -61,23 +53,10 @@ public class DispatcherServlet extends FrameworkServlet {
     public static final String THEME_SOURCE_ATTRIBUTE = com.example.simple.spring.web.mvc.servlet.DispatcherServlet.class.getName() + ".THEME_SOURCE";
 
     public static final String PAGE_NOT_FOUND_LOG_CATEGORY = "org.springframework.web.servlet.PageNotFound";
+
     protected static final Log pageNotFoundLogger = LogFactory.getLog(PAGE_NOT_FOUND_LOG_CATEGORY);
-    private static final String DEFAULT_STRATEGIES_PATH = "DispatcherServlet.properties";
+
     private static final UrlPathHelper urlPathHelper = new UrlPathHelper();
-
-    private static final Properties defaultStrategies;
-
-    static {
-        // Load default strategy implementations from properties file.
-        // This is currently strictly internal and not meant to be customized
-        // by application developers.
-        try {
-            ClassPathResource resource = new ClassPathResource(DEFAULT_STRATEGIES_PATH, com.example.simple.spring.web.mvc.servlet.DispatcherServlet.class);
-            defaultStrategies = PropertiesLoaderUtils.loadProperties(resource);
-        } catch (IOException ex) {
-            throw new IllegalStateException("Could not load 'DispatcherServlet.properties': " + ex.getMessage());
-        }
-    }
 
     private boolean detectAllHandlerMappings = true;
 
@@ -123,21 +102,21 @@ public class DispatcherServlet extends FrameworkServlet {
 
     @Override
     protected void onRefresh(ApplicationContext context) {
-        initStrategies(context);
-    }
-
-    protected void initStrategies(ApplicationContext context) {
         initHandlerMappings(context);
     }
 
     private void initHandlerMappings(ApplicationContext context) {
+        logger.debug("initHandlerMappings for context");
+
         this.handlerMappings = null;
 
         if (this.detectAllHandlerMappings) {
             // Find all HandlerMappings in the ApplicationContext, including ancestor contexts.
             Map<String, HandlerMapping> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
+            logger.debug("matchingBeans : " + matchingBeans);
+
             if (!matchingBeans.isEmpty()) {
-                this.handlerMappings = new ArrayList<HandlerMapping>(matchingBeans.values());
+                this.handlerMappings = new ArrayList<>(matchingBeans.values());
                 // We keep HandlerMappings in sorted order.
                 OrderComparator.sort(this.handlerMappings);
             }
@@ -153,10 +132,7 @@ public class DispatcherServlet extends FrameworkServlet {
         // Ensure we have at least one HandlerMapping, by registering
         // a default HandlerMapping if no other mappings are found.
         if (this.handlerMappings == null) {
-            this.handlerMappings = getDefaultStrategies(context, HandlerMapping.class);
-            if (logger.isDebugEnabled()) {
-                logger.debug("No HandlerMappings found in servlet '" + getServletName() + "': using default");
-            }
+            logger.debug("No HandlerMappings found in servlet '" + getServletName() + "': using default");
         }
     }
 
@@ -166,36 +142,6 @@ public class DispatcherServlet extends FrameworkServlet {
         } else {
             return null;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> List<T> getDefaultStrategies(ApplicationContext context, Class<T> strategyInterface) {
-        String key = strategyInterface.getName();
-        String value = defaultStrategies.getProperty(key);
-        if (value != null) {
-            String[] classNames = StringUtils.commaDelimitedListToStringArray(value);
-            List<T> strategies = new ArrayList<T>(classNames.length);
-            for (String className : classNames) {
-                try {
-                    Class<?> clazz = ClassUtils.forName(className, com.example.simple.spring.web.mvc.servlet.DispatcherServlet.class.getClassLoader());
-                    Object strategy = createDefaultStrategy(context, clazz);
-                    strategies.add((T) strategy);
-                } catch (ClassNotFoundException ex) {
-                    throw new BeanInitializationException("Could not find DispatcherServlet's default strategy class [" + className + "] for interface [" + key + "]", ex);
-                } catch (LinkageError err) {
-                    throw new BeanInitializationException(
-                        "Error loading DispatcherServlet's default strategy class [" + className + "] for interface [" + key + "]: problem with class file or dependent class",
-                        err);
-                }
-            }
-            return strategies;
-        } else {
-            return new LinkedList<T>();
-        }
-    }
-
-    protected Object createDefaultStrategy(ApplicationContext context, Class<?> clazz) {
-        return context.getAutowireCapableBeanFactory().createBean(clazz);
     }
 
     @Override
