@@ -43,14 +43,8 @@ public class SimpleDispatcherServletAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleDispatcherServletAutoConfiguration.class);
 
-    /*
-     * The bean name for a DispatcherServlet that will be mapped to the root URL "/"
-     */
     public static final String DEFAULT_DISPATCHER_SERVLET_BEAN_NAME = "dispatcherServlet";
 
-    /*
-     * The bean name for a ServletRegistrationBean for the DispatcherServlet "/"
-     */
     public static final String DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME = "dispatcherServletRegistration";
 
     @Configuration(proxyBeanMethods = false)
@@ -79,7 +73,9 @@ public class SimpleDispatcherServletAutoConfiguration {
         @ConditionalOnBean(value = DispatcherServlet.class, name = DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)
         public SimpleDispatcherServletRegistrationBean dispatcherServletRegistration(DispatcherServlet dispatcherServlet,
             WebMvcProperties webMvcProperties, ObjectProvider<MultipartConfigElement> multipartConfig) {
-            SimpleDispatcherServletRegistrationBean registration = new SimpleDispatcherServletRegistrationBean(dispatcherServlet, webMvcProperties.getServlet().getPath());
+            final String path = webMvcProperties.getServlet().getPath();
+            LOGGER.info("config bean dispatcherServletRegistration for path : [{}]", path);
+            SimpleDispatcherServletRegistrationBean registration = new SimpleDispatcherServletRegistrationBean(dispatcherServlet, path);
             registration.setName(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME);
             registration.setLoadOnStartup(webMvcProperties.getServlet().getLoadOnStartup());
             multipartConfig.ifAvailable(registration::setMultipartConfig);
@@ -95,18 +91,15 @@ public class SimpleDispatcherServletAutoConfiguration {
         public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
             ConditionMessage.Builder message = ConditionMessage.forCondition("Default DispatcherServlet");
             ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-            List<String> dispatchServletBeans = Arrays
-                .asList(beanFactory.getBeanNamesForType(DispatcherServlet.class, false, false));
-            if (dispatchServletBeans.contains(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)) {
-                return ConditionOutcome
-                    .noMatch(message.found("dispatcher servlet bean").items(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME));
-            }
-            if (beanFactory.containsBean(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)) {
-                return ConditionOutcome.noMatch(
-                    message.found("non dispatcher servlet bean").items(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME));
-            }
+            List<String> dispatchServletBeans = Arrays.asList(beanFactory.getBeanNamesForType(DispatcherServlet.class, false, false));
             if (dispatchServletBeans.isEmpty()) {
                 return ConditionOutcome.match(message.didNotFind("dispatcher servlet beans").atAll());
+            }
+            if (dispatchServletBeans.contains(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)) {
+                return ConditionOutcome.noMatch(message.found("dispatcher servlet bean").items(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME));
+            }
+            if (beanFactory.containsBean(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)) {
+                return ConditionOutcome.noMatch(message.found("non dispatcher servlet bean").items(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME));
             }
             return ConditionOutcome.match(message.found("dispatcher servlet bean", "dispatcher servlet beans")
                                                  .items(ConditionMessage.Style.QUOTE, dispatchServletBeans)
