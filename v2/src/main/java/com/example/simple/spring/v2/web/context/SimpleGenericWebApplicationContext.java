@@ -30,138 +30,99 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 public class SimpleGenericWebApplicationContext extends GenericApplicationContext
-		implements SimpleConfigurableWebApplicationContext, ThemeSource {
+    implements SimpleConfigurableWebApplicationContext, ThemeSource {
 
-	private ServletContext servletContext;
+    private ServletContext servletContext;
 
-	private ThemeSource themeSource;
+    private ThemeSource themeSource;
 
-	/**
-	 * Create a new GenericWebApplicationContext.
-	 * @see #setServletContext
-	 * @see #registerBeanDefinition
-	 * @see #refresh
-	 */
-	public SimpleGenericWebApplicationContext() {
-		super();
-	}
+    public SimpleGenericWebApplicationContext() {
+        super();
+    }
 
-	/**
-	 * Create a new GenericWebApplicationContext for the given ServletContext.
-	 * @param servletContext the ServletContext to run in
-	 * @see #registerBeanDefinition
-	 * @see #refresh
-	 */
-	public SimpleGenericWebApplicationContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+    public SimpleGenericWebApplicationContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
-	/**
-	 * Create a new GenericWebApplicationContext with the given DefaultListableBeanFactory.
-	 * @param beanFactory the DefaultListableBeanFactory instance to use for this context
-	 * @see #setServletContext
-	 * @see #registerBeanDefinition
-	 * @see #refresh
-	 */
-	public SimpleGenericWebApplicationContext(DefaultListableBeanFactory beanFactory) {
-		super(beanFactory);
-	}
+    public SimpleGenericWebApplicationContext(DefaultListableBeanFactory beanFactory) {
+        super(beanFactory);
+    }
 
-	/**
-	 * Create a new GenericWebApplicationContext with the given DefaultListableBeanFactory.
-	 * @param beanFactory the DefaultListableBeanFactory instance to use for this context
-	 * @param servletContext the ServletContext to run in
-	 * @see #registerBeanDefinition
-	 * @see #refresh
-	 */
-	public SimpleGenericWebApplicationContext(DefaultListableBeanFactory beanFactory, ServletContext servletContext) {
-		super(beanFactory);
-		this.servletContext = servletContext;
-	}
+    public SimpleGenericWebApplicationContext(DefaultListableBeanFactory beanFactory, ServletContext servletContext) {
+        super(beanFactory);
+        this.servletContext = servletContext;
+    }
 
+    public ServletContext getServletContext() {
+        return this.servletContext;
+    }
 
-	/**
-	 * Set the ServletContext that this WebApplicationContext runs in.
-	 */
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
-	public ServletContext getServletContext() {
-		return this.servletContext;
-	}
+    @Override
+    protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        beanFactory.ignoreDependencyInterface(ServletContextAware.class);
 
+        WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext);
+    }
 
-	@Override
-	protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-		beanFactory.ignoreDependencyInterface(ServletContextAware.class);
+    @Override
+    protected void onRefresh() {
+        this.themeSource = UiApplicationContextUtils.initThemeSource(this);
+    }
 
-		WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext);
-	}
+    @Override
+    protected void initPropertySources() {
+        super.initPropertySources();
+    }
 
-	/**
-	 * Initialize the theme capability.
-	 */
-	@Override
-	protected void onRefresh() {
-		this.themeSource = UiApplicationContextUtils.initThemeSource(this);
-	}
+    public Theme getTheme(String themeName) {
+        return this.themeSource.getTheme(themeName);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * <p>Replace {@code Servlet}-related property sources.
-	 */
-	@Override
-	protected void initPropertySources() {
-		super.initPropertySources();
-	}
+    // ---------------------------------------------------------------------
+    // Pseudo-implementation of ConfigurableWebApplicationContext
+    // ---------------------------------------------------------------------
 
-	public Theme getTheme(String themeName) {
-		return this.themeSource.getTheme(themeName);
-	}
+    public ServletConfig getServletConfig() {
+        throw new UnsupportedOperationException(
+            "GenericWebApplicationContext does not support getServletConfig()");
+    }
 
+    public void setServletConfig(ServletConfig servletConfig) {
+        // no-op
+    }
 
-	// ---------------------------------------------------------------------
-	// Pseudo-implementation of ConfigurableWebApplicationContext
-	// ---------------------------------------------------------------------
+    public String getNamespace() {
+        throw new UnsupportedOperationException(
+            "GenericWebApplicationContext does not support getNamespace()");
+    }
 
-	public void setServletConfig(ServletConfig servletConfig) {
-		// no-op
-	}
+    public void setNamespace(String namespace) {
+        // no-op
+    }
 
-	public ServletConfig getServletConfig() {
-		throw new UnsupportedOperationException(
-				"GenericWebApplicationContext does not support getServletConfig()");
-	}
+    public void setConfigLocation(String configLocation) {
+        if (StringUtils.hasText(configLocation)) {
+            throw new UnsupportedOperationException(
+                "GenericWebApplicationContext does not support setConfigLocation(). " +
+                    "Do you still have an 'contextConfigLocations' init-param set?");
+        }
+    }
 
-	public void setNamespace(String namespace) {
-		// no-op
-	}
+    public String[] getConfigLocations() {
+        throw new UnsupportedOperationException(
+            "GenericWebApplicationContext does not support getConfigLocations()");
+    }
 
-	public String getNamespace() {
-		throw new UnsupportedOperationException(
-				"GenericWebApplicationContext does not support getNamespace()");
-	}
-
-	public void setConfigLocation(String configLocation) {
-		if (StringUtils.hasText(configLocation)) {
-			throw new UnsupportedOperationException(
-					"GenericWebApplicationContext does not support setConfigLocation(). " +
-					"Do you still have an 'contextConfigLocations' init-param set?");
-		}
-	}
-
-	public void setConfigLocations(String[] configLocations) {
-		if (!ObjectUtils.isEmpty(configLocations)) {
-			throw new UnsupportedOperationException(
-					"GenericWebApplicationContext does not support setConfigLocations(). " +
-					"Do you still have an 'contextConfigLocations' init-param set?");
-		}
-	}
-
-	public String[] getConfigLocations() {
-		throw new UnsupportedOperationException(
-				"GenericWebApplicationContext does not support getConfigLocations()");
-	}
+    public void setConfigLocations(String[] configLocations) {
+        if (!ObjectUtils.isEmpty(configLocations)) {
+            throw new UnsupportedOperationException(
+                "GenericWebApplicationContext does not support setConfigLocations(). " +
+                    "Do you still have an 'contextConfigLocations' init-param set?");
+        }
+    }
 
 }

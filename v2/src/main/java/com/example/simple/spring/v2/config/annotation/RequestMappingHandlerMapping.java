@@ -30,32 +30,18 @@ public class RequestMappingHandlerMapping {
 
     private boolean useTrailingSlashMatch = true;
 
-    /**
-     * Whether to use suffix pattern match (".*") when matching patterns to requests. If enabled a method mapped to "/users" also matches to "/users.*".
-     * <p>The default value is {@code true}.
-     */
     public void setUseSuffixPatternMatch(boolean useSuffixPatternMatch) {
         this.useSuffixPatternMatch = useSuffixPatternMatch;
     }
 
-    /**
-     * Whether to match to URLs irrespective of the presence of a trailing slash. If enabled a method mapped to "/users" also matches to "/users/".
-     * <p>The default value is {@code true}.
-     */
     public void setUseTrailingSlashMatch(boolean useTrailingSlashMatch) {
         this.useTrailingSlashMatch = useTrailingSlashMatch;
     }
 
-    /**
-     * Whether to use suffix pattern matching.
-     */
     public boolean useSuffixPatternMatch() {
         return this.useSuffixPatternMatch;
     }
 
-    /**
-     * Whether to match to URLs irrespective of the presence of a trailing  slash.
-     */
     public boolean useTrailingSlashMatch() {
         return this.useTrailingSlashMatch;
     }
@@ -64,11 +50,6 @@ public class RequestMappingHandlerMapping {
         return AnnotationUtils.findAnnotation(beanType, Controller.class) != null;
     }
 
-    /**
-     * Uses method and type-level @{@link RequestMapping} annotations to create the RequestMappingInfo.
-     *
-     * @return the created RequestMappingInfo, or {@code null} if the method does not have a {@code @RequestMapping} annotation.
-     */
     protected Map<String, Object> getMappingForMethod(Method method, Class<?> handlerType) {
         Map<String, Object> info = null;
         RequestMapping methodAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);

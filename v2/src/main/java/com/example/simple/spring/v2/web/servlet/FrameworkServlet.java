@@ -36,104 +36,42 @@ import java.util.Collections;
 @SuppressWarnings("serial")
 public abstract class FrameworkServlet extends HttpServletBean {
 
-    /**
-     * Suffix for WebApplicationContext namespaces. If a servlet of this class is given the name "test" in a context, the namespace used by the servlet will resolve to
-     * "test-servlet".
-     */
     public static final String DEFAULT_NAMESPACE_SUFFIX = "-servlet";
 
     public static final Class<?> DEFAULT_CONTEXT_CLASS = SimpleAnnotationConfigServletWebServerApplicationContext.class;
 
-    /**
-     * Prefix for the ServletContext attribute for the WebApplicationContext. The completion is the servlet name.
-     */
     public static final String SERVLET_CONTEXT_PREFIX = FrameworkServlet.class.getName() + ".CONTEXT.";
 
-    /**
-     * Any number of these characters are considered delimiters between multiple values in a single init-param String value.
-     */
     private static final String INIT_PARAM_DELIMITERS = ",; \t\n";
 
-    /**
-     * ServletContext attribute to find the WebApplicationContext in
-     */
     private String contextAttribute;
 
-    /**
-     * WebApplicationContext implementation class to create
-     */
     private Class<?> contextClass = DEFAULT_CONTEXT_CLASS;
 
-    /**
-     * WebApplicationContext id to assign
-     */
     private String contextId;
 
-    /**
-     * Namespace for this servlet
-     */
     private String namespace;
 
-    /**
-     * Explicit context config location
-     */
     private String contextConfigLocation;
 
-    /**
-     * Should we publish the context as a ServletContext attribute?
-     */
     private boolean publishContext = true;
 
-    /**
-     * Should we publish a ServletRequestHandledEvent at the end of each request?
-     */
     private boolean publishEvents = true;
 
-    /**
-     * Expose LocaleContext and RequestAttributes as inheritable for child threads?
-     */
     private boolean threadContextInheritable = false;
 
-    /**
-     * Should we dispatch an HTTP OPTIONS request to {@link #doService}?
-     */
     private boolean dispatchOptionsRequest = false;
 
-    /**
-     * Should we dispatch an HTTP TRACE request to {@link #doService}?
-     */
     private boolean dispatchTraceRequest = false;
 
-    /**
-     * WebApplicationContext for this servlet
-     */
     private SimpleWebApplicationContext simpleWebApplicationContext;
 
-    /**
-     * Flag used to detect whether onRefresh has already been called
-     */
     private boolean refreshEventReceived = false;
 
-    /**
-     * Comma-delimited ApplicationContextInitializer classnames set through init param
-     */
     private String contextInitializerClasses;
 
-    /**
-     * Actual ApplicationContextInitializer instances to apply to the context
-     */
-    private ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers = new ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>>();
+    private final ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers = new ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>>();
 
-    /**
-     * Create a new {@code FrameworkServlet} that will create its own internal web application context based on defaults and values provided through servlet init-params. Typically
-     * used in Servlet 2.5 or earlier environments, where the only option for servlet registration is through {@code web.xml} which requires the use of a no-arg constructor.
-     * <p>Calling {@link #setContextConfigLocation} (init-param 'contextConfigLocation')
-     * will dictate which XML files will be loaded by the {@linkplain #DEFAULT_CONTEXT_CLASS default XmlWebApplicationContext}
-     * <p>Calling {@link #setContextClass} (init-param 'contextClass') overrides the
-     * default {@code XmlWebApplicationContext} and allows for specifying an alternative class, such as {@code AnnotationConfigWebApplicationContext}.
-     * <p>Calling {@link #setContextInitializerClasses} (init-param 'contextInitializerClasses')
-     * indicates which {@link ApplicationContextInitializer} classes should be used to further configure the internal application context prior to refresh().
-     */
     public FrameworkServlet() {
     }
 
@@ -141,36 +79,36 @@ public abstract class FrameworkServlet extends HttpServletBean {
         this.simpleWebApplicationContext = simpleWebApplicationContext;
     }
 
-    public void setContextAttribute(String contextAttribute) {
-        this.contextAttribute = contextAttribute;
-    }
-
     public String getContextAttribute() {
         return this.contextAttribute;
     }
 
-    public void setContextClass(Class<?> contextClass) {
-        this.contextClass = contextClass;
+    public void setContextAttribute(String contextAttribute) {
+        this.contextAttribute = contextAttribute;
     }
 
     public Class<?> getContextClass() {
         return this.contextClass;
     }
 
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setContextClass(Class<?> contextClass) {
+        this.contextClass = contextClass;
     }
 
     public String getContextId() {
         return this.contextId;
     }
 
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
     }
 
     public String getNamespace() {
         return (this.namespace != null ? this.namespace : getServletName() + DEFAULT_NAMESPACE_SUFFIX);
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public void setContextInitializerClasses(String contextInitializerClasses) {
@@ -183,12 +121,12 @@ public abstract class FrameworkServlet extends HttpServletBean {
         }
     }
 
-    public void setContextConfigLocation(String contextConfigLocation) {
-        this.contextConfigLocation = contextConfigLocation;
-    }
-
     public String getContextConfigLocation() {
         return this.contextConfigLocation;
+    }
+
+    public void setContextConfigLocation(String contextConfigLocation) {
+        this.contextConfigLocation = contextConfigLocation;
     }
 
     public void setPublishContext(boolean publishContext) {

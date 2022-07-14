@@ -7,6 +7,6 @@ import java.io.IOException;
 
 public interface HttpRequestHandler {
 
-	void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+    void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
 }

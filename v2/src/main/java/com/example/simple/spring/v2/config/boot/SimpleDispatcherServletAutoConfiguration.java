@@ -31,9 +31,6 @@ import javax.servlet.ServletRegistration;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @since 2022-07-13.
- */
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
@@ -41,11 +38,9 @@ import java.util.List;
 @AutoConfigureAfter(ServletWebServerFactoryAutoConfiguration.class)
 public class SimpleDispatcherServletAutoConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleDispatcherServletAutoConfiguration.class);
-
     public static final String DEFAULT_DISPATCHER_SERVLET_BEAN_NAME = "dispatcherServlet";
-
     public static final String DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME = "dispatcherServletRegistration";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleDispatcherServletAutoConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)
     @Conditional(DefaultDispatcherServletCondition.class)

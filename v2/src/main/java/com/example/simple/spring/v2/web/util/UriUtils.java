@@ -34,7 +34,7 @@ public abstract class UriUtils {
                 bos.write(ch);
             }
         }
-        return changed ? new String(bos.toByteArray(), encoding) : source;
+        return changed ? bos.toString(encoding) : source;
     }
 
 }

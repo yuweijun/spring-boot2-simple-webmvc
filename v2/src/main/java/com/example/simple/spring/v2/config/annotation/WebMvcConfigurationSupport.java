@@ -8,8 +8,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
@@ -20,89 +18,63 @@ import java.util.List;
 
 public abstract class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
 
-	private ServletContext servletContext;
+    private ServletContext servletContext;
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
-	private List<Object> interceptors;
+    private List<Object> interceptors;
 
-	// private List<HttpMessageConverter<?>> messageConverters;
+    // private List<HttpMessageConverter<?>> messageConverters;
 
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
-	
-	/**
-	 * Return a {@link RequestMappingHandlerMapping} ordered at 0 for mapping 
-	 * requests to annotated controllers.
-	 */
-	@Bean
-	public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-		RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
-		return handlerMapping;
-	}
-	
-	/**
-	 * Return a handler mapping ordered at Integer.MAX_VALUE with a mapped 
-	 * default servlet handler. To configure "default" Servlet handling, 
-	 * override {@link #configureDefaultServletHandling}.  
-	 */
-	@Bean
-	public HandlerMapping defaultServletHandlerMapping() {
-		DefaultServletHandlerConfigurer configurer = new DefaultServletHandlerConfigurer(servletContext);
-		configureDefaultServletHandling(configurer);
-		AbstractHandlerMapping handlerMapping = configurer.getHandlerMapping();
-		handlerMapping = handlerMapping != null ? handlerMapping : new EmptyHandlerMapping();
-		return handlerMapping;
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
-	/**
-	 * Override this method to configure "default" Servlet handling. 
-	 * @see DefaultServletHandlerConfigurer
-	 */
-	protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-	}
+    @Bean
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
+        return handlerMapping;
+    }
 
+    @Bean
+    public HandlerMapping defaultServletHandlerMapping() {
+        DefaultServletHandlerConfigurer configurer = new DefaultServletHandlerConfigurer(servletContext);
+        configureDefaultServletHandling(configurer);
+        AbstractHandlerMapping handlerMapping = configurer.getHandlerMapping();
+        handlerMapping = handlerMapping != null ? handlerMapping : new EmptyHandlerMapping();
+        return handlerMapping;
+    }
 
-	/**
-	 * Returns a {@link FormattingConversionService} for use with annotated 
-	 * controller methods and the {@code spring:eval} JSP tag. 
-	 * Also see {@link #addFormatters} as an alternative to overriding this method.
-	 */
-	@Bean
-	public FormattingConversionService mvcConversionService() {
-		FormattingConversionService conversionService = new DefaultFormattingConversionService();
-		addFormatters(conversionService);
-		return conversionService;
-	}
+    protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+    }
 
-	/**
-	 * Override this method to add custom {@link Converter}s and {@link Formatter}s.
-	 */
-	protected void addFormatters(FormatterRegistry registry) {
-	}
+    @Bean
+    public FormattingConversionService mvcConversionService() {
+        FormattingConversionService conversionService = new DefaultFormattingConversionService();
+        addFormatters(conversionService);
+        return conversionService;
+    }
 
-	/**
-	 * Returns a {@link SimpleControllerHandlerAdapter} for processing requests 
-	 * with interface-based controllers.
-	 */
-	@Bean
-	public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
-		return new SimpleControllerHandlerAdapter();
-	}
+    protected void addFormatters(FormatterRegistry registry) {
+    }
 
-	private final static class EmptyHandlerMapping extends AbstractHandlerMapping {
-		
-		@Override
-		protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-			return null;
-		}
-	}
-	
+    @Bean
+    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
+        return new SimpleControllerHandlerAdapter();
+    }
+
+    private final static class EmptyHandlerMapping extends AbstractHandlerMapping {
+
+        @Override
+        protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
+            return null;
+        }
+    }
+
 }

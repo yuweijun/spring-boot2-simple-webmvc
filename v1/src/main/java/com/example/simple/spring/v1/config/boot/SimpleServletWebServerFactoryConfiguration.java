@@ -17,20 +17,14 @@ import org.springframework.context.annotation.Configuration;
 import javax.servlet.Servlet;
 import java.util.stream.Collectors;
 
-/**
- * @since 2022-07-13.
- */
 @Configuration(proxyBeanMethods = false)
 class SimpleServletWebServerFactoryConfiguration {
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass({ Servlet.class, Tomcat.class, UpgradeProtocol.class })
+    @ConditionalOnClass({Servlet.class, Tomcat.class, UpgradeProtocol.class})
     @ConditionalOnMissingBean(value = ServletWebServerFactory.class, search = SearchStrategy.CURRENT)
     static class EmbeddedTomcat {
 
-        /**
-         * config ServletWebServerFactory for {@see SimpleServletWebServerApplicationContext.getWebServerFactory()}
-         */
         @Bean
         TomcatServletWebServerFactory tomcatServletWebServerFactory(
             ObjectProvider<TomcatConnectorCustomizer> connectorCustomizers,

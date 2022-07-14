@@ -34,10 +34,8 @@ import java.util.Set;
 
 public class SimpleServletWebServerApplicationContext extends SimpleGenericWebApplicationContext implements ConfigurableWebServerApplicationContext {
 
-    private static final Log logger = LogFactory.getLog(SimpleServletWebServerApplicationContext.class);
-
     public static final String DISPATCHER_SERVLET_NAME = "dispatcherServlet";
-
+    private static final Log logger = LogFactory.getLog(SimpleServletWebServerApplicationContext.class);
     private volatile WebServer webServer;
 
     private ServletConfig servletConfig;
@@ -158,7 +156,8 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
         Object rootContext = servletContext.getAttribute(SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         if (rootContext != null) {
             if (rootContext == this) {
-                throw new IllegalStateException("Cannot initialize context because there is already a root application context present - " + "check whether you have multiple ServletContextInitializers!");
+                throw new IllegalStateException(
+                    "Cannot initialize context because there is already a root application context present - " + "check whether you have multiple ServletContextInitializers!");
             }
             return;
         }
@@ -166,7 +165,8 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
         try {
             servletContext.setAttribute(SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this);
             if (logger.isDebugEnabled()) {
-                logger.debug("Published root WebApplicationContext as ServletContext attribute with name [" + SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE + "]");
+                logger.debug(
+                    "Published root WebApplicationContext as ServletContext attribute with name [" + SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE + "]");
             }
             setServletContext(servletContext);
             if (logger.isInfoEnabled()) {
@@ -196,13 +196,13 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
     }
 
     @Override
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.servletConfig = servletConfig;
+    public ServletConfig getServletConfig() {
+        return this.servletConfig;
     }
 
     @Override
-    public ServletConfig getServletConfig() {
-        return this.servletConfig;
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
     }
 
     @Override

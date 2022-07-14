@@ -19,50 +19,43 @@ package com.example.simple.spring.v2.web.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.server.WebServer;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.SmartLifecycle;
 
-/**
- * {@link SmartLifecycle} to start and stop the {@link WebServer} in a
- * {@link ServletWebServerApplicationContext}.
- *
- * @author Andy Wilkinson
- */
 class WebServerStartStopLifecycle implements SmartLifecycle {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WebServerStartStopLifecycle.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebServerStartStopLifecycle.class);
 
-	private final SimpleServletWebServerApplicationContext applicationContext;
+    private final SimpleServletWebServerApplicationContext applicationContext;
 
-	private final WebServer webServer;
+    private final WebServer webServer;
 
-	private volatile boolean running;
+    private volatile boolean running;
 
-	WebServerStartStopLifecycle(SimpleServletWebServerApplicationContext applicationContext, WebServer webServer) {
-		this.applicationContext = applicationContext;
-		this.webServer = webServer;
-	}
+    WebServerStartStopLifecycle(SimpleServletWebServerApplicationContext applicationContext, WebServer webServer) {
+        this.applicationContext = applicationContext;
+        this.webServer = webServer;
+    }
 
-	@Override
-	public void start() {
-		this.webServer.start();
-		this.running = true;
-		LOGGER.info("this.applicationContext.publishEvent(new ServletWebServerInitializedEvent)");
-	}
+    @Override
+    public void start() {
+        this.webServer.start();
+        this.running = true;
+        LOGGER.info("this.applicationContext.publishEvent(new ServletWebServerInitializedEvent)");
+    }
 
-	@Override
-	public void stop() {
-		this.webServer.stop();
-	}
+    @Override
+    public void stop() {
+        this.webServer.stop();
+    }
 
-	@Override
-	public boolean isRunning() {
-		return this.running;
-	}
+    @Override
+    public boolean isRunning() {
+        return this.running;
+    }
 
-	@Override
-	public int getPhase() {
-		return Integer.MAX_VALUE - 1;
-	}
+    @Override
+    public int getPhase() {
+        return Integer.MAX_VALUE - 1;
+    }
 
 }

@@ -61,11 +61,8 @@ public class DispatcherServlet extends FrameworkServlet {
     public static final String THEME_SOURCE_ATTRIBUTE = DispatcherServlet.class.getName() + ".THEME_SOURCE";
 
     public static final String PAGE_NOT_FOUND_LOG_CATEGORY = "org.springframework.web.servlet.PageNotFound";
-
-    private static final String DEFAULT_STRATEGIES_PATH = "DispatcherServlet.properties";
-
     protected static final Log pageNotFoundLogger = LogFactory.getLog(PAGE_NOT_FOUND_LOG_CATEGORY);
-
+    private static final String DEFAULT_STRATEGIES_PATH = "DispatcherServlet.properties";
     private static final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     private static final Properties defaultStrategies;

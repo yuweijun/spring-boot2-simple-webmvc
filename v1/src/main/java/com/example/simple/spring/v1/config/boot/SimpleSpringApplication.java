@@ -4,9 +4,6 @@ import com.example.simple.spring.v1.web.context.SimpleAnnotationConfigServletWeb
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-/**
- * @since 2022-07-13.
- */
 public class SimpleSpringApplication extends SpringApplication {
 
     public SimpleSpringApplication(Class<?>... primarySources) {
