@@ -1,6 +1,6 @@
 package com.example.simple.spring.v2.config.boot;
 
-import com.example.simple.spring.v2.web.context.ServletWebServerApplicationContext;
+import com.example.simple.spring.v2.web.context.SimpleAnnotationConfigServletWebServerApplicationContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -14,7 +14,7 @@ public class SimpleSpringApplication extends SpringApplication {
     }
 
     protected ConfigurableApplicationContext createApplicationContext() {
-        return new ServletWebServerApplicationContext();
+        return new SimpleAnnotationConfigServletWebServerApplicationContext();
     }
 
 }

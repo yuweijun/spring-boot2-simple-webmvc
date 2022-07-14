@@ -17,7 +17,7 @@ public interface SimpleConfigurableWebApplicationContext extends SimpleWebApplic
 
     /**
      * Name of the ServletConfig environment bean in the factory.
-     * @see javax.servlet.ServletConfig
+     * @see ServletConfig
      */
     String SERVLET_CONFIG_BEAN_NAME = "servletConfig";
 

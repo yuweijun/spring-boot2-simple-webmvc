@@ -1,6 +1,6 @@
 package com.example.simple.spring.v2.web.servlet;
 
-import com.example.simple.spring.v2.web.context.SimpleAnnotationConfigWebApplicationContext;
+import com.example.simple.spring.v2.web.context.SimpleAnnotationConfigServletWebServerApplicationContext;
 import com.example.simple.spring.v2.web.context.SimpleConfigurableWebApplicationContext;
 import com.example.simple.spring.v2.web.context.SimpleWebApplicationContext;
 import com.example.simple.spring.v2.web.context.request.RequestAttributes;
@@ -42,7 +42,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
      */
     public static final String DEFAULT_NAMESPACE_SUFFIX = "-servlet";
 
-    public static final Class<?> DEFAULT_CONTEXT_CLASS = SimpleAnnotationConfigWebApplicationContext.class;
+    public static final Class<?> DEFAULT_CONTEXT_CLASS = SimpleAnnotationConfigServletWebServerApplicationContext.class;
 
     /**
      * Prefix for the ServletContext attribute for the WebApplicationContext. The completion is the servlet name.
