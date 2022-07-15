@@ -37,7 +37,8 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
 
     @Bean
     public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-        return new RequestMappingHandlerMapping();
+        RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
+        return handlerMapping;
     }
 
     @Bean
