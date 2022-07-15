@@ -1,9 +1,9 @@
-package com.example.simple.spring.web.mvc.annotation;
+package com.example.simple.spring.web.mvc.servlet.handler.mapping;
 
+import com.example.simple.spring.web.mvc.annotation.ServletAnnotationMappingUtils;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMethod;
 import com.example.simple.spring.web.mvc.bind.annotation.RestController;
-import com.example.simple.spring.web.mvc.servlet.handler.mapping.AbstractDetectingUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;

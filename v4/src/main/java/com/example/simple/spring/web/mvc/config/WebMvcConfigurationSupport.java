@@ -2,9 +2,11 @@ package com.example.simple.spring.web.mvc.config;
 
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.controller.RootController;
-import com.example.simple.spring.web.mvc.servlet.handler.mapping.BeanNameUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
+import com.example.simple.spring.web.mvc.servlet.handler.RequestMappingHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
+import com.example.simple.spring.web.mvc.servlet.handler.mapping.BeanNameUrlHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.handler.mapping.DefaultAnnotationHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.RequestMappingHandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +39,12 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
 
     @Bean
     public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-        RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
-        return handlerMapping;
+        return new RequestMappingHandlerMapping();
+    }
+
+    @Bean
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
+        return new RequestMappingHandlerAdapter();
     }
 
     @Bean
@@ -60,5 +66,11 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     public RootController rootController() {
         return new RootController();
     }
+
+    @Bean
+    private DefaultAnnotationHandlerMapping defaultAnnotationHandlerMapping() {
+        return new DefaultAnnotationHandlerMapping();
+    }
+
 
 }
