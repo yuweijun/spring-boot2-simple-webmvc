@@ -1,12 +1,12 @@
 package com.example.simple.spring.web.mvc.servlet;
 
-import com.example.simple.spring.web.mvc.context.SimpleAnnotationConfigServletWebServerApplicationContext;
-import com.example.simple.spring.web.mvc.context.SimpleConfigurableWebApplicationContext;
-import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
-import com.example.simple.spring.web.mvc.context.support.WebApplicationContextUtils;
 import com.example.simple.spring.web.mvc.contex.request.RequestAttributes;
 import com.example.simple.spring.web.mvc.contex.request.RequestContextHolder;
 import com.example.simple.spring.web.mvc.contex.request.ServletRequestAttributes;
+import com.example.simple.spring.web.mvc.context.SimpleConfigurableWebApplicationContext;
+import com.example.simple.spring.web.mvc.context.SimpleServletWebServerApplicationContext;
+import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
+import com.example.simple.spring.web.mvc.context.support.WebApplicationContextUtils;
 import com.example.simple.spring.web.mvc.util.NestedServletException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
@@ -37,7 +37,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
     public static final String DEFAULT_NAMESPACE_SUFFIX = "-servlet";
 
-    public static final Class<?> DEFAULT_CONTEXT_CLASS = SimpleAnnotationConfigServletWebServerApplicationContext.class;
+    public static final Class<?> DEFAULT_CONTEXT_CLASS = SimpleServletWebServerApplicationContext.class;
 
     public static final String SERVLET_CONTEXT_PREFIX = FrameworkServlet.class.getName() + ".CONTEXT.";
 
@@ -177,6 +177,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
         SimpleWebApplicationContext rootContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         SimpleWebApplicationContext wac = null;
 
+        logger.debug("init web applicationContext");
         if (this.simpleWebApplicationContext != null) {
             // A context instance was injected at construction time -> use it
             wac = this.simpleWebApplicationContext;
@@ -188,8 +189,10 @@ public abstract class FrameworkServlet extends HttpServletBean {
                     if (cwac.getParent() == null) {
                         // The context instance was injected without an explicit parent -> set
                         // the root application context (if any; may be null) as the parent
+                        logger.debug("config web applicationContext");
                         cwac.setParent(rootContext);
                     }
+                    logger.debug("refresh web applicationContext");
                     configureAndRefreshWebApplicationContext(cwac);
                 }
             }
@@ -203,6 +206,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
         }
         if (wac == null) {
             // No context instance is defined for this servlet -> create a local one
+            logger.debug("create web applicationContext");
             wac = createWebApplicationContext(rootContext);
         }
 
@@ -239,10 +243,8 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
     protected SimpleWebApplicationContext createWebApplicationContext(ApplicationContext parent) {
         Class<?> contextClass = getContextClass();
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Servlet with name '" + getServletName() + "' will try to create custom WebApplicationContext context of class '" + contextClass.getName() + "'"
+        this.logger.debug("Servlet with name '" + getServletName() + "' will try to create custom WebApplicationContext context of class '" + contextClass.getName() + "'"
                 + ", using parent context [" + parent + "]");
-        }
         if (!SimpleConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
             throw new ApplicationContextException(
                 "Fatal initialization error in servlet with name '" + getServletName() + "': custom WebApplicationContext class [" + contextClass.getName()

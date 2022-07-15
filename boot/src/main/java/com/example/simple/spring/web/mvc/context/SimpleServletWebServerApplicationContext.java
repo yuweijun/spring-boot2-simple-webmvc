@@ -36,7 +36,9 @@ import java.util.Set;
 public class SimpleServletWebServerApplicationContext extends SimpleGenericWebApplicationContext implements ConfigurableWebServerApplicationContext {
 
     public static final String DISPATCHER_SERVLET_NAME = "dispatcherServlet";
+
     private static final Log logger = LogFactory.getLog(SimpleServletWebServerApplicationContext.class);
+
     private volatile WebServer webServer;
 
     private ServletConfig servletConfig;
