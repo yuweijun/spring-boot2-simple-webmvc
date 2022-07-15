@@ -1,31 +1,3 @@
 # ServletContextAware.setServletContext call stack
 
-setServletContext:87, SimpleGenericWebApplicationContext (com.example.simple.spring.v2.web.context)
-prepareWebApplicationContext:171, SimpleServletWebServerApplicationContext (com.example.simple.spring.v2.web.context)
-selfInitialize:132, SimpleServletWebServerApplicationContext (com.example.simple.spring.v2.web.context)
-onStartup:-1, 1917161212 (com.example.simple.spring.v2.web.context.SimpleServletWebServerApplicationContext$$Lambda$322)
-onStartup:53, TomcatStarter (org.springframework.boot.web.embedded.tomcat)
-startInternal:5219, StandardContext (org.apache.catalina.core)
-main:12, WebApplication (com.example.simple.spring.v2)
-
-# controller call stack
-
-    home:11, HomeController (com.example.simple.spring.v1.controller)
-    invoke0:-1, NativeMethodAccessorImpl (jdk.internal.reflect)
-    invoke:62, NativeMethodAccessorImpl (jdk.internal.reflect)
-    invoke:43, DelegatingMethodAccessorImpl (jdk.internal.reflect)
-    invoke:566, Method (java.lang.reflect)
-    doInvoke:205, InvocableHandlerMethod (org.springframework.web.method.support)
-    invokeForRequest:150, InvocableHandlerMethod (org.springframework.web.method.support)
-    invokeAndHandle:117, ServletInvocableHandlerMethod (org.springframework.web.servlet.mvc.method.annotation)
-    invokeHandlerMethod:895, RequestMappingHandlerAdapter (org.springframework.web.servlet.mvc.method.annotation)
-    handleInternal:808, RequestMappingHandlerAdapter (org.springframework.web.servlet.mvc.method.annotation)
-    handle:87, AbstractHandlerMethodAdapter (org.springframework.web.servlet.mvc.method)
-    doDispatch:1067, DispatcherServlet (org.springframework.web.servlet)
-    doService:963, DispatcherServlet (org.springframework.web.servlet)
-    processRequest:1006, FrameworkServlet (org.springframework.web.servlet)
-    doGet:898, FrameworkServlet (org.springframework.web.servlet)
-    service:655, HttpServlet (javax.servlet.http)
-    service:883, FrameworkServlet (org.springframework.web.servlet)
-    service:764, HttpServlet (javax.servlet.http)
-    run:829, Thread (java.lang)
+# RootController work
