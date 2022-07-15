@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.servlet.handler;
+package com.example.simple.spring.web.mvc.servlet.handler.mapping;
 
 import com.example.simple.spring.web.mvc.contex.support.WebApplicationObjectSupport;
 import com.example.simple.spring.web.mvc.servlet.HandlerExecutionChain;

@@ -2,7 +2,7 @@ package com.example.simple.spring.web.mvc.servlet;
 
 import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
-import com.example.simple.spring.web.mvc.servlet.handler.SimpleUrlHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.handler.mapping.SimpleUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.util.NestedServletException;
 import com.example.simple.spring.web.mvc.util.UrlPathHelper;
 import com.example.simple.spring.web.mvc.util.WebUtils;

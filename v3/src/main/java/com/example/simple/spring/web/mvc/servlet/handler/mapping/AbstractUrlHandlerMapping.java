@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.servlet.handler;
+package com.example.simple.spring.web.mvc.servlet.handler.mapping;
 
 import com.example.simple.spring.web.mvc.servlet.HandlerExecutionChain;
 import com.example.simple.spring.web.mvc.servlet.HandlerMapping;
@@ -15,8 +15,10 @@ import java.util.Map;
 
 public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
-    private final Map<String, Object> handlerMap = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> handlerMap = new LinkedHashMap<>();
+
     private Object rootHandler;
+
     private boolean lazyInitHandlers = false;
 
     public Object getRootHandler() {
@@ -35,6 +37,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
         Object handler = lookupHandler(lookupPath, request);
+
         if (handler == null) {
             // We need to care for the default handler directly, since we need to
             // expose the PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE for it as well.
@@ -55,11 +58,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
                 handler = buildPathExposingHandler(rawHandler, lookupPath, lookupPath, null);
             }
         }
-        if (handler != null && logger.isDebugEnabled()) {
-            logger.debug("Mapping [" + lookupPath + "] to " + handler);
-        } else if (handler == null && logger.isTraceEnabled()) {
-            logger.trace("No handler mapping found for [" + lookupPath + "]");
-        }
+        logger.debug("Mapping [" + lookupPath + "] to " + handler);
         return handler;
     }
 
@@ -76,7 +75,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
             return buildPathExposingHandler(handler, urlPath, urlPath, null);
         }
         // Pattern match?
-        List<String> matchingPatterns = new ArrayList<String>();
+        List<String> matchingPatterns =  new ArrayList<>();
         for (String registeredPattern : this.handlerMap.keySet()) {
             if (getPathMatcher().match(registeredPattern, urlPath)) {
                 matchingPatterns.add(registeredPattern);
@@ -103,7 +102,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
             // There might be multiple 'best patterns', let's make sure we have the correct URI template variables
             // for all of them
-            Map<String, String> uriTemplateVariables = new LinkedHashMap<String, String>();
+            Map<String, String> uriTemplateVariables =  new LinkedHashMap<>();
             for (String matchingPattern : matchingPatterns) {
                 if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
                     uriTemplateVariables.putAll(getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath));
@@ -122,7 +121,6 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
     }
 
     protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern, String pathWithinMapping, Map<String, String> uriTemplateVariables) {
-
         HandlerExecutionChain chain = new HandlerExecutionChain(rawHandler);
         return chain;
     }
@@ -144,6 +142,8 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
     }
 
     protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException {
+        logger.debug("register handler for url : " + urlPath + ", and handler is " + handler);
+
         Assert.notNull(urlPath, "URL path must not be null");
         Assert.notNull(handler, "Handler object must not be null");
         Object resolvedHandler = handler;

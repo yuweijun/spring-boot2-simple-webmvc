@@ -2,7 +2,7 @@ package com.example.simple.spring.web.mvc.config;
 
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.controller.RootController;
-import com.example.simple.spring.web.mvc.servlet.handler.BeanNameUrlHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.handler.mapping.BeanNameUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.RequestMappingHandlerMapping;

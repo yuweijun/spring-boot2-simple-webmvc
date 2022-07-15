@@ -3,7 +3,7 @@ package com.example.simple.spring.web.mvc.annotation;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMethod;
 import com.example.simple.spring.web.mvc.bind.annotation.RestController;
-import com.example.simple.spring.web.mvc.servlet.handler.AbstractDetectingUrlHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.handler.mapping.AbstractDetectingUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;

@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.servlet.handler;
+package com.example.simple.spring.web.mvc.servlet.handler.mapping;
 
 import org.springframework.util.StringUtils;
 
