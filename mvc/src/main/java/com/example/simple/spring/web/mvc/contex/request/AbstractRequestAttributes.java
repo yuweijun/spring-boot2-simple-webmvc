@@ -7,7 +7,7 @@ import java.util.Map;
 
 public abstract class AbstractRequestAttributes implements RequestAttributes {
 
-    protected final Map<String, Runnable> requestDestructionCallbacks = new LinkedHashMap<String, Runnable>(8);
+    protected final Map<String, Runnable> requestDestructionCallbacks =  new LinkedHashMap<>(8);
 
     private volatile boolean requestActive = true;
 

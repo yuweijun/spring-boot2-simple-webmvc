@@ -1,10 +1,11 @@
 package com.example.simple.spring.web.mvc.config;
 
-import com.example.simple.spring.web.mvc.servlet.handler.mapping.RequestMappingHandlerMapping;
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.controller.RootController;
-import com.example.simple.spring.web.mvc.servlet.handler.AbstractHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.handler.BeanNameUrlHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
+import com.example.simple.spring.web.mvc.servlet.handler.mapping.RequestMappingHandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -13,7 +14,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 public abstract class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
 
@@ -47,15 +47,18 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     }
 
     @Bean
-    public RootController rootController() {
-        return new RootController();
+    public HttpRequestHandlerAdapter httpRequestHandlerAdapter() {
+        return new HttpRequestHandlerAdapter();
     }
 
-    private final static class EmptyHandlerMapping extends AbstractHandlerMapping {
-        @Override
-        protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-            return null;
-        }
+    @Bean
+    public BeanNameUrlHandlerMapping beanNameUrlHandlerMapping() {
+        return new BeanNameUrlHandlerMapping();
+    }
+
+    @Bean
+    public RootController rootController() {
+        return new RootController();
     }
 
 }

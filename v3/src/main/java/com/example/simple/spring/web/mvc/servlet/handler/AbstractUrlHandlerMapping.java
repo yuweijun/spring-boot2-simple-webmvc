@@ -75,7 +75,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
             return buildPathExposingHandler(handler, urlPath, urlPath, null);
         }
         // Pattern match?
-        List<String> matchingPatterns = new ArrayList<String>();
+        List<String> matchingPatterns =  new ArrayList<>();
         for (String registeredPattern : this.handlerMap.keySet()) {
             if (getPathMatcher().match(registeredPattern, urlPath)) {
                 matchingPatterns.add(registeredPattern);
@@ -102,7 +102,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
             // There might be multiple 'best patterns', let's make sure we have the correct URI template variables
             // for all of them
-            Map<String, String> uriTemplateVariables = new LinkedHashMap<String, String>();
+            Map<String, String> uriTemplateVariables =  new LinkedHashMap<>();
             for (String matchingPattern : matchingPatterns) {
                 if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
                     uriTemplateVariables.putAll(getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath));

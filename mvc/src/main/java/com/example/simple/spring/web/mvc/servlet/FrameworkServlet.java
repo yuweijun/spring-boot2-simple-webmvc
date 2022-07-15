@@ -69,7 +69,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
     private String contextInitializerClasses;
 
-    private final ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers = new ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>>();
+    private final ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers =  new ArrayList<>();
 
     public FrameworkServlet() {
     }

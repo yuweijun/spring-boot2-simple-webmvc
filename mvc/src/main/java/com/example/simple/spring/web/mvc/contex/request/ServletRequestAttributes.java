@@ -15,7 +15,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
         ServletRequestAttributes.class.getName() + ".DESTRUCTION_CALLBACK.";
 
     private final HttpServletRequest request;
-    private final Map<String, Object> sessionAttributesToUpdate = new HashMap<String, Object>();
+    private final Map<String, Object> sessionAttributesToUpdate =  new HashMap<>();
     private volatile HttpSession session;
 
     public ServletRequestAttributes(HttpServletRequest request) {

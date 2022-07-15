@@ -1,12 +1,11 @@
 package com.example.simple.spring.web.mvc.servlet.handler;
 
-import com.example.simple.spring.web.mvc.servlet.Controller;
 import com.example.simple.spring.web.mvc.servlet.HandlerAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class SimpleControllerHandlerAdapter implements HandlerAdapter {
+public class HttpRequestHandlerAdapter implements HandlerAdapter {
 
     public boolean supports(Object handler) {
         return (handler instanceof HttpRequestHandler);

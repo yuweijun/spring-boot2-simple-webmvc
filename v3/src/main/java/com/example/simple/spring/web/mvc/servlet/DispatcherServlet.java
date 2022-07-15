@@ -1,11 +1,11 @@
 package com.example.simple.spring.web.mvc.servlet;
 
 import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
+import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
+import com.example.simple.spring.web.mvc.servlet.handler.SimpleUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.util.NestedServletException;
 import com.example.simple.spring.web.mvc.util.UrlPathHelper;
 import com.example.simple.spring.web.mvc.util.WebUtils;
-import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
-import com.example.simple.spring.web.mvc.servlet.handler.SimpleUrlHandlerMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -116,7 +116,8 @@ public class DispatcherServlet extends FrameworkServlet {
         if (this.detectAllHandlerMappings) {
             // Find all HandlerMappings in the ApplicationContext, including ancestor contexts.
             Map<String, HandlerMapping> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
-            logger.debug("matchingBeans : " + matchingBeans);
+
+            matchingBeans.values().forEach(logger::debug);
 
             if (!matchingBeans.isEmpty()) {
                 this.handlerMappings = new ArrayList<>(matchingBeans.values());
@@ -138,6 +139,7 @@ public class DispatcherServlet extends FrameworkServlet {
             logger.debug("No HandlerMappings found in servlet '" + getServletName() + "': using default");
             this.handlerMappings = new ArrayList<>();
             final SimpleUrlHandlerMapping simpleUrlHandlerMapping = new SimpleUrlHandlerMapping();
+            simpleUrlHandlerMapping.setRootHandler("rootController");
             handlerMappings.add(simpleUrlHandlerMapping);
         }
     }
@@ -150,7 +152,7 @@ public class DispatcherServlet extends FrameworkServlet {
             Map<String, HandlerAdapter> matchingBeans =
                 BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerAdapter.class, true, false);
             if (!matchingBeans.isEmpty()) {
-                this.handlerAdapters = new ArrayList<HandlerAdapter>(matchingBeans.values());
+                this.handlerAdapters =  new ArrayList<>(matchingBeans.values());
                 // We keep HandlerAdapters in sorted order.
                 OrderComparator.sort(this.handlerAdapters);
             }
@@ -169,9 +171,9 @@ public class DispatcherServlet extends FrameworkServlet {
         // default HandlerAdapters if no other adapters are found.
         if (this.handlerAdapters == null) {
             logger.debug("No HandlerAdapters found in servlet '" + getServletName() + "': using default");
-            final SimpleControllerHandlerAdapter simpleControllerHandlerAdapter = new SimpleControllerHandlerAdapter();
+            final HttpRequestHandlerAdapter httpRequestHandlerAdapter = new HttpRequestHandlerAdapter();
             this.handlerAdapters = new ArrayList<>();
-            handlerAdapters.add(simpleControllerHandlerAdapter);
+            handlerAdapters.add(httpRequestHandlerAdapter);
         }
     }
     public final ThemeSource getThemeSource() {
@@ -192,7 +194,7 @@ public class DispatcherServlet extends FrameworkServlet {
         Map<String, Object> attributesSnapshot = null;
         if (WebUtils.isIncludeRequest(request)) {
             logger.debug("Taking snapshot of request attributes before include");
-            attributesSnapshot = new HashMap<String, Object>();
+            attributesSnapshot =  new HashMap<>();
             Enumeration<?> attrNames = request.getAttributeNames();
             while (attrNames.hasMoreElements()) {
                 String attrName = (String) attrNames.nextElement();
@@ -224,8 +226,12 @@ public class DispatcherServlet extends FrameworkServlet {
             try {
                 // Determine handler for the current request.
                 mappedHandler = getHandler(request);
+                if (mappedHandler == null) {
+                    return;
+                }
+
                 final Object handler = mappedHandler.getHandler();
-                if (mappedHandler == null || handler == null) {
+                if (handler == null) {
                     noHandlerFound(request, response);
                     return;
                 }
@@ -334,7 +340,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
         // Need to copy into separate Collection here, to avoid side effects
         // on the Enumeration when removing attributes.
-        Set<String> attrsToCheck = new HashSet<String>();
+        Set<String> attrsToCheck =  new HashSet<>();
         Enumeration<?> attrNames = request.getAttributeNames();
         while (attrNames.hasMoreElements()) {
             String attrName = (String) attrNames.nextElement();
