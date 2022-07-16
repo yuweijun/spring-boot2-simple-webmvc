@@ -51,8 +51,7 @@ public abstract class WebApplicationObjectSupport extends ApplicationObjectSuppo
         }
         ServletContext servletContext = getWebApplicationContext().getServletContext();
         if (servletContext == null && isContextRequired()) {
-            throw new IllegalStateException("WebApplicationObjectSupport instance [" + this +
-                "] does not run within a ServletContext. Make sure the object is fully configured!");
+            throw new IllegalStateException("WebApplicationObjectSupport instance [" + this + "] does not run within a ServletContext. Make sure the object is fully configured!");
         }
         return servletContext;
     }
