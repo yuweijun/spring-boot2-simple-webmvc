@@ -29,10 +29,6 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         this.rootHandler = rootHandler;
     }
 
-    public void setLazyInitHandlers(boolean lazyInitHandlers) {
-        this.lazyInitHandlers = lazyInitHandlers;
-    }
-
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);

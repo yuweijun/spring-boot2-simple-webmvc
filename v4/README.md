@@ -1,5 +1,3 @@
-# HandlerMapping and HandlerAdapter
+# HandlerMapping and HandlerAdapter for @RequestMapping annotation
 
-BeanNameUrlHandlerMapping
-RequestMappingHandlerMapping
-HttpRequestHandlerAdapter
+RequestMappingHandlerMapping -> RequestMappingHandlerAdapter -> AnnotationController

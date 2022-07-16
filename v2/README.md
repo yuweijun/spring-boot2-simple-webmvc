@@ -1,3 +1,3 @@
-# ServletContextAware.setServletContext call stack
+# HandlerMapping and HandlerAdapter for root controller
 
-# RootController work
+SimpleUrlHandlerMapping -> HttpRequestHandlerAdapter -> RootController

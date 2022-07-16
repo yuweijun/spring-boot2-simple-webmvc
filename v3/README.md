@@ -1,5 +1,3 @@
-# HandlerMapping and HandlerAdapter
+# HandlerMapping and HandlerAdapter for bean name controller
 
-BeanNameUrlHandlerMapping
-RequestMappingHandlerMapping
-HttpRequestHandlerAdapter
+BeanNameUrlHandlerMapping -> SimpleControllerHandlerAdapter -> BeanNameController

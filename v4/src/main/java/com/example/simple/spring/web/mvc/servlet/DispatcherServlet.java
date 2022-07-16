@@ -237,7 +237,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 }
 
                 // Determine handler adapter for the current request.
-                logger.debug("getHandlerAdapter from mappedHandler : " + request);
+                logger.debug("getHandlerAdapter from mappedHandler : " + mappedHandler);
                 HandlerAdapter ha = getHandlerAdapter(handler);
 
                 // Apply preHandle methods of registered interceptors.

@@ -1,0 +1,27 @@
+package com.example.simple.spring.web.mvc.controller;
+
+import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+
+/**
+ * @since 2022-07-16.
+ */
+@Controller
+public class AnnotationController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationController.class);
+
+    @RequestMapping("/annotation")
+    public String annotation() {
+        LOGGER.info("annotation method invoked");
+        return "annotation controller";
+    }
+
+    @RequestMapping("/void")
+    public void diov() {
+        LOGGER.info("diov method invoked");
+    }
+
+}

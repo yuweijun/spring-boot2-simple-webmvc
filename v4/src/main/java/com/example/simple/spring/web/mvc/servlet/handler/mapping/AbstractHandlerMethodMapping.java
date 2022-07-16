@@ -1,9 +1,8 @@
-package com.example.simple.spring.web.mvc.servlet.handler;
+package com.example.simple.spring.web.mvc.servlet.handler.mapping;
 
 import com.example.simple.spring.web.mvc.method.HandlerMethod;
 import com.example.simple.spring.web.mvc.method.HandlerMethodSelector;
 import com.example.simple.spring.web.mvc.servlet.HandlerMapping;
-import com.example.simple.spring.web.mvc.servlet.handler.mapping.AbstractHandlerMapping;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.util.ClassUtils;
@@ -28,6 +27,14 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
     private final Map<T, HandlerMethod> handlerMethods = new LinkedHashMap<T, HandlerMethod>();
 
     private final MultiValueMap<String, T> urlMap = new LinkedMultiValueMap<String, T>();
+
+    protected abstract boolean isHandler(Class<?> beanType);
+
+    protected abstract T getMappingForMethod(Method method, Class<?> handlerType);
+
+    protected abstract Set<String> getMappingPathPatterns(T mapping);
+
+    protected abstract T getMatchingMapping(T mapping, HttpServletRequest request);
 
     public void setDetectHandlerMethodsInAncestorContexts(boolean detectHandlerMethodsInAncestorContexts) {
         this.detectHandlerMethodsInAncestorContexts = detectHandlerMethodsInAncestorContexts;
@@ -60,8 +67,6 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
         handlerMethodsInitialized(getHandlerMethods());
     }
 
-    protected abstract boolean isHandler(Class<?> beanType);
-
     protected void handlerMethodsInitialized(Map<T, HandlerMethod> handlerMethods) {
     }
 
@@ -82,8 +87,6 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
             registerHandlerMethod(handler, method, mapping);
         }
     }
-
-    protected abstract T getMappingForMethod(Method method, Class<?> handlerType);
 
     protected void registerHandlerMethod(Object handler, Method method, T mapping) {
         HandlerMethod handlerMethod;
@@ -112,8 +115,6 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
         }
     }
 
-    protected abstract Set<String> getMappingPathPatterns(T mapping);
-
     @Override
     protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception {
         String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
@@ -136,8 +137,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
             mappings = new ArrayList<T>(handlerMethods.keySet());
         }
 
-        List<Match> matches = new ArrayList<Match>();
-
+        List<Match> matches = new ArrayList<>();
         for (T mapping : mappings) {
             T match = getMatchingMapping(mapping, request);
             if (match != null) {
@@ -146,24 +146,8 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
         }
 
         if (!matches.isEmpty()) {
-            Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
-            Collections.sort(matches, comparator);
-
-            if (logger.isTraceEnabled()) {
-                logger.trace("Found " + matches.size() + " matching mapping(s) for [" + lookupPath + "] : " + matches);
-            }
-
+            logger.trace("Found " + matches.size() + " matching mapping(s) for [" + lookupPath + "] : " + matches);
             Match bestMatch = matches.get(0);
-            if (matches.size() > 1) {
-                Match secondBestMatch = matches.get(1);
-                if (comparator.compare(bestMatch, secondBestMatch) == 0) {
-                    Method m1 = bestMatch.handlerMethod.getMethod();
-                    Method m2 = secondBestMatch.handlerMethod.getMethod();
-                    throw new IllegalStateException(
-                        "Ambiguous handler methods mapped for HTTP path '" + request.getRequestURL() + "': {" +
-                            m1 + ", " + m2 + "}");
-                }
-            }
 
             handleMatch(bestMatch.mapping, lookupPath, request);
             return bestMatch.handlerMethod;
@@ -171,10 +155,6 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
             return handleNoMatch(handlerMethods.keySet(), lookupPath, request);
         }
     }
-
-    protected abstract T getMatchingMapping(T mapping, HttpServletRequest request);
-
-    protected abstract Comparator<T> getMappingComparator(HttpServletRequest request);
 
     protected void handleMatch(T mapping, String lookupPath, HttpServletRequest request) {
         request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, lookupPath);
