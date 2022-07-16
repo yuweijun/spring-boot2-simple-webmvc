@@ -1,7 +1,9 @@
-package com.example.simple.spring.web.mvc;
+package com.example.simple.spring.web.mvc.config;
 
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.controller.RootController;
+import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
+import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.RequestMappingHandlerAdapter;
@@ -27,6 +29,8 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private List<HandlerInterceptor> interceptors;
+
+    private List<HttpMessageConverter<?>> messageConverters;
 
     private ServletContext servletContext;
 
@@ -77,9 +81,26 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     protected void addInterceptors(List<HandlerInterceptor> registry) {
     }
 
+    protected final List<HttpMessageConverter<?>> getMessageConverters() {
+        if (messageConverters == null) {
+            messageConverters = new ArrayList<>();
+            configureMessageConverters(messageConverters);
+            if (messageConverters.isEmpty()) {
+                messageConverters.add(new MappingJackson2HttpMessageConverter());
+            }
+        }
+        return messageConverters;
+    }
+
+    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    }
+
     @Bean
     public RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
-        return new RequestMappingHandlerAdapter();
+        final RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapter();
+        adapter.setMessageConverters(getMessageConverters());
+
+        return adapter;
     }
 
     @Bean

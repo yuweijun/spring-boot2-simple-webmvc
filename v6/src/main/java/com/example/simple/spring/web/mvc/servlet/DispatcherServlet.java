@@ -152,17 +152,15 @@ public class DispatcherServlet extends FrameworkServlet {
             Map<String, HandlerAdapter> matchingBeans =
                 BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerAdapter.class, true, false);
             if (!matchingBeans.isEmpty()) {
-                this.handlerAdapters =  new ArrayList<>(matchingBeans.values());
+                this.handlerAdapters = new ArrayList<>(matchingBeans.values());
                 // We keep HandlerAdapters in sorted order.
                 OrderComparator.sort(this.handlerAdapters);
             }
-        }
-        else {
+        } else {
             try {
                 HandlerAdapter ha = context.getBean(HANDLER_ADAPTER_BEAN_NAME, HandlerAdapter.class);
                 this.handlerAdapters = Collections.singletonList(ha);
-            }
-            catch (NoSuchBeanDefinitionException ex) {
+            } catch (NoSuchBeanDefinitionException ex) {
                 // Ignore, we'll add a default HandlerAdapter later.
             }
         }
@@ -176,6 +174,7 @@ public class DispatcherServlet extends FrameworkServlet {
             handlerAdapters.add(httpRequestHandlerAdapter);
         }
     }
+
     public final ThemeSource getThemeSource() {
         if (getWebApplicationContext() instanceof ThemeSource) {
             return (ThemeSource) getWebApplicationContext();
@@ -194,7 +193,7 @@ public class DispatcherServlet extends FrameworkServlet {
         Map<String, Object> attributesSnapshot = null;
         if (WebUtils.isIncludeRequest(request)) {
             logger.debug("Taking snapshot of request attributes before include");
-            attributesSnapshot =  new HashMap<>();
+            attributesSnapshot = new HashMap<>();
             Enumeration<?> attrNames = request.getAttributeNames();
             while (attrNames.hasMoreElements()) {
                 String attrName = (String) attrNames.nextElement();
@@ -340,7 +339,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
         // Need to copy into separate Collection here, to avoid side effects
         // on the Enumeration when removing attributes.
-        Set<String> attrsToCheck =  new HashSet<>();
+        Set<String> attrsToCheck = new HashSet<>();
         Enumeration<?> attrNames = request.getAttributeNames();
         while (attrNames.hasMoreElements()) {
             String attrName = (String) attrNames.nextElement();

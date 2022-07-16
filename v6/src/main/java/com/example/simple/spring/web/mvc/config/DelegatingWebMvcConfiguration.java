@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc;
+package com.example.simple.spring.web.mvc.config;
 
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.ResponseStatusInterceptor;

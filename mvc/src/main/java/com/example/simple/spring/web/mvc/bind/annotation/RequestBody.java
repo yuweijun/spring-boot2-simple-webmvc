@@ -1,16 +1,14 @@
-package com.example.simple.spring.web.mvc;
-
-import org.springframework.context.annotation.Import;
+package com.example.simple.spring.web.mvc.bind.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
+ 
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
 @Documented
-@Import(DelegatingWebMvcConfiguration.class)
-public @interface EnableWebMvc {
+public @interface RequestBody {
+
 }

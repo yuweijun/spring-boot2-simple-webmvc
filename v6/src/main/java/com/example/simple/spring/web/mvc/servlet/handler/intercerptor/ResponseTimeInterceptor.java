@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-/**
- * @since 2022-07-16.
- */
+ 
 public class ResponseTimeInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResponseTimeInterceptor.class);
