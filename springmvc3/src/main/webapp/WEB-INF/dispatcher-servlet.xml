@@ -12,8 +12,13 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
 
   <mvc:annotation-driven/>
-  <!-- register controller in servlet private context -->
-  <context:component-scan base-package="com.example.simple.spring.v1.controller"/>
+
+  <context:component-scan base-package="com.example.simple.spring.web.mvc.controller"/>
   <mvc:default-servlet-handler/>
+
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/view/"/>
+    <property name="suffix" value=".jsp"/>
+  </bean>
 
 </beans>

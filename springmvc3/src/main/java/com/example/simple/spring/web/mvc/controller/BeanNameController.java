@@ -1,4 +1,4 @@
-package com.example.simple.spring.v1.controller;
+package com.example.simple.spring.web.mvc.controller;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;

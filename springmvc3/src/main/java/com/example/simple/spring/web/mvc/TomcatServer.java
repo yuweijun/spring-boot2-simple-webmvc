@@ -1,4 +1,4 @@
-package com.example.simple.spring.v1;
+package com.example.simple.spring.web.mvc;
 
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResourceRoot;

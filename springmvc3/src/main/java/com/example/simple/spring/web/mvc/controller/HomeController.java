@@ -1,16 +1,16 @@
-package com.example.simple.spring.v1.controller;
+package com.example.simple.spring.web.mvc.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class LoginController {
+public class HomeController {
 
-    @RequestMapping("/login")
+    @RequestMapping("/home")
     @ResponseBody
-    public String login() {
-        return "login";
+    public String home() {
+        return "home";
     }
 
 }
