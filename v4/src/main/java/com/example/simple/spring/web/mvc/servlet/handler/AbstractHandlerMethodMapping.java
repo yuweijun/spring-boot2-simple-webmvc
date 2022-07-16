@@ -28,21 +28,21 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
     private final Map<T, HandlerMethod> handlerMethods = new LinkedHashMap<T, HandlerMethod>();
 
     private final MultiValueMap<String, T> urlMap = new LinkedMultiValueMap<String, T>();
-   
+
     public void setDetectHandlerMethodsInAncestorContexts(boolean detectHandlerMethodsInAncestorContexts) {
         this.detectHandlerMethodsInAncestorContexts = detectHandlerMethodsInAncestorContexts;
     }
-   
+
     public Map<T, HandlerMethod> getHandlerMethods() {
         return Collections.unmodifiableMap(handlerMethods);
     }
-   
+
     @Override
     public void initApplicationContext() throws ApplicationContextException {
         super.initApplicationContext();
         initHandlerMethods();
     }
-   
+
     protected void initHandlerMethods() {
         if (logger.isDebugEnabled()) {
             logger.debug("Looking for request mappings in application context: " + getApplicationContext());
@@ -53,18 +53,18 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
             getApplicationContext().getBeanNamesForType(Object.class));
 
         for (String beanName : beanNames) {
-            if (isHandler(getApplicationContext().getType(beanName))){
+            if (isHandler(getApplicationContext().getType(beanName))) {
                 detectHandlerMethods(beanName);
             }
         }
         handlerMethodsInitialized(getHandlerMethods());
     }
-   
+
     protected abstract boolean isHandler(Class<?> beanType);
-   
+
     protected void handlerMethodsInitialized(Map<T, HandlerMethod> handlerMethods) {
     }
-   
+
     protected void detectHandlerMethods(final Object handler) {
         Class<?> handlerType = (handler instanceof String) ?
             getApplicationContext().getType((String) handler) : handler.getClass();
@@ -82,16 +82,15 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
             registerHandlerMethod(handler, method, mapping);
         }
     }
-   
+
     protected abstract T getMappingForMethod(Method method, Class<?> handlerType);
-   
+
     protected void registerHandlerMethod(Object handler, Method method, T mapping) {
         HandlerMethod handlerMethod;
         if (handler instanceof String) {
             String beanName = (String) handler;
             handlerMethod = new HandlerMethod(beanName, getApplicationContext(), method);
-        }
-        else {
+        } else {
             handlerMethod = new HandlerMethod(handler, method);
         }
 
@@ -103,9 +102,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
         }
 
         handlerMethods.put(mapping, handlerMethod);
-        if (logger.isInfoEnabled()) {
-            logger.info("Mapped \"" + mapping + "\" onto " + handlerMethod);
-        }
+        logger.info("Mapped \"" + mapping + "\" onto " + handlerMethod);
 
         Set<String> patterns = getMappingPathPatterns(mapping);
         for (String pattern : patterns) {
@@ -114,30 +111,25 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
             }
         }
     }
-   
+
     protected abstract Set<String> getMappingPathPatterns(T mapping);
-   
+
     @Override
     protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception {
         String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Looking up handler method for path " + lookupPath);
-        }
+        logger.debug("Looking up handler method for path " + lookupPath);
 
         HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);
 
-        if (logger.isDebugEnabled()) {
-            if (handlerMethod != null) {
-                logger.debug("Returning handler method [" + handlerMethod + "]");
-            }
-            else {
-                logger.debug("Did not find handler method for [" + lookupPath + "]");
-            }
+        if (handlerMethod != null) {
+            logger.debug("Returning handler method [" + handlerMethod + "]");
+        } else {
+            logger.debug("Did not find handler method for [" + lookupPath + "]");
         }
 
         return (handlerMethod != null) ? handlerMethod.createWithResolvedBean() : null;
     }
-   
+
     protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
         List<T> mappings = urlMap.get(lookupPath);
         if (mappings == null) {
@@ -175,25 +167,24 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
             handleMatch(bestMatch.mapping, lookupPath, request);
             return bestMatch.handlerMethod;
-        }
-        else {
+        } else {
             return handleNoMatch(handlerMethods.keySet(), lookupPath, request);
         }
     }
-   
+
     protected abstract T getMatchingMapping(T mapping, HttpServletRequest request);
-   
+
     protected abstract Comparator<T> getMappingComparator(HttpServletRequest request);
-   
+
     protected void handleMatch(T mapping, String lookupPath, HttpServletRequest request) {
         request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, lookupPath);
     }
-   
+
     protected HandlerMethod handleNoMatch(Set<T> mappings, String lookupPath, HttpServletRequest request)
         throws Exception {
         return null;
     }
-   
+
     private class Match {
 
         private final T mapping;

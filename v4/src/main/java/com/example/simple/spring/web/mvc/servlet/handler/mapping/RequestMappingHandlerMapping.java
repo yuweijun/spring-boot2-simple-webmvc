@@ -3,22 +3,24 @@ package com.example.simple.spring.web.mvc.servlet.handler.mapping;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.servlet.HandlerExecutionChain;
 import com.example.simple.spring.web.mvc.servlet.HandlerMapping;
-import com.example.simple.spring.web.mvc.util.UrlPathHelper;
+import com.example.simple.spring.web.mvc.servlet.handler.AbstractHandlerMethodMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ApplicationObjectSupport;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-public class RequestMappingHandlerMapping extends ApplicationObjectSupport implements HandlerMapping {
+public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<Map<String, Object>> implements HandlerMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerMapping.class);
-
-    private UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     protected Map<String, Object> getMappingForMethod(Method method, Class<?> handlerType) {
         Map<String, Object> info = null;
@@ -33,6 +35,11 @@ public class RequestMappingHandlerMapping extends ApplicationObjectSupport imple
         return info;
     }
 
+    protected boolean isHandler(Class<?> beanType) {
+        return (AnnotatedElementUtils.hasAnnotation(beanType, Controller.class) ||
+            AnnotatedElementUtils.hasAnnotation(beanType, RequestMapping.class));
+    }
+
     private Map<String, Object> createRequestMappingInfo(RequestMapping annotation, Method customCondition) {
         LOGGER.debug("createRequestMappingInfo by method : {}", annotation);
         return new HashMap<>();
@@ -44,42 +51,22 @@ public class RequestMappingHandlerMapping extends ApplicationObjectSupport imple
     }
 
     @Override
-    public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
-        Object handler = getHandlerInternal(request);
-        if (handler == null) {
-            return null;
-        }
-        // Bean name or resolved handler?
-        if (handler instanceof String) {
-            String handlerName = (String) handler;
-            handler = getApplicationContext().getBean(handlerName);
-        }
-        return getHandlerExecutionChain(handler, request);
+    protected Set<String> getMappingPathPatterns(Map<String, Object> mapping) {
+        return new HashSet<>();
     }
 
-    protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-        String lookupPath = urlPathHelper.getLookupPathForRequest(request);
-        Object rawHandler = null;
-        if ("/".equals(lookupPath)) {
-            rawHandler = getRootHandler();
-        }
-        if (rawHandler != null) {
-            LOGGER.debug("rawHandler is {}", rawHandler);
-            if (rawHandler instanceof String) {
-                String handlerName = (String) rawHandler;
-                rawHandler = getApplicationContext().getBean(handlerName);
-            }
-
-            Object handler = buildPathExposingHandler(rawHandler, lookupPath);
-            LOGGER.debug("Mapping [{}] lookupPath to {}", lookupPath, handler);
-            return handler;
-        }
-        LOGGER.debug("get handler failed");
-        return null;
+    @Override
+    protected Map<String, Object> getMatchingMapping(Map<String, Object> mapping, HttpServletRequest request) {
+        return new HashMap<>();
     }
 
-    private Object getRootHandler() {
-        return "rootController";
+    @Override
+    protected Comparator<Map<String, Object>> getMappingComparator(HttpServletRequest request) {
+        return (map1, map2) -> {
+            logger.debug(map1);
+            logger.debug(map2);
+            return 0;
+        };
     }
 
     protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) {
@@ -90,8 +77,4 @@ public class RequestMappingHandlerMapping extends ApplicationObjectSupport imple
         return new HandlerExecutionChain(handler);
     }
 
-    protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern) {
-        HandlerExecutionChain chain = new HandlerExecutionChain(rawHandler);
-        return chain;
-    }
 }

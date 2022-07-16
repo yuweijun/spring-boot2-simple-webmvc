@@ -34,9 +34,7 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
                 // URL paths found: Let's consider it a handler.
                 registerHandler(urls, beanName);
             } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Rejected bean name '" + beanName + "': no URL paths identified");
-                }
+                logger.trace("Rejected bean name '" + beanName + "': no URL paths identified");
             }
         }
     }

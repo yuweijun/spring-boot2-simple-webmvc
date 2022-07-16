@@ -6,8 +6,8 @@ import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapt
 import com.example.simple.spring.web.mvc.servlet.handler.RequestMappingHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.BeanNameUrlHandlerMapping;
-import com.example.simple.spring.web.mvc.servlet.handler.mapping.DefaultAnnotationHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.RequestMappingHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.handler.mapping.SimpleUrlHandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -38,12 +38,25 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     }
 
     @Bean
-    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-        return new RequestMappingHandlerMapping();
+    public RootController rootController() {
+        return new RootController();
     }
 
     @Bean
-    private RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
+    public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
+        SimpleUrlHandlerMapping simpleUrlHandlerMapping = new SimpleUrlHandlerMapping();
+        simpleUrlHandlerMapping.setRootHandler(rootController());
+        return simpleUrlHandlerMapping;
+    }
+
+    @Bean
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        final RequestMappingHandlerMapping requestMappingHandlerMapping = new RequestMappingHandlerMapping();
+        return requestMappingHandlerMapping;
+    }
+
+    @Bean
+    public RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
         return new RequestMappingHandlerAdapter();
     }
 
@@ -60,16 +73,6 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
     @Bean
     public BeanNameUrlHandlerMapping beanNameUrlHandlerMapping() {
         return new BeanNameUrlHandlerMapping();
-    }
-
-    @Bean
-    public RootController rootController() {
-        return new RootController();
-    }
-
-    @Bean
-    private DefaultAnnotationHandlerMapping defaultAnnotationHandlerMapping() {
-        return new DefaultAnnotationHandlerMapping();
     }
 
 

@@ -9,9 +9,9 @@ public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMappin
 
     @Override
     protected String[] determineUrlsForHandler(String beanName) {
-        logger.debug("bean name is " + beanName);
         List<String> urls =  new ArrayList<>();
         if (beanName.startsWith("/")) {
+            logger.debug("bean name is " + beanName);
             urls.add(beanName);
         }
         String[] aliases = getApplicationContext().getAliases(beanName);
