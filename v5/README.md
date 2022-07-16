@@ -1,3 +1,9 @@
-# HandlerMapping and HandlerAdapter for @RequestMapping annotation
+# MappedInterceptor and HandlerInterceptor
 
-RequestMappingHandlerMapping -> RequestMappingHandlerAdapter -> AnnotationController
+MappedInterceptor
+RequestLoggerInterceptor
+ResponseStatusInterceptor
+ResponseTimeInterceptor
+AbstractHandlerMapping
+WebMvcConfigurationSupport
+DelegatingWebMvcConfiguration

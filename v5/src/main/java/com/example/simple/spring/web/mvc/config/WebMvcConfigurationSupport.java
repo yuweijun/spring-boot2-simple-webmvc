@@ -2,9 +2,12 @@ package com.example.simple.spring.web.mvc.config;
 
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.controller.RootController;
+import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.RequestMappingHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
+import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.MappedInterceptor;
+import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.RequestLoggerInterceptor;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.BeanNameUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.RequestMappingHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.SimpleUrlHandlerMapping;
@@ -16,10 +19,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 
 import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private List<HandlerInterceptor> interceptors;
 
     private ServletContext servletContext;
 
@@ -44,15 +51,30 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
 
     @Bean
     public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
-        SimpleUrlHandlerMapping simpleUrlHandlerMapping = new SimpleUrlHandlerMapping();
-        simpleUrlHandlerMapping.setRootHandler(rootController());
-        return simpleUrlHandlerMapping;
+        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
+        handlerMapping.setRootHandler(rootController());
+        handlerMapping.setOrder(1);
+        handlerMapping.setInterceptors(getInterceptors());
+        return handlerMapping;
     }
 
     @Bean
     public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-        final RequestMappingHandlerMapping requestMappingHandlerMapping = new RequestMappingHandlerMapping();
-        return requestMappingHandlerMapping;
+        RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
+        handlerMapping.setOrder(0);
+        handlerMapping.setInterceptors(getInterceptors());
+        return handlerMapping;
+    }
+
+    protected final HandlerInterceptor[] getInterceptors() {
+        if (interceptors == null) {
+            interceptors = new ArrayList<>();
+            addInterceptors(interceptors);
+        }
+        return interceptors.toArray(new HandlerInterceptor[0]);
+    }
+
+    protected void addInterceptors(List<HandlerInterceptor> registry) {
     }
 
     @Bean
@@ -72,8 +94,22 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
 
     @Bean
     public BeanNameUrlHandlerMapping beanNameUrlHandlerMapping() {
-        return new BeanNameUrlHandlerMapping();
+        final BeanNameUrlHandlerMapping handlerMapping = new BeanNameUrlHandlerMapping();
+        handlerMapping.setOrder(2);
+        handlerMapping.setInterceptors(getInterceptors());
+
+        return handlerMapping;
     }
 
+    @Bean
+    public RequestLoggerInterceptor requestLoggerInterceptor() {
+        return new RequestLoggerInterceptor();
+    }
+
+    @Bean
+    public MappedInterceptor mappedInterceptor() {
+        String[] pathPatterns = new String[]{"/"};
+        return new MappedInterceptor(pathPatterns, requestLoggerInterceptor());
+    }
 
 }

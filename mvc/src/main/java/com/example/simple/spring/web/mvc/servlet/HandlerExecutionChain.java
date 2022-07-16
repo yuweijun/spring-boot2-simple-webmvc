@@ -22,7 +22,7 @@ public class HandlerExecutionChain {
         if (handler instanceof HandlerExecutionChain) {
             HandlerExecutionChain originalChain = (HandlerExecutionChain) handler;
             this.handler = originalChain.getHandler();
-            this.interceptorList =  new ArrayList<>();
+            this.interceptorList = new ArrayList<>();
             CollectionUtils.mergeArrayIntoCollection(originalChain.getInterceptors(), this.interceptorList);
             CollectionUtils.mergeArrayIntoCollection(interceptors, this.interceptorList);
         } else {
@@ -49,7 +49,7 @@ public class HandlerExecutionChain {
 
     private void initInterceptorList() {
         if (this.interceptorList == null) {
-            this.interceptorList =  new ArrayList<>();
+            this.interceptorList = new ArrayList<>();
         }
         if (this.interceptors != null) {
             this.interceptorList.addAll(Arrays.asList(this.interceptors));

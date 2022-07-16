@@ -1,7 +1,6 @@
 package com.example.simple.spring.web.mvc.servlet.handler.mapping;
 
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
-import com.example.simple.spring.web.mvc.servlet.HandlerExecutionChain;
 import com.example.simple.spring.web.mvc.servlet.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,15 +101,6 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<M
         }
 
         return null;
-    }
-
-    @Override
-    protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) {
-        LOGGER.debug("handler is {}", handler);
-        if (handler instanceof HandlerExecutionChain) {
-            return (HandlerExecutionChain) handler;
-        }
-        return new HandlerExecutionChain(handler);
     }
 
 }
