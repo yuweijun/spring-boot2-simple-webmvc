@@ -26,3 +26,14 @@ Spring web MVC 3.1.0.RELEASE test
    </jsp-config>
 ``` 
 
+# java.lang.ArrayIndexOutOfBoundsException: Index 17152 out of bounds for length 77 when server start using JDK8 or JDK11
+
+    ArrayOutOfBoundsException on Bean creation while using Java 8 constructs
+    https://stackoverflow.com/questions/30729125/arrayoutofboundsexception-on-bean-creation-while-using-java-8-constructs
+
+## fix spring3 issue
+
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+
+

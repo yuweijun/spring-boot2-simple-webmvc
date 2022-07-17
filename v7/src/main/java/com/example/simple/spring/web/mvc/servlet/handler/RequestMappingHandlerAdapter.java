@@ -7,6 +7,7 @@ import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolverComposite;
 import com.example.simple.spring.web.mvc.method.HandlerMethodReturnValueHandler;
 import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
+import com.example.simple.spring.web.mvc.method.RequestParamMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ServletInvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.servlet.HandlerAdapter;
@@ -100,7 +101,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
 
         // Annotation-based argument resolution
 
-        // resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
+        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
         // resolvers.add(new RequestParamMapMethodArgumentResolver());
         // resolvers.add(new PathVariableMethodArgumentResolver());
         // resolvers.add(new ServletModelAttributeMethodProcessor(false));

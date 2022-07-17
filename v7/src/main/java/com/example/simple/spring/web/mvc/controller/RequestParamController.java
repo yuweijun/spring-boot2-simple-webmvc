@@ -1,7 +1,9 @@
 package com.example.simple.spring.web.mvc.controller;
 
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
+import com.example.simple.spring.web.mvc.bind.annotation.RequestParam;
 import com.example.simple.spring.web.mvc.bind.annotation.ResponseBody;
+import com.example.simple.spring.web.mvc.controller.dto.UserDTO;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,4 +31,26 @@ public class RequestParamController {
         return map;
     }
 
+    /**
+     * http://localhost:8080/requestStringParam?username=testuser
+     */
+    @RequestMapping("/requestStringParam")
+    @ResponseBody
+    public UserDTO requestStringParam(@RequestParam String username) {
+        LOGGER.info("requestParamAnnotation method invoked with username : {}", username);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(1);
+        userDTO.setUsername(username);
+        return userDTO;
+    }
+
+    @RequestMapping("/requestIntegerParam")
+    @ResponseBody
+    public UserDTO requestIntegerParam(@RequestParam int id) {
+        LOGGER.info("DataBinder not work and Request processing failed; nested exception is java.lang.IllegalArgumentException: argument type mismatch");
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername("id = " + id);
+        userDTO.setId(id);
+        return userDTO;
+    }
 }

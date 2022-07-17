@@ -6,3 +6,6 @@ HandlerMethodArgumentResolver
 ServletInvocableHandlerMethod
 RequestBodyController
 RequestParamController
+RequestParamMethodArgumentResolver
+AbstractNamedValueMethodArgumentResolver
+RequestMappingHandlerAdapter

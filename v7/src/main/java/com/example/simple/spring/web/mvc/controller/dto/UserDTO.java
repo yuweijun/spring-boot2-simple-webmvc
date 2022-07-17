@@ -1,8 +1,5 @@
 package com.example.simple.spring.web.mvc.controller.dto;
-
-/**
- * @since 2022-07-17.
- */
+  
 public class UserDTO {
 
     private int id;

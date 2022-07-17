@@ -8,10 +8,7 @@ import com.example.simple.spring.web.mvc.controller.dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-
-/**
- * curl -H 'Content-Type: application/json' -d '{"id":1,"username":"test"}' http://localhost:8080/requestBody
- */
+  
 @Controller
 public class RequestBodyController {
 
