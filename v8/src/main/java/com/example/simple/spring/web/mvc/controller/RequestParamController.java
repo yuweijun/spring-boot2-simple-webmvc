@@ -32,7 +32,7 @@ public class RequestParamController {
     }
 
     /**
-     * http://localhost:8080/requestStringParam?username=testuser
+     * http://localhost:8080/requestStringParam?id=1&username=test
      */
     @RequestMapping("/requestStringParam")
     @ResponseBody
@@ -44,10 +44,13 @@ public class RequestParamController {
         return userDTO;
     }
 
+    /**
+     * http://localhost:8080/requestIntegerParam?id=1&username=test
+     */
     @RequestMapping("/requestIntegerParam")
     @ResponseBody
     public UserDTO requestIntegerParam(@RequestParam int id) {
-        LOGGER.info("DataBinder not work and Request processing failed; nested exception is java.lang.IllegalArgumentException: argument type mismatch");
+        LOGGER.info("DataBinder is ExtendedServletRequestDataBinder which cast string id to integer value");
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername("id = " + id);
         userDTO.setId(id);

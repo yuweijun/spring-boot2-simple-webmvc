@@ -2,6 +2,7 @@
 
 package com.example.simple.spring.web.mvc.method;
 
+import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.MethodParameter;
@@ -31,10 +32,10 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
         return getArgumentResolver(parameter) != null;
     }
 
-    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response, ServletRequestDataBinder servletRequestDataBinder) throws Exception {
         HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter);
         Assert.notNull(resolver, "Unknown parameter type [" + parameter.getParameterType().getName() + "]");
-        return resolver.resolveArgument(parameter, request, response);
+        return resolver.resolveArgument(parameter, request, response, servletRequestDataBinder);
     }
 
     private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {

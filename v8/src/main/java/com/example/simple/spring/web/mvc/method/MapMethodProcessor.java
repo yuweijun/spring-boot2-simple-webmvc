@@ -1,5 +1,6 @@
 package com.example.simple.spring.web.mvc.method;
 
+import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.MethodParameter;
@@ -22,7 +23,7 @@ public class MapMethodProcessor implements HandlerMethodArgumentResolver, Handle
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response, ServletRequestDataBinder servletRequestDataBinder) throws Exception {
         return new LinkedHashMap<>();
     }
 

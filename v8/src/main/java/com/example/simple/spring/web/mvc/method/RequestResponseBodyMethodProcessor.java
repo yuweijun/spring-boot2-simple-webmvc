@@ -1,5 +1,6 @@
 package com.example.simple.spring.web.mvc.method;
 
+import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestBody;
 import com.example.simple.spring.web.mvc.bind.annotation.ResponseBody;
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
@@ -24,7 +25,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response, ServletRequestDataBinder servletRequestDataBinder) throws Exception {
         final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
         return readWithMessageConverters(inputMessage, parameter, parameter.getParameterType());
     }

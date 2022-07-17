@@ -1,6 +1,9 @@
 package com.example.simple.spring.web.mvc.method;
 
+import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
 import com.example.simple.spring.web.mvc.context.request.RequestScope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -15,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractNamedValueMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
+    private final Log logger = LogFactory.getLog(getClass());
+
     private final ConfigurableBeanFactory configurableBeanFactory;
 
     private final BeanExpressionContext expressionContext;
@@ -26,7 +31,8 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
         this.expressionContext = (beanFactory != null) ? new BeanExpressionContext(beanFactory, new RequestScope()) : null;
     }
 
-    public final Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @Override
+    public final Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response, ServletRequestDataBinder servletRequestDataBinder) throws Exception {
         Class<?> paramType = parameter.getParameterType();
 
         NamedValueInfo namedValueInfo = getNamedValueInfo(parameter);
@@ -39,6 +45,13 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
                 handleMissingValue(namedValueInfo.name, parameter);
             }
             arg = handleNullValue(namedValueInfo.name, arg, paramType);
+        }
+
+        if (arg != null && servletRequestDataBinder != null) {
+            arg = servletRequestDataBinder.convertIfNecessary(arg, paramType, parameter);
+            if (arg != null) {
+                logger.debug("arg convert type : " + arg.getClass().getSimpleName());
+            }
         }
 
         handleResolvedValue(arg, namedValueInfo.name, parameter, request, response);

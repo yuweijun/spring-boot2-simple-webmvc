@@ -1,5 +1,6 @@
 package com.example.simple.spring.web.mvc.servlet.handler;
 
+import com.example.simple.spring.web.mvc.bind.ExtendedServletRequestDataBinder;
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.example.simple.spring.web.mvc.method.HandlerMethod;
@@ -144,11 +145,13 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
     }
 
     private ServletInvocableHandlerMethod createRequestMappingMethod(HandlerMethod handlerMethod, HttpServletRequest request, HttpServletResponse response) {
-        ServletInvocableHandlerMethod requestMethod;
-        requestMethod = new ServletInvocableHandlerMethod(handlerMethod.getBean(), handlerMethod.getMethod(), request, response);
+        ServletInvocableHandlerMethod requestMethod = new ServletInvocableHandlerMethod(handlerMethod.getBean(), handlerMethod.getMethod(), request, response);
         requestMethod.setHandlerMethodArgumentResolvers(argumentResolvers);
         requestMethod.setParameterNameDiscoverer(parameterNameDiscoverer);
         requestMethod.setHandlerMethodReturnValueHandler(getReturnValueHandler());
+
+        ExtendedServletRequestDataBinder setServletRequestDataBinder = new ExtendedServletRequestDataBinder();
+        requestMethod.setServletRequestDataBinder(setServletRequestDataBinder);
         return requestMethod;
     }
 

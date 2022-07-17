@@ -1,5 +1,6 @@
 package com.example.simple.spring.web.mvc.method;
 
+import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -17,6 +18,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
     private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
+    private ServletRequestDataBinder servletRequestDataBinder;
+
     protected HttpServletRequest request;
 
     protected HttpServletResponse response;
@@ -33,6 +36,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
     public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
         this.parameterNameDiscoverer = parameterNameDiscoverer;
+    }
+
+    public void setServletRequestDataBinder(ServletRequestDataBinder servletRequestDataBinder) {
+        this.servletRequestDataBinder = servletRequestDataBinder;
     }
 
     public final Object invokeForRequest(Object... providedArgs) throws Exception {
@@ -60,7 +67,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
             if (argumentResolvers.supportsParameter(parameter)) {
                 try {
-                    args[i] = argumentResolvers.resolveArgument(parameter, request, response);
+                    args[i] = argumentResolvers.resolveArgument(parameter, request, response, servletRequestDataBinder);
                     continue;
                 } catch (Exception ex) {
                     if (logger.isTraceEnabled()) {
