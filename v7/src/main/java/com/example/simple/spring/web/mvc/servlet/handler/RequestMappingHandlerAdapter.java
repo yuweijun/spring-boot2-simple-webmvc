@@ -1,13 +1,20 @@
 package com.example.simple.spring.web.mvc.servlet.handler;
 
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
+import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.example.simple.spring.web.mvc.method.HandlerMethod;
+import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolver;
+import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolverComposite;
+import com.example.simple.spring.web.mvc.method.HandlerMethodReturnValueHandler;
+import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
+import com.example.simple.spring.web.mvc.method.ServletInvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.servlet.HandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
@@ -20,13 +27,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactoryAware {
+public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactoryAware, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerAdapter.class);
 
     private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
     private List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+
+    private HandlerMethodReturnValueHandler returnValueHandler;
+
+    private HandlerMethodArgumentResolverComposite argumentResolvers;
 
     private ConfigurableBeanFactory beanFactory;
 
@@ -39,6 +50,14 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
 
     public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
         this.messageConverters = messageConverters;
+    }
+
+    public void setReturnValueHandler(HandlerMethodReturnValueHandler returnValueHandler) {
+        this.returnValueHandler = returnValueHandler;
+    }
+
+    public void setArgumentResolvers(HandlerMethodArgumentResolverComposite argumentResolvers) {
+        this.argumentResolvers = argumentResolvers;
     }
 
     @Override
@@ -58,6 +77,63 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
         }
     }
 
+    @Override
+    public void afterPropertiesSet() {
+        if (this.argumentResolvers == null) {
+            List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
+            this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
+        }
+    }
+
+    private HandlerMethodReturnValueHandler getReturnValueHandler() {
+        if (this.returnValueHandler == null) {
+            if (messageConverters.isEmpty()) {
+                messageConverters.add(new MappingJackson2HttpMessageConverter());
+            }
+            this.returnValueHandler = new RequestResponseBodyMethodProcessor(messageConverters);
+        }
+        return this.returnValueHandler;
+    }
+
+    private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
+        List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
+
+        // Annotation-based argument resolution
+
+        // resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
+        // resolvers.add(new RequestParamMapMethodArgumentResolver());
+        // resolvers.add(new PathVariableMethodArgumentResolver());
+        // resolvers.add(new ServletModelAttributeMethodProcessor(false));
+
+        resolvers.add(new RequestResponseBodyMethodProcessor(messageConverters));
+
+        // resolvers.add(new RequestPartMethodArgumentResolver(getMessageConverters()));
+        // resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
+        // resolvers.add(new RequestHeaderMapMethodArgumentResolver());
+        // resolvers.add(new ServletCookieValueMethodArgumentResolver(getBeanFactory()));
+        // resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
+
+        // Type-based argument resolution
+
+        // resolvers.add(new ServletRequestMethodArgumentResolver());
+        // resolvers.add(new ServletResponseMethodArgumentResolver());
+        // resolvers.add(new HttpEntityMethodProcessor(getMessageConverters()));
+        // resolvers.add(new RedirectAttributesMethodArgumentResolver());
+        // resolvers.add(new ModelMethodProcessor());
+        resolvers.add(new MapMethodProcessor());
+        // resolvers.add(new ErrorsMethodArgumentResolver());
+        // resolvers.add(new SessionStatusMethodArgumentResolver());
+        // resolvers.add(new UriComponentsBuilderMethodArgumentResolver());
+
+
+        // Catch-all
+
+        // resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+        // resolvers.add(new ServletModelAttributeMethodProcessor(true));
+
+        return resolvers;
+    }
+
     protected ConfigurableBeanFactory getBeanFactory() {
         return this.beanFactory;
     }
@@ -66,24 +142,25 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
         invokeHandlerMethod(request, response, handlerMethod);
     }
 
+    private ServletInvocableHandlerMethod createRequestMappingMethod(HandlerMethod handlerMethod, HttpServletRequest request, HttpServletResponse response) {
+        ServletInvocableHandlerMethod requestMethod;
+        requestMethod = new ServletInvocableHandlerMethod(handlerMethod.getBean(), handlerMethod.getMethod(), request, response);
+        requestMethod.setHandlerMethodArgumentResolvers(argumentResolvers);
+        requestMethod.setParameterNameDiscoverer(parameterNameDiscoverer);
+        requestMethod.setHandlerMethodReturnValueHandler(getReturnValueHandler());
+        return requestMethod;
+    }
+
     private void invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         final Method method = handlerMethod.getMethod();
         final MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        final Object bean = handlerMethod.getBean();
-        final MethodParameter returnType = handlerMethod.getReturnType();
-        LOGGER.info("method [{}] invoke in bean [{}]", method.getName(), bean.getClass().getSimpleName());
         LOGGER.debug("methodParameters is : {}", Arrays.asList(methodParameters));
 
-        final Object ret = method.invoke(bean);
-        if (ret != null) {
-            RequestResponseBodyMethodProcessor requestResponseBodyMethodProcessor = new RequestResponseBodyMethodProcessor(messageConverters);
-            if (!messageConverters.isEmpty() && requestResponseBodyMethodProcessor.supportsReturnType(returnType)) {
-                requestResponseBodyMethodProcessor.handleReturnValue(ret, returnType, request, response);
-            } else {
-                LOGGER.debug("invoke return value type : {}", ret.getClass().getSimpleName());
-                response.getWriter().write(ret.toString());
-            }
-        }
+        final Object bean = handlerMethod.getBean();
+        LOGGER.info("method [{}] invoke in bean [{}]", method.getName(), bean.getClass().getSimpleName());
+
+        final ServletInvocableHandlerMethod invocableHandlerMethod = createRequestMappingMethod(handlerMethod, request, response);
+        invocableHandlerMethod.invokeAndHandle(request, response);
     }
 
 }

@@ -18,7 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractMessageConverterMethodArgumentResolver {
+public abstract class AbstractMessageConverterMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
