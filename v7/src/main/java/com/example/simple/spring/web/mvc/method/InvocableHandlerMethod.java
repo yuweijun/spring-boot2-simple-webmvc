@@ -1,6 +1,5 @@
 package com.example.simple.spring.web.mvc.method;
 
-import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -50,11 +49,9 @@ public class InvocableHandlerMethod extends HandlerMethod {
         MethodParameter[] parameters = getMethodParameters();
         Object[] args = new Object[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
-            MethodParameter parameter = parameters[i];
+            // GenericTypeResolver.resolveParameterType(parameter, getBean().getClass());
+            MethodParameter parameter = parameters[i].withContainingClass(getBean().getClass());
             parameter.initParameterNameDiscovery(parameterNameDiscoverer);
-            final Class<?> aClass = GenericTypeResolver.resolveParameterType(parameter, getBean().getClass());
-            final Class<?> parameterType = parameter.withContainingClass(getBean().getClass()).getParameterType();
-            logger.debug("class " + aClass.getSimpleName() + ", type " + parameterType.getSimpleName());
 
             args[i] = resolveProvidedArgument(parameter, providedArgs);
             if (args[i] != null) {

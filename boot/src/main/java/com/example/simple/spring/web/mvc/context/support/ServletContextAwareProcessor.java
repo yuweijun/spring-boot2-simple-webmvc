@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.lang.Nullable;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -41,7 +40,6 @@ public class ServletContextAwareProcessor implements BeanPostProcessor {
             LOGGER.debug("get servletContext from servletConfig : {}", context);
             return context;
         }
-        LOGGER.debug("get servletContext : {}", this.servletContext);
         return this.servletContext;
     }
 
