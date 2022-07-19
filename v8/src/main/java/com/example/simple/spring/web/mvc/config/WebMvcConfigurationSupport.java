@@ -5,6 +5,8 @@ import com.example.simple.spring.web.mvc.controller.RootController;
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
+import com.example.simple.spring.web.mvc.servlet.exception.ExceptionHandlerExceptionResolver;
+import com.example.simple.spring.web.mvc.servlet.exception.HandlerExceptionResolver;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.RequestMappingHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
@@ -133,4 +135,12 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
         return new MappedInterceptor(pathPatterns, requestLoggerInterceptor());
     }
 
+    @Bean
+    public HandlerExceptionResolver handlerExceptionResolver() throws Exception {
+        ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
+        exceptionHandlerExceptionResolver.setMessageConverters(getMessageConverters());
+        exceptionHandlerExceptionResolver.afterPropertiesSet();
+
+        return exceptionHandlerExceptionResolver;
+    }
 }

@@ -77,7 +77,7 @@ public class DispatcherServlet extends FrameworkServlet {
         Map<String, HandlerAdapter> matchingBeans =
             BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerAdapter.class, true, false);
         if (!matchingBeans.isEmpty()) {
-            this.handlerAdapters = new ArrayList<HandlerAdapter>(matchingBeans.values());
+            this.handlerAdapters = new ArrayList<>(matchingBeans.values());
             // We keep HandlerAdapters in sorted order.
             OrderComparator.sort(this.handlerAdapters);
         }

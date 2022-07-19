@@ -88,7 +88,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
     protected List<MediaType> getProducibleMediaTypes(HttpServletRequest request, Class<?> returnValueClass) {
         Set<MediaType> mediaTypes = (Set<MediaType>) request.getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
         if (!CollectionUtils.isEmpty(mediaTypes)) {
-            return new ArrayList<MediaType>(mediaTypes);
+            return new ArrayList<>(mediaTypes);
         } else if (!allSupportedMediaTypes.isEmpty()) {
             List<MediaType> result = new ArrayList<>();
             for (HttpMessageConverter<?> converter : messageConverters) {

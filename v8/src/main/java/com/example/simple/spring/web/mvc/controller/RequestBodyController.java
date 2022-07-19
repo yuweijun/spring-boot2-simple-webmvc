@@ -13,10 +13,7 @@ import org.springframework.stereotype.Controller;
 public class RequestBodyController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestBodyController.class);
-
-    /**
-     * curl -H 'Content-Type: application/json' -d '{"id":1,"username":"test"}' http://localhost:8080/requestBody
-     */
+  
     @RequestMapping(value = "/requestBody", method = RequestMethod.POST)
     @ResponseBody
     public UserDTO requestBody(@RequestBody UserDTO userDTO) {

@@ -30,10 +30,7 @@ public class RequestParamController {
         }
         return map;
     }
-
-    /**
-     * http://localhost:8080/requestStringParam?username=testuser
-     */
+  
     @RequestMapping("/requestStringParam")
     @ResponseBody
     public UserDTO requestStringParam(@RequestParam String username) {

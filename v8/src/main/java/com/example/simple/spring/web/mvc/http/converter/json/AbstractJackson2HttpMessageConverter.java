@@ -49,9 +49,6 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
         ENCODINGS.put("US-ASCII", JsonEncoding.UTF8);
     }
 
-    @Deprecated
-    public static final Charset DEFAULT_CHARSET = null;
-
     protected ObjectMapper objectMapper;
 
     private Boolean prettyPrint;

@@ -69,7 +69,7 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         Assert.notNull(headers, "'headers' must not be null");
         if (readOnly) {
             Map<String, List<String>> map =
-                new LinkedCaseInsensitiveMap<List<String>>(headers.size(), Locale.ENGLISH);
+                new LinkedCaseInsensitiveMap<>(headers.size(), Locale.ENGLISH);
             for (Entry<String, List<String>> entry : headers.entrySet()) {
                 List<String> values = Collections.unmodifiableList(entry.getValue());
                 map.put(entry.getKey(), values);
@@ -81,7 +81,7 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     }
 
     public HttpHeaders() {
-        this(new LinkedCaseInsensitiveMap<List<String>>(8, Locale.ENGLISH), false);
+        this(new LinkedCaseInsensitiveMap<>(8, Locale.ENGLISH), false);
     }
 
     public static HttpHeaders readOnlyHttpHeaders(HttpHeaders headers) {

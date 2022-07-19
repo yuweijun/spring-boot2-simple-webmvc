@@ -70,9 +70,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
                     args[i] = argumentResolvers.resolveArgument(parameter, request, response, servletRequestDataBinder);
                     continue;
                 } catch (Exception ex) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace(getArgumentResolutionErrorMessage("Error resolving argument", i), ex);
-                    }
+                    logger.debug(getArgumentResolutionErrorMessage("Error resolving argument", i), ex);
                     throw ex;
                 }
             }

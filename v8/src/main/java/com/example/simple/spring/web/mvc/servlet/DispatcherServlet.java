@@ -1,6 +1,8 @@
 package com.example.simple.spring.web.mvc.servlet;
 
 import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
+import com.example.simple.spring.web.mvc.servlet.exception.ExceptionHandlerExceptionResolver;
+import com.example.simple.spring.web.mvc.servlet.exception.HandlerExceptionResolver;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.SimpleUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.util.NestedServletException;
@@ -60,11 +62,11 @@ public class DispatcherServlet extends FrameworkServlet {
 
     private static final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
+    private HandlerExceptionResolver handlerExceptionResolver;
+
     private boolean detectAllHandlerMappings = true;
 
     private boolean detectAllHandlerAdapters = true;
-
-    private boolean detectAllHandlerExceptionResolvers = true;
 
     private boolean detectAllViewResolvers = true;
 
@@ -90,10 +92,6 @@ public class DispatcherServlet extends FrameworkServlet {
         this.detectAllHandlerAdapters = detectAllHandlerAdapters;
     }
 
-    public void setDetectAllHandlerExceptionResolvers(boolean detectAllHandlerExceptionResolvers) {
-        this.detectAllHandlerExceptionResolvers = detectAllHandlerExceptionResolvers;
-    }
-
     public void setDetectAllViewResolvers(boolean detectAllViewResolvers) {
         this.detectAllViewResolvers = detectAllViewResolvers;
     }
@@ -106,6 +104,7 @@ public class DispatcherServlet extends FrameworkServlet {
     protected void onRefresh(ApplicationContext context) {
         initHandlerMappings(context);
         initHandlerAdapters(context);
+        initHandlerExceptionResolvers(context);
     }
 
     private void initHandlerMappings(ApplicationContext context) {
@@ -172,6 +171,21 @@ public class DispatcherServlet extends FrameworkServlet {
             final HttpRequestHandlerAdapter httpRequestHandlerAdapter = new HttpRequestHandlerAdapter();
             this.handlerAdapters = new ArrayList<>();
             handlerAdapters.add(httpRequestHandlerAdapter);
+        }
+    }
+
+    private void initHandlerExceptionResolvers(ApplicationContext context) {
+        try {
+            this.handlerExceptionResolver = context.getBean(HANDLER_EXCEPTION_RESOLVER_BEAN_NAME, HandlerExceptionResolver.class);
+        } catch (NoSuchBeanDefinitionException ex) {
+            // Ignore, no HandlerExceptionResolver is fine too.
+        }
+
+        // Ensure we have at least some HandlerExceptionResolvers, by registering
+        // default HandlerExceptionResolvers if no other resolvers are found.
+        if (this.handlerExceptionResolver == null) {
+            logger.debug("No HandlerExceptionResolvers found in servlet '" + getServletName() + "': using default");
+            this.handlerExceptionResolver = new ExceptionHandlerExceptionResolver();
         }
     }
 
@@ -310,14 +324,14 @@ public class DispatcherServlet extends FrameworkServlet {
         throw new ServletException("No adapter for handler [" + handler + "]: Does your handler implement a supported interface like Controller?");
     }
 
-    protected void processHandlerException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
-        throw ex;
+    protected void processHandlerException(HttpServletRequest request, HttpServletResponse response,
+        Object handler, Exception ex) throws Exception {
+        logger.error("process handler exception for request : " + request.getRequestURI(), ex);
+        handlerExceptionResolver.resolveException(request, response, handler, ex);
     }
 
     private void triggerAfterCompletion(HandlerExecutionChain mappedHandler, int interceptorIndex, HttpServletRequest request, HttpServletResponse response, Exception ex)
         throws Exception {
-
         // Apply afterCompletion methods of registered interceptors.
         if (mappedHandler != null) {
             HandlerInterceptor[] interceptors = mappedHandler.getInterceptors();

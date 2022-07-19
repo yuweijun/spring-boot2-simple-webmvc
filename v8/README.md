@@ -10,3 +10,4 @@ RequestResponseBodyMethodProcessor
 RequestMappingHandlerAdapter
 AbstractNamedValueMethodArgumentResolver
 RequestParamController
+ExceptionHandler

@@ -2,6 +2,7 @@ package com.example.simple.spring.web.mvc.servlet.handler;
 
 import com.example.simple.spring.web.mvc.bind.ExtendedServletRequestDataBinder;
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
+import com.example.simple.spring.web.mvc.http.converter.StringHttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.example.simple.spring.web.mvc.method.HandlerMethod;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolver;
@@ -91,6 +92,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
         if (this.returnValueHandler == null) {
             if (messageConverters.isEmpty()) {
                 messageConverters.add(new MappingJackson2HttpMessageConverter());
+                messageConverters.add(new StringHttpMessageConverter());
             }
             this.returnValueHandler = new RequestResponseBodyMethodProcessor(messageConverters);
         }
