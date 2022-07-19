@@ -4,7 +4,9 @@ import com.example.simple.spring.web.mvc.bind.annotation.ExceptionHandler;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestParam;
 import com.example.simple.spring.web.mvc.bind.annotation.ResponseBody;
+import com.example.simple.spring.web.mvc.bind.annotation.ResponseStatus;
 import com.example.simple.spring.web.mvc.controller.dto.UserDTO;
+import com.example.simple.spring.web.mvc.http.HttpStatus;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +71,8 @@ public class RequestParamController {
     }
 
     @ExceptionHandler({TypeMismatchException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "TypeMismatchException")
+    @ResponseBody
     public Map<String, String> handleTypeMismatchException(HttpServletRequest request, HttpServletResponse response, Object... providedArgs) {
         LOGGER.error("TypeMismatchException handler");
         Map<String, String> map = new HashMap<>();

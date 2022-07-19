@@ -1,7 +1,5 @@
-package com.example.simple.spring.web.mvc.controller;
+package com.example.simple.spring.web.mvc.http;
 
-import com.example.simple.spring.web.mvc.http.HttpHeaders;
-import com.example.simple.spring.web.mvc.http.MediaType;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.specification.RequestSpecification;
 
