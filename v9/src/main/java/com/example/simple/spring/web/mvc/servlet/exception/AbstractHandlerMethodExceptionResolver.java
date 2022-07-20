@@ -5,7 +5,7 @@ import com.example.simple.spring.web.mvc.method.HandlerMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class AbstractHandlerMethodExceptionResolver extends AbstractHandlerExceptionResolver {
+public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHandlerExceptionResolver {
 
     @Override
     protected boolean shouldApplyTo(HttpServletRequest request, Object handler) {
@@ -25,7 +25,6 @@ public class AbstractHandlerMethodExceptionResolver extends AbstractHandlerExcep
         doResolveHandlerMethodException(request, response, (HandlerMethod) handler, ex);
     }
 
-    protected void doResolveHandlerMethodException(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) {
-    }
+    protected abstract void doResolveHandlerMethodException(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex);
 
 }

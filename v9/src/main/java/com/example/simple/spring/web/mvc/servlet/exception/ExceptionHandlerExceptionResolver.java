@@ -11,6 +11,7 @@ import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcess
 import com.example.simple.spring.web.mvc.method.ServletInvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.method.ServletRequestMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.ServletResponseMethodArgumentResolver;
+import com.example.simple.spring.web.mvc.servlet.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 
     private HandlerMethodArgumentResolverComposite argumentResolvers;
 
-    private HandlerMethodReturnValueHandler returnValueHandlers;
+    private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
 
     public ExceptionHandlerExceptionResolver() {
 
@@ -77,8 +78,10 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
     public void setReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         if (returnValueHandlers == null) {
             this.returnValueHandlers = null;
-        } else {
-            this.returnValueHandlers = new RequestResponseBodyMethodProcessor(getMessageConverters());
+        }
+        else {
+            this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite();
+            this.returnValueHandlers.addHandlers(returnValueHandlers);
         }
     }
 
@@ -101,7 +104,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         }
         if (this.returnValueHandlers == null) {
             List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
-            this.returnValueHandlers = new RequestResponseBodyMethodProcessor(getMessageConverters());
+            this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
         }
     }
 
@@ -151,11 +154,13 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
     @Override
     protected void doResolveHandlerMethodException(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception exception) {
         if (handlerMethod == null) {
+            logger.debug("handlerMethod is null");
             return;
         }
 
         ServletInvocableHandlerMethod exceptionHandlerMethod = getExceptionHandlerMethod(request, response, handlerMethod, exception);
         if (exceptionHandlerMethod == null) {
+            logger.debug("exceptionHandlerMethod is not found");
             return;
         }
 
