@@ -6,13 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation project(":boot")
-    implementation project(":mvc")
-    implementation "org.springframework.boot:spring-boot-starter-tomcat"
-    implementation "org.springframework.boot:spring-boot-starter-logging"
-    implementation "org.springframework.boot:spring-boot-autoconfigure"
-    implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation 'javax.xml.bind:jaxb-api:2.2.9'
+    implementation 'commons-logging:commons-logging:1.2'
     implementation 'com.jayway.restassured:rest-assured:2.9.0'
 }
 
@@ -24,9 +19,4 @@ targetCompatibility = JavaVersion.VERSION_11
 
 test {
     useJUnitPlatform()
-}
-
-application {
-    // Define the main class for the application.
-    mainClass = 'com.example.simple.spring.v1.WebApplication'
 }

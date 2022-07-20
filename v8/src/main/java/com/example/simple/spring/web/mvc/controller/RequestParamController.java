@@ -8,14 +8,15 @@ import com.example.simple.spring.web.mvc.bind.annotation.ResponseStatus;
 import com.example.simple.spring.web.mvc.controller.dto.UserDTO;
 import com.example.simple.spring.web.mvc.http.HttpStatus;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Controller
 public class RequestParamController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestParamController.class);
+    private final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
     private List<HandlerInterceptor> interceptors;
@@ -31,7 +32,7 @@ public class RequestParamController {
     @RequestMapping("/requestParam")
     @ResponseBody
     public Map<String, String> requestParam(Map<String, String> map) {
-        LOGGER.info("requestParam method invoked");
+        logger.info("requestParam method invoked");
         for (HandlerInterceptor interceptor : interceptors) {
             map.put(interceptor.getClass().getSimpleName(), interceptor.getClass().getCanonicalName());
         }
@@ -42,7 +43,7 @@ public class RequestParamController {
     @RequestMapping("/requestStringParam")
     @ResponseBody
     public UserDTO requestStringParam(@RequestParam String username) {
-        LOGGER.info("requestStringParam method invoked with username : {}", username);
+        logger.info("requestStringParam method invoked with username : " + username);
         UserDTO userDTO = new UserDTO();
         userDTO.setId(1);
         userDTO.setUsername(username);
@@ -52,7 +53,7 @@ public class RequestParamController {
     @RequestMapping("/requestParamNamed")
     @ResponseBody
     public UserDTO requestParamNamed(@RequestParam("username") String name) {
-        LOGGER.info("requestParamNamed method invoked with username : {}", name);
+        logger.info("requestParamNamed method invoked with username : " + name);
         UserDTO userDTO = new UserDTO();
         userDTO.setId(1);
         userDTO.setUsername(name);
@@ -60,10 +61,11 @@ public class RequestParamController {
     }
 
     // http://localhost:8080/requestIntegerParam?id=1&username=test
+    // http://localhost:8080/requestIntegerParam?id=id&username=test will throw exception and caught by method #handleTypeMismatchException
     @RequestMapping("/requestIntegerParam")
     @ResponseBody
     public UserDTO requestIntegerParam(@RequestParam int id) {
-        LOGGER.info("DataBinder is ExtendedServletRequestDataBinder which cast string id to integer value");
+        logger.info("DataBinder is ExtendedServletRequestDataBinder which cast string id to integer value");
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername("id = " + id);
         userDTO.setId(id);
@@ -71,10 +73,10 @@ public class RequestParamController {
     }
 
     @ExceptionHandler({TypeMismatchException.class})
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "TypeMismatchException")
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Map<String, String> handleTypeMismatchException(HttpServletRequest request, HttpServletResponse response, Object... providedArgs) {
-        LOGGER.error("TypeMismatchException handler");
+    public Map<String, String> handleTypeMismatchException(HttpServletRequest request, HttpServletResponse response, Object... providedArgs) throws IOException {
+        logger.error("TypeMismatchException handler");
         Map<String, String> map = new HashMap<>();
         map.put("uri", request.getRequestURI());
         map.put("error", TypeMismatchException.class.getName());

@@ -2,21 +2,14 @@ package com.example.simple.spring.web.mvc.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.TypeMismatchException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.InternalResourceView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -63,14 +56,4 @@ public class RequestParamController {
         return "id = " + id;
     }
 
-    @ExceptionHandler({TypeMismatchException.class})
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "TypeMismatchException")
-    @ResponseBody
-    public Map<String, String> handleTypeMismatchException(HttpServletRequest request, HttpServletResponse response, Object... providedArgs) {
-        logger.error("TypeMismatchException handler");
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("uri", request.getRequestURI());
-        map.put("error", TypeMismatchException.class.getName());
-        return map;
-    }
 }

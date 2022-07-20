@@ -3,36 +3,46 @@ package com.example.simple.spring.web.mvc.controller;
 import com.example.simple.spring.web.mvc.http.HttpStatus;
 import com.jayway.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.example.simple.spring.web.mvc.http.RestAssuredUtil.given;
+import static org.hamcrest.Matchers.equalTo;
 
 public class RequestParamControllerTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestParamControllerTest.class);
-
     @Test
-    void requestParam() {
+    public void requestParam() {
     }
 
     @Test
-    void requestStringParam() {
+    public void requestStringParam() {
     }
 
     @Test
-    void requestParamNamed() {
-    }
-
-    @Test
-    void requestIntegerParam() {
+    public void requestParamNamed() {
         final RequestSpecification request = given();
-        request.get("/requestIntegerParam?id=id1&username=test")
+        request.get("/requestParamNamed?id=1&username=test")
                .prettyPeek()
                .then()
-               .statusCode(HttpStatus.BAD_REQUEST.value());
-               // .body("error.message", equalTo("error message"))
-               // .body("error.code", equalTo("BadArgument"));
+               .statusCode(HttpStatus.OK.value());
+    }
 
+    @Test
+    public void requestIntegerParamException() {
+        final RequestSpecification request = given();
+        request.get("/requestIntegerParam?id=not-number&username=test")
+               .prettyPeek()
+               .then()
+               .statusCode(HttpStatus.BAD_REQUEST.value())
+               .body("error", equalTo("org.springframework.beans.TypeMismatchException"));
+    }
+
+    @Test
+    public void requestIntegerParam() {
+        final RequestSpecification request = given();
+        request.get("/requestIntegerParam?id=1&username=test")
+               .prettyPeek()
+               .then()
+               .statusCode(HttpStatus.OK.value())
+               .body("id", equalTo(1));
     }
 }
