@@ -4,6 +4,5 @@ Spring web MVC learning
 
 # TODO
 
-AnnotationDrivenBeanDefinitionParser
 ResponseStatusExceptionResolver
-ExceptionHandlerExceptionResolver
+ResponseBodyAdvice

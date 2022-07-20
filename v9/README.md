@@ -1,5 +1,6 @@
 # ControllerAdvice and ExceptionHandler support
 
 ControllerAdvice
+ControllerAdviceBean
 ExceptionHandler
 HandlerMethodReturnValueHandlerComposite

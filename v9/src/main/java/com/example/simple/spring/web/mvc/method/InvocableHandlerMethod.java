@@ -1,6 +1,7 @@
 package com.example.simple.spring.web.mvc.method;
 
 import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -26,6 +27,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
     public InvocableHandlerMethod(Object bean, Method method, HttpServletRequest request, HttpServletResponse response) {
         super(bean, method);
+        this.request = request;
+        this.response = response;
+    }
+
+    public InvocableHandlerMethod(String beanName, BeanFactory beanFactory, Method method, HttpServletRequest request, HttpServletResponse response) {
+        super(beanName, beanFactory, method);
         this.request = request;
         this.response = response;
     }

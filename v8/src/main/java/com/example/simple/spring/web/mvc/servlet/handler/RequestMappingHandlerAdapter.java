@@ -166,7 +166,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
         LOGGER.info("method [{}] invoke in bean [{}]", method.getName(), bean.getClass().getSimpleName());
 
         final ServletInvocableHandlerMethod invocableHandlerMethod = createRequestMappingMethod(handlerMethod, request, response);
-        invocableHandlerMethod.invokeAndHandle(request, response);
+        invocableHandlerMethod.invokeAndHandle();
     }
 
 }

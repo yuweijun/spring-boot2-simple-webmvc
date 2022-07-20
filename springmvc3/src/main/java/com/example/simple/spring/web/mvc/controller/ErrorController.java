@@ -25,24 +25,24 @@ public class ErrorController {
 
         ModelAndView modelAndView = new ModelAndView("json");
         String message = "";
-        
-        int code = getErrorCode(httpRequest);
+
+        int code = getStatusCode(httpRequest);
 
         switch (code) {
             case 400: {
-                message = "Http Error Code: 400. Bad Request";
+                message = "400: Bad Request";
                 break;
             }
             case 401: {
-                message = "Http Error Code: 401. Unauthorized";
+                message = "401: Unauthorized";
                 break;
             }
             case 404: {
-                message = "Http Error Code: 404. Resource not found";
+                message = "404: Resource not found";
                 break;
             }
             case 500: {
-                message = "Http Error Code: 500. Internal Server Error";
+                message = "500: Internal Server Error";
                 break;
             }
         }
@@ -61,7 +61,7 @@ public class ErrorController {
         return modelAndView;
     }
 
-    private int getErrorCode(HttpServletRequest httpRequest) {
+    private int getStatusCode(HttpServletRequest httpRequest) {
         return (Integer) httpRequest.getAttribute("javax.servlet.error.status_code");
     }
 

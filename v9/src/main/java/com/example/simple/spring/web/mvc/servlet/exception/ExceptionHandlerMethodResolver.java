@@ -4,6 +4,8 @@ package com.example.simple.spring.web.mvc.servlet.exception;
 
 import com.example.simple.spring.web.mvc.bind.annotation.ExceptionHandler;
 import com.example.simple.spring.web.mvc.method.HandlerMethodSelector;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.ExceptionDepthComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -20,6 +22,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ExceptionHandlerMethodResolver {
+
+    private final Log logger = LogFactory.getLog(getClass());
 
     private static final Method NO_METHOD_FOUND = ClassUtils.getMethodIfAvailable(System.class, "currentTimeMillis");
 
@@ -57,6 +61,7 @@ public class ExceptionHandlerMethodResolver {
     }
 
     private void addExceptionMapping(Class<? extends Throwable> exceptionType, Method method) {
+        logger.debug("find mapped method for exceptionType [" + exceptionType.getName() + "], method : " + method.getName());
         Method oldMethod = this.mappedMethods.put(exceptionType, method);
         if (oldMethod != null && !oldMethod.equals(method)) {
             throw new IllegalStateException("Ambiguous @ExceptionHandler method mapped for [" + exceptionType + "]: {" + oldMethod + ", " + method + "}.");
@@ -94,4 +99,7 @@ public class ExceptionHandlerMethodResolver {
         }
     };
 
+    public boolean hasExceptionMappings() {
+        return !this.mappedMethods.isEmpty();
+    }
 }

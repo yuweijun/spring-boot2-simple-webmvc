@@ -52,6 +52,10 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
         this.preventResponseCaching = preventResponseCaching;
     }
 
+    protected boolean hasHandlerMappings() {
+        return (this.mappedHandlers != null || this.mappedHandlerClasses != null);
+    }
+
     public void resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         if (shouldApplyTo(request, handler)) {
             // Log exception, both at debug log level and at warn level, if desired.
