@@ -27,10 +27,10 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
     }
 
     @Override
-    protected final void doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        doResolveHandlerMethodException(request, response, (HandlerMethod) handler, ex);
+    protected final boolean doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        return doResolveHandlerMethodException(request, response, (HandlerMethod) handler, ex);
     }
 
-    protected abstract void doResolveHandlerMethodException(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex);
+    protected abstract boolean doResolveHandlerMethodException(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex);
 
 }

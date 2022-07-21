@@ -3,4 +3,11 @@
 ControllerAdvice
 ControllerAdviceBean
 ExceptionHandler
+HandlerExceptionResolverComposite
 HandlerMethodReturnValueHandlerComposite
+
+# Exception handler Resolver example
+
+NotFoundHandlerExceptionResolver
+NotFoundException
+ThrowExceptionController

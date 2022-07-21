@@ -56,14 +56,15 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
         return (this.mappedHandlers != null || this.mappedHandlerClasses != null);
     }
 
-    public void resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public boolean resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         if (shouldApplyTo(request, handler)) {
             // Log exception, both at debug log level and at warn level, if desired.
             logger.debug("Resolving exception from handler [" + handler + "]: " + ex);
             logException(ex, request);
             prepareResponse(ex, response);
-            doResolveException(request, response, handler, ex);
+            return doResolveException(request, response, handler, ex);
         }
+        return false;
     }
 
     protected boolean shouldApplyTo(HttpServletRequest request, Object handler) {
@@ -104,6 +105,6 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
         response.addHeader(HEADER_CACHE_CONTROL, "no-store");
     }
 
-    protected abstract void doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
+    protected abstract boolean doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
 
 }

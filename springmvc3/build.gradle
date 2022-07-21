@@ -1,6 +1,11 @@
 plugins {
-    id 'com.example.simple.spring.java-application-conventions'
+    // Apply the java Plugin to add support for Java.
+    id 'application'
+}
 
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
 }
 
 dependencies {
@@ -27,7 +32,4 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
-test {
-    useJUnitPlatform()
-}
 

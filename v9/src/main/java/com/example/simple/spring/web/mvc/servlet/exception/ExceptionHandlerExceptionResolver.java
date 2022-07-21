@@ -228,10 +228,10 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
     }
 
     @Override
-    protected void doResolveHandlerMethodException(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception exception) {
+    protected boolean doResolveHandlerMethodException(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception exception) {
         ServletInvocableHandlerMethod exceptionHandlerMethod = getExceptionHandlerMethod(request, response, handlerMethod, exception);
         if (exceptionHandlerMethod == null) {
-            return;
+            return false;
         }
 
         if (this.argumentResolvers != null) {
@@ -257,6 +257,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
             exceptions.toArray(arguments);  // efficient arraycopy call in ArrayList
             arguments[arguments.length - 1] = handlerMethod;
             exceptionHandlerMethod.invokeAndHandle(arguments);
+            return true;
         } catch (Throwable invocationEx) {
             // Any other than the original exception (or a cause) is unintended here,
             // probably an accident (e.g. failed assertion or the like).
@@ -265,6 +266,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
             }
             // Continue with default processing of the original exception...
         }
+        return false;
     }
 
     protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception exception) {

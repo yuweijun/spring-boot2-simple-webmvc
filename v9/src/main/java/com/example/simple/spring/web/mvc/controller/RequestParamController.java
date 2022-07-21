@@ -14,8 +14,6 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -75,10 +73,9 @@ public class RequestParamController {
     @ExceptionHandler({TypeMismatchException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Map<String, String> handleTypeMismatchException(HttpServletRequest request, HttpServletResponse response, Object... providedArgs) throws IOException {
+    public Map<String, String> handleTypeMismatchException(Object... providedArgs) throws IOException {
         logger.error("TypeMismatchException handler");
         Map<String, String> map = new HashMap<>();
-        map.put("uri", request.getRequestURI());
         map.put("error", TypeMismatchException.class.getName());
         return map;
     }

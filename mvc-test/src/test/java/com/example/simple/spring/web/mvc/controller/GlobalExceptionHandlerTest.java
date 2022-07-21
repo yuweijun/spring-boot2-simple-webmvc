@@ -19,4 +19,13 @@ public class GlobalExceptionHandlerTest {
                .body("exception", equalTo("com.example.simple.spring.web.mvc.controller.exception.AuthenticationFailedException"));
     }
 
+    @Test
+    public void notFound() {
+        final RequestSpecification request = given();
+        request.get("/notFound")
+               .prettyPeek()
+               .then()
+               .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
 }
