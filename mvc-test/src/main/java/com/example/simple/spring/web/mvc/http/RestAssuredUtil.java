@@ -14,7 +14,7 @@ public final class RestAssuredUtil {
     }
 
     public static Map<String, String> getHttpHeaders() {
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<String, String>();
         headers.put("Content-Type", APPLICATION_JSON_VALUE);
         return headers;
     }

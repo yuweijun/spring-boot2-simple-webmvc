@@ -125,18 +125,18 @@ public enum HttpStatus {
 	NOT_EXTENDED(510, "Not Extended");
 
 
-	private final int value;
+	private final int code;
 
 	private final String reasonPhrase;
 
 
-	private HttpStatus(int value, String reasonPhrase) {
-		this.value = value;
+	private HttpStatus(int code, String reasonPhrase) {
+		this.code = code;
 		this.reasonPhrase = reasonPhrase;
 	}
   
-	public int value() {
-		return this.value;
+	public int code() {
+		return this.code;
 	}
   
 	public String getReasonPhrase() {
@@ -149,12 +149,12 @@ public enum HttpStatus {
   
 	@Override
 	public String toString() {
-		return Integer.toString(value);
+		return Integer.toString(code);
 	}
   
 	public static HttpStatus valueOf(int statusCode) {
 		for (HttpStatus status : values()) {
-			if (status.value == statusCode) {
+			if (status.code == statusCode) {
 				return status;
 			}
 		}
@@ -180,7 +180,7 @@ public enum HttpStatus {
 		}
 
 		private static Series valueOf(HttpStatus status) {
-			int seriesCode = status.value() / 100;
+			int seriesCode = status.code() / 100;
 			for (Series series : values()) {
 				if (series.value == seriesCode) {
 					return series;

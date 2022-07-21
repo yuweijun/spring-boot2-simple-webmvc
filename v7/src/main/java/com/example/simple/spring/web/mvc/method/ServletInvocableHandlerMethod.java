@@ -61,9 +61,9 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
     private void setResponseStatus(HttpServletResponse response) throws IOException {
         if (this.responseStatus != null) {
             if (StringUtils.hasText(this.responseReason)) {
-                response.sendError(this.responseStatus.value(), this.responseReason);
+                response.sendError(this.responseStatus.code(), this.responseReason);
             } else {
-                response.setStatus(this.responseStatus.value());
+                response.setStatus(this.responseStatus.code());
             }
         }
     }

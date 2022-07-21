@@ -10,6 +10,10 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-tomcat"
     implementation "org.springframework.boot:spring-boot-starter-logging"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
+
+    testImplementation 'javax.xml.bind:jaxb-api:2.2.9'
+    testImplementation 'com.jayway.restassured:rest-assured:2.9.0'
+    testImplementation project(':mvc-test')
 }
 
 group = 'com.example'

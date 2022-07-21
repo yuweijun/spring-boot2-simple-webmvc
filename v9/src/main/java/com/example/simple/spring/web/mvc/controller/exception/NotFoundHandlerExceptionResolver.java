@@ -33,7 +33,7 @@ public class NotFoundHandlerExceptionResolver extends AbstractHandlerExceptionRe
         logger.debug("handler is : " + handler.getClass().getName());
         try {
             // response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setStatus(HttpStatus.NOT_FOUND.code());
             response.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             Map<String, String> map = new HashMap<>();
             map.put("error", NotFoundException.class.getName());

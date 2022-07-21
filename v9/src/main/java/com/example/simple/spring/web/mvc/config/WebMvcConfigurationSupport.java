@@ -143,7 +143,9 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
 
         ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
         exceptionHandlerExceptionResolver.setMessageConverters(getMessageConverters());
+        exceptionHandlerExceptionResolver.setApplicationContext(applicationContext);
         exceptionHandlerExceptionResolver.afterPropertiesSet();
+
         exceptionResolvers.add(exceptionHandlerExceptionResolver);
         exceptionResolvers.add(new NotFoundHandlerExceptionResolver());
 

@@ -1,21 +1,18 @@
 plugins {
     id 'com.example.simple.spring.java-application-conventions'
-
-    id "org.springframework.boot" version "2.7.1"
-    id "io.spring.dependency-management" version "1.0.12.RELEASE"
 }
 
 dependencies {
-    implementation 'javax.xml.bind:jaxb-api:2.2.9'
     implementation 'commons-logging:commons-logging:1.2'
+    implementation 'javax.xml.bind:jaxb-api:2.2.9'
     implementation 'com.jayway.restassured:rest-assured:2.9.0'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
 
 test {
     useJUnitPlatform()

@@ -1,7 +1,6 @@
 package com.example.simple.spring.web.mvc.controller.exception;
 
 import com.example.simple.spring.web.mvc.http.HttpStatus;
-import com.example.simple.spring.web.mvc.http.MediaType;
 import com.example.simple.spring.web.mvc.servlet.exception.AbstractHandlerExceptionResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
@@ -33,8 +32,8 @@ public class NotFoundHandlerExceptionResolver extends AbstractHandlerExceptionRe
         logger.debug("handler is : " + handler.getClass().getName());
         try {
             // response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-            response.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpStatus.NOT_FOUND.code());
+            response.setHeader("Content-Type", "application/json;charset=UTF-8");
             Map<String, String> map = new HashMap<>();
             map.put("error", NotFoundException.class.getName());
             response.getWriter().write(objectMapper.writeValueAsString(map));

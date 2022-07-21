@@ -28,7 +28,7 @@ public class ServletServerHttpResponse implements ServerHttpResponse {
 	}
 
 	public void setStatusCode(HttpStatus status) {
-		this.servletResponse.setStatus(status.value());
+		this.servletResponse.setStatus(status.code());
 	}
 
 	public HttpHeaders getHeaders() {

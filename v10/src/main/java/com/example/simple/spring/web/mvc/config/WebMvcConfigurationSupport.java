@@ -2,13 +2,14 @@ package com.example.simple.spring.web.mvc.config;
 
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.controller.RootController;
-import com.example.simple.spring.web.mvc.servlet.exception.HandlerExceptionResolverComposite;
 import com.example.simple.spring.web.mvc.controller.exception.NotFoundHandlerExceptionResolver;
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import com.example.simple.spring.web.mvc.servlet.exception.ExceptionHandlerExceptionResolver;
 import com.example.simple.spring.web.mvc.servlet.exception.HandlerExceptionResolver;
+import com.example.simple.spring.web.mvc.servlet.exception.HandlerExceptionResolverComposite;
+import com.example.simple.spring.web.mvc.servlet.exception.ResponseStatusExceptionResolver;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.RequestMappingHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
@@ -145,6 +146,7 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
         exceptionHandlerExceptionResolver.setMessageConverters(getMessageConverters());
         exceptionHandlerExceptionResolver.afterPropertiesSet();
         exceptionResolvers.add(exceptionHandlerExceptionResolver);
+        exceptionResolvers.add(new ResponseStatusExceptionResolver());
         exceptionResolvers.add(new NotFoundHandlerExceptionResolver());
 
         HandlerExceptionResolverComposite handlerExceptionResolver = new HandlerExceptionResolverComposite();

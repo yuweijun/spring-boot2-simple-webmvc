@@ -13,8 +13,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "com.fasterxml.jackson.core:jackson-databind"
 
-    testImplementation 'com.jayway.restassured:rest-assured:2.9.0'
     testImplementation 'javax.xml.bind:jaxb-api:2.2.9'
+    testImplementation 'com.jayway.restassured:rest-assured:2.9.0'
+    testImplementation project(':mvc-test')
 }
 
 group = 'com.example'
