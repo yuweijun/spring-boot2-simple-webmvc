@@ -1,5 +1,6 @@
 package com.example.simple.spring.web.mvc.servlet.exception;
 
+import com.example.simple.spring.web.mvc.servlet.error.DefaultErrorAttributes;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ public class HandlerExceptionResolverComposite implements HandlerExceptionResolv
     }
 
     public boolean resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        DefaultErrorAttributes.storeErrorInRequest(request, ex);
         if (resolvers != null) {
             for (HandlerExceptionResolver handlerExceptionResolver : resolvers) {
                 final boolean resolved = handlerExceptionResolver.resolveException(request, response, handler, ex);

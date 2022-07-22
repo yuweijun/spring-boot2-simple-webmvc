@@ -3,6 +3,7 @@ package com.example.simple.spring.web.mvc.servlet.error;
 import com.example.simple.spring.web.mvc.http.HttpStatus;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.util.Assert;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,16 @@ import java.util.Map;
 
 public abstract class AbstractErrorController implements ErrorController {
 
-    protected abstract Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options);
+    private final ErrorAttributes errorAttributes;
+
+    public AbstractErrorController(ErrorAttributes errorAttributes) {
+        Assert.notNull(errorAttributes, "ErrorAttributes must not be null");
+        this.errorAttributes = errorAttributes;
+    }
+
+    protected Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options) {
+        return this.errorAttributes.getErrorAttributes(request, options);
+    }
 
     protected boolean getTraceParameter(HttpServletRequest request) {
         return getBooleanParameter(request, "trace");

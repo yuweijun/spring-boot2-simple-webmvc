@@ -11,3 +11,4 @@ BeanPostProcessorsRegistrar
 ErrorMvcAutoConfiguration
 WebMvcConfigurationSupport
 ErrorPageRegistrarBeanPostProcessor
+DefaultErrorAttributes

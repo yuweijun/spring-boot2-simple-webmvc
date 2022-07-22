@@ -21,15 +21,9 @@ public class BasicErrorController extends AbstractErrorController {
 
     private final ErrorProperties errorProperties;
 
-    public BasicErrorController(ErrorProperties errorProperties) {
-        super();
+    public BasicErrorController(ErrorProperties errorProperties, ErrorAttributes errorAttributes) {
+        super(errorAttributes);
         this.errorProperties = errorProperties;
-    }
-
-    @Override
-    protected Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options) {
-        ErrorAttributes errorAttributes = new DefaultErrorAttributes();
-        return errorAttributes.getErrorAttributes(request, options);
     }
 
     @ResponseBody

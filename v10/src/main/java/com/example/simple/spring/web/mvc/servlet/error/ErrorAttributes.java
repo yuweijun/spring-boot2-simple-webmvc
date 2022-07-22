@@ -16,6 +16,4 @@ public interface ErrorAttributes {
  
 	Throwable getError(HttpServletRequest request);
  
-	void storeErrorInformation(HttpServletRequest request, Throwable error);
-
 }

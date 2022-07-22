@@ -35,18 +35,15 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerAdapter.class);
 
-    private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
-
     private List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+
+    private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
     private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
 
     private HandlerMethodArgumentResolverComposite argumentResolvers;
 
     private ConfigurableBeanFactory beanFactory;
-
-    public RequestMappingHandlerAdapter() {
-    }
 
     public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
         this.parameterNameDiscoverer = parameterNameDiscoverer;
@@ -96,9 +93,8 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
                 messageConverters.add(new StringHttpMessageConverter());
             }
 
-            final RequestResponseBodyMethodProcessor requestResponseBodyMethodProcessor = new RequestResponseBodyMethodProcessor(messageConverters);
             this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite();
-            this.returnValueHandlers.addHandler(requestResponseBodyMethodProcessor);
+            this.returnValueHandlers.addHandler(new RequestResponseBodyMethodProcessor(messageConverters));
             this.returnValueHandlers.addHandler(new HttpEntityMethodProcessor(messageConverters));
         }
 

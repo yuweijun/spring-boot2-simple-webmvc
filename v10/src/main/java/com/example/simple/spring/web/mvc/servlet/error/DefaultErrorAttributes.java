@@ -4,24 +4,29 @@ package com.example.simple.spring.web.mvc.servlet.error;
 
 import com.example.simple.spring.web.mvc.bind.annotation.ResponseStatus;
 import com.example.simple.spring.web.mvc.http.HttpStatus;
+import com.example.simple.spring.web.mvc.servlet.exception.HandlerExceptionResolver;
 import com.example.simple.spring.web.mvc.servlet.exception.ResponseStatusException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.error.ErrorAttributeOptions.Include;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DefaultErrorAttributes implements ErrorAttributes {
+// org.springframework.boot.web.servlet.error.DefaultErrorAttributes
+public class DefaultErrorAttributes implements ErrorAttributes, HandlerExceptionResolver {
 
-    public static final String ERROR_INTERNAL_ATTRIBUTE = DefaultErrorAttributes.class.getName() + ".ERROR";
+    private static final String ERROR_INTERNAL_ATTRIBUTE = DefaultErrorAttributes.class.getName() + ".ERROR";
 
     @Override
     public Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options) {
@@ -44,8 +49,8 @@ public class DefaultErrorAttributes implements ErrorAttributes {
     private Map<String, Object> getErrorAttributes(HttpServletRequest request, boolean includeStackTrace) {
         Map<String, Object> errorAttributes = new LinkedHashMap<>();
         errorAttributes.put("timestamp", new Date());
-        errorAttributes.put("path", request.getRequestURI());
-        errorAttributes.put("requestId", request.getRequestURL());
+        errorAttributes.put("path", request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI));
+        errorAttributes.put("requestId", ObjectUtils.getIdentityHexString(request));
         Throwable error = getError(request);
         if (error != null) {
             MergedAnnotation<ResponseStatus> responseStatusAnnotation = MergedAnnotations.from(error.getClass(), MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).get(ResponseStatus.class);
@@ -108,12 +113,24 @@ public class DefaultErrorAttributes implements ErrorAttributes {
 
     @Override
     public Throwable getError(HttpServletRequest request) {
-        Object error = request.getAttribute(ERROR_INTERNAL_ATTRIBUTE);
-        return (Throwable) error;
+        return getErrorFromRequest(request);
     }
 
     @Override
-    public void storeErrorInformation(HttpServletRequest request, Throwable error) {
+    public boolean resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        storeErrorInRequest(request, ex);
+        return false;
+    }
+
+    private void storeErrorInformation(HttpServletRequest request, Throwable error) {
+        storeErrorInRequest(request, error);
+    }
+
+    public static Throwable getErrorFromRequest(HttpServletRequest request) {
+        return (Throwable) request.getAttribute(ERROR_INTERNAL_ATTRIBUTE);
+    }
+
+    public static void storeErrorInRequest(HttpServletRequest request, Throwable error) {
         request.setAttribute(ERROR_INTERNAL_ATTRIBUTE, error);
     }
 

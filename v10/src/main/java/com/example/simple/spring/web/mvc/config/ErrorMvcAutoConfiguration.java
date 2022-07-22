@@ -1,12 +1,16 @@
 package com.example.simple.spring.web.mvc.config;
 
 import com.example.simple.spring.web.mvc.servlet.DispatcherServlet;
+import com.example.simple.spring.web.mvc.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
 import org.springframework.boot.web.server.ErrorPageRegistry;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -18,6 +22,12 @@ import javax.servlet.Servlet;
 @ConditionalOnClass({Servlet.class, DispatcherServlet.class})
 @Import({BeanPostProcessorsRegistrar.class})
 public class ErrorMvcAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(value = ErrorAttributes.class, search = SearchStrategy.CURRENT)
+    public DefaultErrorAttributes errorAttributes() {
+        return new DefaultErrorAttributes();
+    }
 
     @Bean
     public ServerProperties serverProperties() {

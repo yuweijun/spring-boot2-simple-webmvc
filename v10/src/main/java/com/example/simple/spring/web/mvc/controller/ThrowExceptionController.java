@@ -4,6 +4,7 @@ import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.controller.exception.AuthenticationFailedException;
 import com.example.simple.spring.web.mvc.controller.exception.NotFoundException;
 import com.example.simple.spring.web.mvc.http.HttpStatus;
+import com.example.simple.spring.web.mvc.servlet.error.DefaultErrorAttributes;
 import com.example.simple.spring.web.mvc.servlet.exception.ResponseStatusException;
 import org.springframework.stereotype.Controller;
 
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static com.example.simple.spring.web.mvc.servlet.error.DefaultErrorAttributes.ERROR_INTERNAL_ATTRIBUTE;
 
 @Controller
 public class ThrowExceptionController {
@@ -25,7 +25,7 @@ public class ThrowExceptionController {
     @RequestMapping("/illegalArgumentException")
     public void illegalArgumentException(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IllegalArgumentException error = new IllegalArgumentException("throws IllegalArgumentException from ThrowExceptionController");
-        request.setAttribute(ERROR_INTERNAL_ATTRIBUTE, error);
+        DefaultErrorAttributes.storeErrorInRequest(request, error);
         response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
     }
 
