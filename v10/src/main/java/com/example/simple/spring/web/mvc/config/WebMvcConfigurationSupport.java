@@ -43,13 +43,13 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
 
     @Override
     public void setServletContext(ServletContext servletContext) {
-        logger.debug("set servletContext in WebMvcConfigurationSupport");
+        logger.debug("set servletContext in WebMvcConfigurationSupport : {}", servletContext);
         this.servletContext = servletContext;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        logger.debug("set applicationContext in WebMvcConfigurationSupport");
+        logger.debug("set applicationContext in WebMvcConfigurationSupport : {}", applicationContext);
         this.applicationContext = applicationContext;
     }
 
@@ -144,7 +144,9 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
 
         ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
         exceptionHandlerExceptionResolver.setMessageConverters(getMessageConverters());
+        exceptionHandlerExceptionResolver.setApplicationContext(applicationContext);
         exceptionHandlerExceptionResolver.afterPropertiesSet();
+
         exceptionResolvers.add(exceptionHandlerExceptionResolver);
         exceptionResolvers.add(new ResponseStatusExceptionResolver());
         exceptionResolvers.add(new NotFoundHandlerExceptionResolver());
@@ -153,4 +155,5 @@ public abstract class WebMvcConfigurationSupport implements ApplicationContextAw
         handlerExceptionResolver.setExceptionResolvers(exceptionResolvers);
         return handlerExceptionResolver;
     }
+
 }

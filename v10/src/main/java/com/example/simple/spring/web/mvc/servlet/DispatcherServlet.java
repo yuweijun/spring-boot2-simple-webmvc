@@ -242,6 +242,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 if (mappedHandler == null) {
                     return;
                 }
+                logger.info("request handler is " + mappedHandler);
 
                 final Object handler = mappedHandler.getHandler();
                 if (handler == null) {
@@ -250,8 +251,8 @@ public class DispatcherServlet extends FrameworkServlet {
                 }
 
                 // Determine handler adapter for the current request.
-                logger.debug("getHandlerAdapter from mappedHandler : " + mappedHandler);
                 HandlerAdapter ha = getHandlerAdapter(handler);
+                logger.debug("getHandlerAdapter from mappedHandler : " + ha);
 
                 // Apply preHandle methods of registered interceptors.
                 HandlerInterceptor[] interceptors = mappedHandler.getInterceptors();

@@ -7,6 +7,7 @@ import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2Http
 import com.example.simple.spring.web.mvc.method.HandlerMethod;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolverComposite;
+import com.example.simple.spring.web.mvc.method.HttpEntityMethodProcessor;
 import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
 import com.example.simple.spring.web.mvc.method.RequestParamMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
@@ -98,7 +99,9 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
             final RequestResponseBodyMethodProcessor requestResponseBodyMethodProcessor = new RequestResponseBodyMethodProcessor(messageConverters);
             this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite();
             this.returnValueHandlers.addHandler(requestResponseBodyMethodProcessor);
+            this.returnValueHandlers.addHandler(new HttpEntityMethodProcessor(messageConverters));
         }
+
         return this.returnValueHandlers;
     }
 
@@ -124,7 +127,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
 
         // resolvers.add(new ServletRequestMethodArgumentResolver());
         // resolvers.add(new ServletResponseMethodArgumentResolver());
-        // resolvers.add(new HttpEntityMethodProcessor(getMessageConverters()));
+        resolvers.add(new HttpEntityMethodProcessor(messageConverters));
         // resolvers.add(new RedirectAttributesMethodArgumentResolver());
         // resolvers.add(new ModelMethodProcessor());
         resolvers.add(new MapMethodProcessor());

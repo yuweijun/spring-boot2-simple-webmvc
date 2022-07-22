@@ -1,13 +1,13 @@
-# ControllerAdvice and ExceptionHandler support
+# Override ErrorController of spring boot
 
-ControllerAdvice
-ControllerAdviceBean
-ExceptionHandler
-HandlerExceptionResolverComposite
-HandlerMethodReturnValueHandlerComposite
+BasicErrorController
+ResponseEntity
+AbstractErrorController
+HttpEntity
 
-# Exception handler Resolver example
+## config /error page for tomcat error pages
 
-NotFoundHandlerExceptionResolver
-NotFoundException
-ThrowExceptionController
+BeanPostProcessorsRegistrar
+ErrorMvcAutoConfiguration
+WebMvcConfigurationSupport
+ErrorPageRegistrarBeanPostProcessor
