@@ -6,14 +6,11 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 import java.util.Map;
 
 public abstract class AbstractErrorController implements ErrorController {
 
-    protected Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options) {
-        return Collections.EMPTY_MAP;
-    }
+    protected abstract Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options);
 
     protected boolean getTraceParameter(HttpServletRequest request) {
         return getBooleanParameter(request, "trace");

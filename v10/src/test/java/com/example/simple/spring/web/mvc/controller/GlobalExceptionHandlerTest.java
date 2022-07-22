@@ -37,4 +37,12 @@ public class GlobalExceptionHandlerTest {
                .statusCode(HttpResponseStatus.NOT_FOUND.code());
     }
 
+    @Test
+    public void illegalArgumentException() {
+        final RequestSpecification request = given();
+        request.get("/illegalArgumentException")
+               .prettyPeek()
+               .then()
+               .statusCode(HttpResponseStatus.BAD_GATEWAY.code());
+    }
 }

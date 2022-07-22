@@ -26,6 +26,12 @@ public class BasicErrorController extends AbstractErrorController {
         this.errorProperties = errorProperties;
     }
 
+    @Override
+    protected Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options) {
+        ErrorAttributes errorAttributes = new DefaultErrorAttributes();
+        return errorAttributes.getErrorAttributes(request, options);
+    }
+
     @ResponseBody
     @RequestMapping("/error/html")
     public String errorHtml(HttpServletRequest request, HttpServletResponse response) {

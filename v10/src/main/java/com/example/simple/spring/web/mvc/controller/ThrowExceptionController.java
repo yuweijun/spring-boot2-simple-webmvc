@@ -7,12 +7,26 @@ import com.example.simple.spring.web.mvc.http.HttpStatus;
 import com.example.simple.spring.web.mvc.servlet.exception.ResponseStatusException;
 import org.springframework.stereotype.Controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+import static com.example.simple.spring.web.mvc.servlet.error.DefaultErrorAttributes.ERROR_INTERNAL_ATTRIBUTE;
+
 @Controller
 public class ThrowExceptionController {
 
     @RequestMapping("/loginFailed")
     public void loginFailed() {
         throw new AuthenticationFailedException("Authentication Failed");
+    }
+
+    @RequestMapping("/illegalArgumentException")
+    public void illegalArgumentException(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final IllegalArgumentException error = new IllegalArgumentException("throws IllegalArgumentException from ThrowExceptionController");
+        request.setAttribute(ERROR_INTERNAL_ATTRIBUTE, error);
+        response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
     }
 
     @RequestMapping("/notFound")
