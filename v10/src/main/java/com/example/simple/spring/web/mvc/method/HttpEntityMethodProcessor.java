@@ -42,7 +42,7 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
         Class<?> paramType = getHttpEntityType(parameter);
 
         Object body = readWithMessageConverters(createInputMessage(request), parameter, paramType);
-        return new HttpEntity<Object>(body, inputMessage.getHeaders());
+        return new HttpEntity<>(body, inputMessage.getHeaders());
     }
 
     private Class<?> getHttpEntityType(MethodParameter parameter) {

@@ -5,6 +5,10 @@ import com.example.simple.spring.web.mvc.servlet.exception.ExceptionHandlerExcep
 import com.example.simple.spring.web.mvc.servlet.exception.HandlerExceptionResolver;
 import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.SimpleUrlHandlerMapping;
+import com.example.simple.spring.web.mvc.servlet.view.InternalResourceViewResolver;
+import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;
+import com.example.simple.spring.web.mvc.servlet.view.View;
+import com.example.simple.spring.web.mvc.servlet.view.ViewResolver;
 import com.example.simple.spring.web.mvc.util.NestedServletException;
 import com.example.simple.spring.web.mvc.util.UrlPathHelper;
 import com.example.simple.spring.web.mvc.util.WebUtils;
@@ -76,6 +80,8 @@ public class DispatcherServlet extends FrameworkServlet {
 
     private List<HandlerAdapter> handlerAdapters;
 
+    private List<ViewResolver> viewResolvers;
+
     public DispatcherServlet() {
         super();
     }
@@ -105,6 +111,7 @@ public class DispatcherServlet extends FrameworkServlet {
         initHandlerMappings(context);
         initHandlerAdapters(context);
         initHandlerExceptionResolvers(context);
+        initViewResolvers(context);
     }
 
     private void initHandlerMappings(ApplicationContext context) {
@@ -148,8 +155,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
         if (this.detectAllHandlerAdapters) {
             // Find all HandlerAdapters in the ApplicationContext, including ancestor contexts.
-            Map<String, HandlerAdapter> matchingBeans =
-                BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerAdapter.class, true, false);
+            Map<String, HandlerAdapter> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerAdapter.class, true, false);
             if (!matchingBeans.isEmpty()) {
                 this.handlerAdapters = new ArrayList<>(matchingBeans.values());
                 // We keep HandlerAdapters in sorted order.
@@ -186,6 +192,36 @@ public class DispatcherServlet extends FrameworkServlet {
         if (this.handlerExceptionResolver == null) {
             logger.debug("No HandlerExceptionResolvers found in servlet '" + getServletName() + "': using default");
             this.handlerExceptionResolver = new ExceptionHandlerExceptionResolver();
+        }
+    }
+
+    private void initViewResolvers(ApplicationContext context) {
+        this.viewResolvers = null;
+
+        if (this.detectAllViewResolvers) {
+            // Find all ViewResolvers in the ApplicationContext, including ancestor contexts.
+            Map<String, ViewResolver> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, ViewResolver.class, true, false);
+            logger.info("match view resolvers bean : " + matchingBeans.values());
+            if (!matchingBeans.isEmpty()) {
+                this.viewResolvers = new ArrayList<>(matchingBeans.values());
+                // We keep ViewResolvers in sorted order.
+                OrderComparator.sort(this.viewResolvers);
+            }
+        } else {
+            try {
+                ViewResolver vr = context.getBean(VIEW_RESOLVER_BEAN_NAME, ViewResolver.class);
+                this.viewResolvers = Collections.singletonList(vr);
+            } catch (NoSuchBeanDefinitionException ex) {
+                // Ignore, we'll add a default ViewResolver later.
+            }
+        }
+
+        // Ensure we have at least one ViewResolver, by registering
+        // a default ViewResolver if no other resolvers are found.
+        if (this.viewResolvers == null) {
+            this.viewResolvers = new ArrayList<>();
+            this.viewResolvers.add(new InternalResourceViewResolver());
+            logger.debug("No ViewResolvers found in servlet '" + getServletName() + "': using default");
         }
     }
 
@@ -232,6 +268,7 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute(ModelAndView.class.getName(), null);
         HandlerExecutionChain mappedHandler = null;
         int interceptorIndex = -1;
 
@@ -282,6 +319,11 @@ public class DispatcherServlet extends FrameworkServlet {
                 processHandlerException(request, response, (mappedHandler != null ? mappedHandler.getHandler() : null), ex);
             }
 
+            ModelAndView mv = (ModelAndView) request.getAttribute(ModelAndView.class.getName());
+            if (mv != null && !mv.wasCleared()) {
+                render(mv, request, response);
+            }
+
             // Trigger after-completion for successful outcome.
             triggerAfterCompletion(mappedHandler, interceptorIndex, request, response, null);
         } catch (Exception ex) {
@@ -307,6 +349,40 @@ public class DispatcherServlet extends FrameworkServlet {
         return null;
     }
 
+    protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        View view;
+        if (mv.isReference()) {
+            // We need to resolve the view name.
+            view = resolveViewName(mv.getViewName(), mv.getModelInternal(), request);
+            if (view == null) {
+                throw new ServletException("Could not resolve view with name '" + mv.getViewName() + "' in servlet with name '" + getServletName() + "'");
+            }
+        } else {
+            // No need to lookup: the ModelAndView object contains the actual View object.
+            view = mv.getView();
+            if (view == null) {
+                throw new ServletException("ModelAndView [" + mv + "] neither contains a view name nor a " + "View object in servlet with name '" + getServletName() + "'");
+            }
+        }
+
+        // Delegate to the View object for rendering.
+        if (logger.isDebugEnabled()) {
+            logger.debug("Rendering view [" + view + "] in DispatcherServlet with name '" + getServletName() + "'");
+        }
+        view.render(mv.getModelInternal(), request, response);
+    }
+
+    protected View resolveViewName(String viewName, Map<String, Object> model, HttpServletRequest request) throws Exception {
+        for (ViewResolver viewResolver : this.viewResolvers) {
+            View view = viewResolver.resolveViewName(viewName);
+            if (view != null) {
+                return view;
+            }
+        }
+
+        return null;
+    }
+
     protected void noHandlerFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (pageNotFoundLogger.isWarnEnabled()) {
             String requestUri = urlPathHelper.getRequestUri(request);
@@ -325,14 +401,12 @@ public class DispatcherServlet extends FrameworkServlet {
         throw new ServletException("No adapter for handler [" + handler + "]: Does your handler implement a supported interface like Controller?");
     }
 
-    protected void processHandlerException(HttpServletRequest request, HttpServletResponse response,
-        Object handler, Exception ex) throws Exception {
+    protected void processHandlerException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         logger.error("process handler exception for request : " + request.getRequestURI(), ex);
         handlerExceptionResolver.resolveException(request, response, handler, ex);
     }
 
-    private void triggerAfterCompletion(HandlerExecutionChain mappedHandler, int interceptorIndex, HttpServletRequest request, HttpServletResponse response, Exception ex)
-        throws Exception {
+    private void triggerAfterCompletion(HandlerExecutionChain mappedHandler, int interceptorIndex, HttpServletRequest request, HttpServletResponse response, Exception ex) throws Exception {
         // Apply afterCompletion methods of registered interceptors.
         if (mappedHandler != null) {
             HandlerInterceptor[] interceptors = mappedHandler.getInterceptors();

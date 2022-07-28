@@ -23,5 +23,5 @@ test {
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.example.simple.spring.v1.WebApplication'
+    mainClass = 'com.example.simple.spring.web.mvc.WebApplication'
 }

@@ -13,6 +13,11 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "com.fasterxml.jackson.core:jackson-databind"
 
+    implementation 'javax.servlet:javax.servlet-api'
+    implementation 'javax.servlet:jstl'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    implementation 'org.apache.taglibs:taglibs-standard-impl:1.2.5'
+
     testImplementation 'javax.xml.bind:jaxb-api:2.2.9'
     testImplementation 'com.jayway.restassured:rest-assured:2.9.0'
     testImplementation project(':mvc-test')
@@ -30,5 +35,5 @@ test {
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.example.simple.spring.v1.WebApplication'
+    mainClass = 'com.example.simple.spring.web.mvc.WebApplication'
 }

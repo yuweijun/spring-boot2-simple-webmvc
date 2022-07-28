@@ -1,5 +1,11 @@
 plugins {
-    id 'com.example.simple.spring.java-application-conventions'
+    // Apply the java Plugin to add support for Java.
+    id 'java'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
 }
 
 dependencies {

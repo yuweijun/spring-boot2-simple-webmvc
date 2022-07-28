@@ -1,14 +1,29 @@
-# Override ErrorController of spring boot
+# ModelAndView and JstlView
 
-BasicErrorController
-ResponseEntity
-AbstractErrorController
-HttpEntity
+AbstractCachingViewResolver
+AbstractUrlBasedView
+AbstractView
+InternalResourceView
+InternalResourceViewResolver
+JstlView
+ModelAndView
+RedirectView
+SmartView
+UrlBasedViewResolver
+View
+ViewResolver
+DispatcherServlet
+RequestContext
+DelegatingWebMvcConfiguration
 
-## config /error page for tomcat error pages
+# IDEA jsp file not found issue
 
-BeanPostProcessorsRegistrar
-ErrorMvcAutoConfiguration
-WebMvcConfigurationSupport
-ErrorPageRegistrarBeanPostProcessor
-DefaultErrorAttributes
+using gradle `bootRun` application in module `:v11`:
+
+or below gradle task in command line:
+
+    gradle :v11:bootRun
+
+then access url:
+
+    http://localhost:8080/jstlView

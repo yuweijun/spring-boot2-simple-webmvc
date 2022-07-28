@@ -22,7 +22,7 @@ public class TomcatServer {
 
         // springmvc3/build/tomcat.8080/work/Tomcat/localhost/ROOT/org/apache/jsp
         tomcat.setBaseDir("springmvc3/build/tomcat.8080");
-        tomcat.setPort(8080);
+        tomcat.setPort(9090);
 
         final String webappDirLocation = "springmvc3/src/main/webapp";
         String path = new File(webappDirLocation).getAbsolutePath();
