@@ -8,4 +8,4 @@ or below gradle task in command line:
    
 then access url: 
 
-    http://localhost:8080/hello?time=1
+    http://localhost:8080/index?time=1

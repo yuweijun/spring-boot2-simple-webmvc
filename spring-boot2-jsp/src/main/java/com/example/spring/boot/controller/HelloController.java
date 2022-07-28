@@ -1,6 +1,8 @@
 package com.example.spring.boot.controller;
 
 import com.example.spring.boot.dto.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,18 +15,20 @@ import java.util.Map;
 @Controller
 public class HelloController {
 
-    @RequestMapping("/hello")
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloController.class);
+
+    @RequestMapping("/index")
     public String index(@ModelAttribute("map") Map<String, Integer> map, String time, Model model) {
-        System.out.println(map);
-        System.out.println("index");
-        System.out.println("time is " + time);
+        LOGGER.info("@ModelAttribute(map) is {}", map);
+        LOGGER.info("index");
+        LOGGER.info("time is : {}", time);
         model.addAttribute("hello", "yu");
         return "index";
     }
 
     @RequestMapping("/test")
     public String testNullView(Model model) {
-        System.out.println("testNullView");
+        LOGGER.info("testNullView");
         model.addAttribute("hello", "test");
         return null;
     }
@@ -40,7 +44,7 @@ public class HelloController {
 
     @ModelAttribute
     public Map<String, Integer> method1() {
-        System.out.println("method1");
+        LOGGER.info("method1");
         Map<String, Integer> map = new HashMap<>();
         map.put("test", 1);
         return map;
