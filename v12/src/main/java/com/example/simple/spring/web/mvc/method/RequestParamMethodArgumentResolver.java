@@ -35,6 +35,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
             }
         } else {
             if (this.useDefaultResolution) {
+                logger.debug("catch all simple param type : " + paramType);
                 return BeanUtils.isSimpleProperty(paramType);
             } else {
                 return false;

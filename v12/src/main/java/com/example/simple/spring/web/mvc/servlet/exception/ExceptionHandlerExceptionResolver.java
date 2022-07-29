@@ -8,6 +8,7 @@ import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolverComposite;
 import com.example.simple.spring.web.mvc.method.HandlerMethodReturnValueHandler;
 import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
+import com.example.simple.spring.web.mvc.method.ModelAttributeMethodProcessor;
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ServletInvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.method.ServletRequestMethodArgumentResolver;
@@ -204,7 +205,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         // handlers.add(new HttpEntityMethodProcessor(getMessageConverters()));
 
         // Annotation-based return value types
-        // handlers.add(new ModelAttributeMethodProcessor(false));
+        handlers.add(new ModelAttributeMethodProcessor());
         handlers.add(new RequestResponseBodyMethodProcessor(getMessageConverters()));
 
         // Multi-purpose return value types
@@ -215,9 +216,6 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         if (getCustomReturnValueHandlers() != null) {
             handlers.addAll(getCustomReturnValueHandlers());
         }
-
-        // Catch-all
-        // handlers.add(new ModelAttributeMethodProcessor(true));
 
         return handlers;
     }

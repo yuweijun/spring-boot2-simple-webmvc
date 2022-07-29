@@ -268,7 +268,7 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        request.setAttribute(ModelAndView.class.getName(), null);
+        ModelAndView.clear(request);
         HandlerExecutionChain mappedHandler = null;
         int interceptorIndex = -1;
 
@@ -319,7 +319,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 processHandlerException(request, response, (mappedHandler != null ? mappedHandler.getHandler() : null), ex);
             }
 
-            ModelAndView mv = (ModelAndView) request.getAttribute(ModelAndView.class.getName());
+            ModelAndView mv = ModelAndView.get(request);
             if (mv != null && !mv.wasCleared()) {
                 render(mv, request, response);
             }

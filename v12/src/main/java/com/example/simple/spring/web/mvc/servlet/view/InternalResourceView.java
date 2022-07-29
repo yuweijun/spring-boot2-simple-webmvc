@@ -70,9 +70,7 @@ public class InternalResourceView extends AbstractUrlBasedView {
     }
 
     @Override
-    protected void renderMergedOutputModel(
-        Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+    protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         // Determine which request handle to expose to the RequestDispatcher.
         HttpServletRequest requestToExpose = getRequestToExpose(request);
 
@@ -88,8 +86,7 @@ public class InternalResourceView extends AbstractUrlBasedView {
         // Obtain a RequestDispatcher for the target resource (typically a JSP).
         RequestDispatcher rd = getRequestDispatcher(requestToExpose, dispatcherPath);
         if (rd == null) {
-            throw new ServletException("Could not get RequestDispatcher for [" + getUrl() +
-                "]: Check that the corresponding file exists within your web application archive!");
+            throw new ServletException("Could not get RequestDispatcher for [" + getUrl() + "]: Check that the corresponding file exists within your web application archive!");
         }
 
         // If already included or response already committed, perform include, else forward.
@@ -116,16 +113,13 @@ public class InternalResourceView extends AbstractUrlBasedView {
     protected void exposeHelpers(HttpServletRequest request) throws Exception {
     }
 
-    protected String prepareForRendering(HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
+    protected String prepareForRendering(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String path = getUrl();
         if (this.preventDispatchLoop) {
             String uri = request.getRequestURI();
             if (path.startsWith("/") ? uri.equals(path) : uri.equals(StringUtils.applyRelativePath(uri, path))) {
-                throw new ServletException("Circular view path [" + path + "]: would dispatch back " +
-                    "to the current handler URL [" + uri + "] again. Check your ViewResolver setup! " +
-                    "(Hint: This may be the result of an unspecified view, due to default view name generation.)");
+                throw new ServletException("Circular view path [" + path + "]: would dispatch back " + "to the current handler URL [" + uri + "] again. Check your ViewResolver setup! " + "(Hint: This may be the result of an unspecified view, due to default view name generation.)");
             }
         }
         return path;

@@ -3,6 +3,7 @@ package com.example.simple.spring.web.mvc.servlet.view;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public class ModelAndView {
@@ -130,4 +131,37 @@ public class ModelAndView {
         return sb.toString();
     }
 
+    public void put(HttpServletRequest request) {
+        ModelAndView.put(request, this);
+    }
+
+    public static void put(HttpServletRequest request, ModelAndView modelAndView) {
+        request.setAttribute(ModelAndView.class.getName(), modelAndView);
+    }
+
+    public static void clear(HttpServletRequest request) {
+        put(request, null);
+    }
+
+    public static ModelAndView get(HttpServletRequest request) {
+        return (ModelAndView) request.getAttribute(ModelAndView.class.getName());
+    }
+
+    public static void addAttribute(HttpServletRequest request, String name, Object value) {
+        ModelAndView modelAndView = get(request);
+        if (modelAndView == null) {
+            modelAndView = new ModelAndView();
+            put(request, modelAndView);
+        }
+
+        modelAndView.getModelMap().addAttribute(name, value);
+    }
+
+    public static boolean containsAttribute(HttpServletRequest request, String modelName) {
+        ModelAndView modelAndView = get(request);
+        if (modelAndView != null) {
+            return modelAndView.getModelMap().containsAttribute(modelName);
+        }
+        return false;
+    }
 }

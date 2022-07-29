@@ -61,8 +61,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
                     throw new IllegalArgumentException("Expected = in attributes CSV string '" + propString + "'");
                 }
                 if (eqIdx >= tok.length() - 2) {
-                    throw new IllegalArgumentException(
-                        "At least 2 characters ([]) required in attributes CSV string '" + propString + "'");
+                    throw new IllegalArgumentException("At least 2 characters ([]) required in attributes CSV string '" + propString + "'");
                 }
                 String name = tok.substring(0, eqIdx);
                 String value = tok.substring(eqIdx + 1);
@@ -110,8 +109,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (logger.isTraceEnabled()) {
-            logger.trace("Rendering view with name '" + this.beanName + "' with model " + model +
-                " and static attributes " + this.staticAttributes);
+            logger.trace("Rendering view with name '" + this.beanName + "' with model " + model + " and static attributes " + this.staticAttributes);
         }
 
         Map<String, Object> mergedModel = createMergedOutputModel(model, request, response);
@@ -120,22 +118,24 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
         renderMergedOutputModel(mergedModel, request, response);
     }
 
-    protected Map<String, Object> createMergedOutputModel(Map<String, ?> model, HttpServletRequest request,
-        HttpServletResponse response) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> pathVars = this.exposePathVariables ?
-            (Map<String, Object>) request.getAttribute(View.PATH_VARIABLES) : null;
+    protected Map<String, Object> createMergedOutputModel(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> pathVars = this.exposePathVariables ? (Map<String, Object>) request.getAttribute(View.PATH_VARIABLES) : null;
 
         // Consolidate static and dynamic model attributes.
         int size = this.staticAttributes.size();
         size += (model != null) ? model.size() : 0;
         size += (pathVars != null) ? pathVars.size() : 0;
+
         Map<String, Object> mergedModel = new HashMap<>(size);
         mergedModel.putAll(this.staticAttributes);
+
         if (pathVars != null) {
+            logger.debug("add path vars into merged map " + pathVars.values());
             mergedModel.putAll(pathVars);
         }
+
         if (model != null) {
+            logger.debug("add model into merged map " + model.values());
             mergedModel.putAll(model);
         }
 
@@ -147,8 +147,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
         return mergedModel;
     }
 
-    protected RequestContext createRequestContext(
-        HttpServletRequest request, HttpServletResponse response, Map<String, Object> model) {
+    protected RequestContext createRequestContext(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model) {
 
         return new RequestContext(request, response, getServletContext(), model);
     }
@@ -164,8 +163,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
         return false;
     }
 
-    protected abstract void renderMergedOutputModel(
-        Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    protected abstract void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
     protected void exposeModelAsRequestAttributes(Map<String, Object> model, HttpServletRequest request) throws Exception {
         for (Map.Entry<String, Object> entry : model.entrySet()) {
@@ -173,16 +171,10 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
             Object modelValue = entry.getValue();
             if (modelValue != null) {
                 request.setAttribute(modelName, modelValue);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Added model object '" + modelName + "' of type [" + modelValue.getClass().getName() +
-                        "] to request in view with name '" + getBeanName() + "'");
-                }
+                logger.debug("Added model object '" + modelName + "' of type [" + modelValue.getClass().getName() + "] to request in view with name '" + getBeanName() + "'");
             } else {
                 request.removeAttribute(modelName);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Removed model object '" + modelName +
-                        "' from request in view with name '" + getBeanName() + "'");
-                }
+                logger.debug("Removed model object '" + modelName + "' from request in view with name '" + getBeanName() + "'");
             }
         }
     }
