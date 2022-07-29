@@ -33,7 +33,7 @@ dependencies {
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
-// for spring 3 which is compitable with JDK8
+// for spring 3 which is compatible with JDK8
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 

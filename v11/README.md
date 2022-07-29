@@ -27,3 +27,7 @@ or below gradle task in command line:
 then access url:
 
     http://localhost:8080/jstlView
+
+# application.yml add config for output log with ansi color support
+
+    spring.output.ansi.enabled: ALWAYS

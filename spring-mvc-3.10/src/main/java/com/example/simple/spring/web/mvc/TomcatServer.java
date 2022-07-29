@@ -12,19 +12,20 @@ import org.apache.log4j.Logger;
 import javax.servlet.ServletException;
 import java.io.File;
 
+//////////////////////////////////////////////////////////// IMPORTANT ////////////////////////////////////////////////////////////
+// Intellij IDEA -> run/debug configurations -> Application -> set 'working directory' as '$MODULE_DIR$'                         //
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 public class TomcatServer {
-
     private static final Logger LOGGER = Logger.getLogger(TomcatServer.class);
 
     public static void main(String[] args) throws ServletException, LifecycleException {
-
         Tomcat tomcat = new Tomcat();
 
-        // springmvc3/build/tomcat.8080/work/Tomcat/localhost/ROOT/org/apache/jsp
-        tomcat.setBaseDir("springmvc3/build/tomcat.8080");
-        tomcat.setPort(9090);
+        // save jsp generated java file under directory: build/tomcat.8080/work/Tomcat/localhost/ROOT/org/apache/jsp
+        tomcat.setBaseDir("build/tomcat.8080");
+        tomcat.setPort(8080);
 
-        final String webappDirLocation = "springmvc3/src/main/webapp";
+        final String webappDirLocation = "src/main/webapp";
         String path = new File(webappDirLocation).getAbsolutePath();
         LOGGER.info("webapp path : " + path);
 
