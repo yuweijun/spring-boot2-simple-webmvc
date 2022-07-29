@@ -99,9 +99,7 @@ public class RedirectView extends AbstractUrlBasedView implements SmartView {
 
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         String targetUrl = createTargetUrl(model, request);
-
         targetUrl = updateTargetUrl(targetUrl, model, request, response);
 
         // FlashMap flashMap = RequestContextUtils.getOutputFlashMap(request);

@@ -148,6 +148,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
         // Check for special "redirect:" prefix.
         if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
             String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
+            logger.debug("redirect url is " + redirectUrl);
             RedirectView view = new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
             return applyLifecycleMethods(viewName, view);
         }

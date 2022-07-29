@@ -9,8 +9,7 @@ import org.springframework.context.support.ApplicationObjectSupport;
 import javax.servlet.ServletContext;
 import java.io.File;
 
-public abstract class WebApplicationObjectSupport extends ApplicationObjectSupport
-    implements ServletContextAware {
+public abstract class WebApplicationObjectSupport extends ApplicationObjectSupport implements ServletContextAware {
 
     private ServletContext servletContext;
 
@@ -38,8 +37,7 @@ public abstract class WebApplicationObjectSupport extends ApplicationObjectSuppo
         if (ctx instanceof SimpleWebApplicationContext) {
             return (SimpleWebApplicationContext) getApplicationContext();
         } else if (isContextRequired()) {
-            throw new IllegalStateException("WebApplicationObjectSupport instance [" + this +
-                "] does not run in a WebApplicationContext but in: " + ctx);
+            throw new IllegalStateException("WebApplicationObjectSupport instance [" + this + "] does not run in a WebApplicationContext but in: " + ctx);
         } else {
             return null;
         }

@@ -10,6 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class JstlViewController {
 
+    @RequestMapping("/redirectView")
+    public void redirectView(HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:/jstlView");
+        modelAndView.addObject("msg", "World");
+
+        request.setAttribute(ModelAndView.class.getName(), modelAndView);
+    }
+
     @RequestMapping("/jstlView")
     public void jstlView(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView modelAndView = new ModelAndView();
