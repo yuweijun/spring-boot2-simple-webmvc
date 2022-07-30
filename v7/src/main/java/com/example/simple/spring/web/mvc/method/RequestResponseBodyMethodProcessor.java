@@ -23,6 +23,12 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         return parameter.hasParameterAnnotation(RequestBody.class);
     }
 
+    @Override
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
+        return readWithMessageConverters(inputMessage, parameter, parameter.getParameterType());
+    }
+
     public boolean supportsReturnType(MethodParameter returnType) {
         logger.debug("returnType is " + returnType);
         return returnType.hasMethodAnnotation(ResponseBody.class);
@@ -30,7 +36,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 
     @Override
     public void handleReturnValue(Object returnValue, MethodParameter returnType, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.debug("handle return value by " + getClass().getSimpleName());
+        logger.debug("handle return value by HandlerMethodReturnValueHandler : " + getClass().getSimpleName());
         if (returnValue != null) {
             writeWithMessageConverters(returnValue, returnType, new ServletServerHttpRequest(request), new ServletServerHttpResponse(response));
         }

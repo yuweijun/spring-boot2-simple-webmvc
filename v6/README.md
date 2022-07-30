@@ -1,3 +1,0 @@
-# MessageConverter
-
-MappingJackson2HttpMessageConverter
