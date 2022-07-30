@@ -1,0 +1,9 @@
+# MappedInterceptor and HandlerInterceptor
+
+MappedInterceptor
+RequestLoggerInterceptor
+ResponseStatusInterceptor
+ResponseTimeInterceptor
+AbstractHandlerMapping
+WebMvcConfigurationSupport
+DelegatingWebMvcConfiguration
