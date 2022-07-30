@@ -4,8 +4,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
-public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping {
+import java.util.ArrayList;
+import java.util.List;
+
+public class BeanNameUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
     private boolean detectHandlersInAncestorContexts = false;
 
@@ -34,13 +38,24 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
                 // URL paths found: Let's consider it a handler.
                 registerHandler(urls, beanName);
             } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Rejected bean name '" + beanName + "': no URL paths identified");
-                }
+                logger.trace("Rejected bean name '" + beanName + "': no URL paths identified");
             }
         }
     }
 
-    protected abstract String[] determineUrlsForHandler(String beanName);
+    protected String[] determineUrlsForHandler(String beanName) {
+        List<String> urls =  new ArrayList<>();
+        if (beanName.startsWith("/")) {
+            logger.debug("bean name is " + beanName);
+            urls.add(beanName);
+        }
+        String[] aliases = getApplicationContext().getAliases(beanName);
+        for (String alias : aliases) {
+            if (alias.startsWith("/")) {
+                urls.add(alias);
+            }
+        }
+        return StringUtils.toStringArray(urls);
+    }
 
 }
