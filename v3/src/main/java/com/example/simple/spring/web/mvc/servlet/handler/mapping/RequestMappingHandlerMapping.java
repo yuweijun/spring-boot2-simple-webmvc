@@ -59,8 +59,6 @@ public class RequestMappingHandlerMapping extends ApplicationObjectSupport imple
 
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         String lookupPath = urlPathHelper.getLookupPathForRequest(request);
-        // We need to care for the default handler directly, since we need to
-        // expose the PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE for it as well.
         Object rawHandler = null;
         if ("/".equals(lookupPath)) {
             rawHandler = getRootHandler();

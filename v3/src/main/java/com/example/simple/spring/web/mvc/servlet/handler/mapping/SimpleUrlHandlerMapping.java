@@ -35,6 +35,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
         } else {
             for (Map.Entry<String, Object> entry : urlMap.entrySet()) {
                 String url = entry.getKey();
+                logger.debug("register handler for url : " + url);
                 Object handler = entry.getValue();
                 // Prepend with slash if not already present.
                 if (!url.startsWith("/")) {
@@ -44,6 +45,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
                 if (handler instanceof String) {
                     handler = ((String) handler).trim();
                 }
+
                 registerHandler(url, handler);
             }
         }

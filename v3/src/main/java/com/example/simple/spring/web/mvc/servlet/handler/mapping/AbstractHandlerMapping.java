@@ -19,14 +19,14 @@ import java.util.List;
 public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
     implements HandlerMapping, Ordered {
 
-    private final List<Object> interceptors = new ArrayList<>();
-    private final List<HandlerInterceptor> adaptedInterceptors = new ArrayList<>();
+    private final List<Object> interceptors =  new ArrayList<>();
+    private final List<HandlerInterceptor> adaptedInterceptors =  new ArrayList<>();
     private int order = Integer.MAX_VALUE;  // default: same as non-Ordered
     private Object defaultHandler;
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private PathMatcher pathMatcher = new AntPathMatcher();
 
-    // private final List<MappedInterceptor> mappedInterceptors = new ArrayList<>();
+    // private final List<MappedInterceptor> mappedInterceptors =  new ArrayList<>();
 
     public final int getOrder() {
         return this.order;
