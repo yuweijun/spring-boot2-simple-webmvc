@@ -131,7 +131,7 @@ public class ModelAndView {
         return sb.toString();
     }
 
-    public void put(HttpServletRequest request) {
+    public void apply(HttpServletRequest request) {
         ModelAndView.put(request, this);
     }
 

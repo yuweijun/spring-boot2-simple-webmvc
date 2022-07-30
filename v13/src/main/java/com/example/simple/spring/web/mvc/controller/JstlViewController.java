@@ -16,7 +16,7 @@ public class JstlViewController {
         modelAndView.setViewName("redirect:/jstlView");
         modelAndView.addObject("msg", "World");
 
-        modelAndView.put(request);
+        modelAndView.apply(request);
     }
 
     @RequestMapping("/jstlView")
@@ -25,7 +25,7 @@ public class JstlViewController {
         modelAndView.setViewName("jstl");
         modelAndView.addObject("msg", "World");
 
-        modelAndView.put(request);
+        modelAndView.apply(request);
     }
 
 }

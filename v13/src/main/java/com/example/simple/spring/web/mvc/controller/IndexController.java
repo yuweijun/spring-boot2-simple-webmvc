@@ -30,7 +30,7 @@ public class IndexController {
         modelMap.addAttribute("map", map);
         modelMap.addAttribute("time", time);
         modelMap.addAttribute("hello", "yu");
-        modelAndView.put(request);
+        modelAndView.apply(request);
     }
 
     @ModelAttribute
