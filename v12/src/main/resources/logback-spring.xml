@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="CONSOLE_LOG_PATTERN" value="%highlight(%d{yyyy-MM-dd mm:ss.SSS} %-5p) %clr([%-15t]){faint} %green([%M:%L]) %clr(%C){cyan} %n %clr(>>>){magenta} %highlight(%m) %n%n%wEx"/>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <logger name="com.example" level="DEBUG"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+</configuration>
