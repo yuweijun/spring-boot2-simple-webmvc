@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@SessionAttributes("session_attributes_1")
+@SessionAttributes({"session_attributes_1", "userDTO@RequestBody"})
 public class AttributesController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttributesController.class);
