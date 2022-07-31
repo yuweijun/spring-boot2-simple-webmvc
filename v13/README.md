@@ -15,3 +15,5 @@ RequestAttributeMethodArgumentResolver
 RequestMappingHandlerAdapter
 
 # @SessionAttributes and @RequestAttribute example in AttributesController
+
+# update test cases based io.rest-assured:rest-assured
