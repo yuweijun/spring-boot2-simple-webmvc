@@ -14,7 +14,9 @@ public class ServletResponseMethodArgumentResolver implements HandlerMethodArgum
 
     public boolean supportsParameter(MethodParameter parameter) {
         Class<?> paramType = parameter.getParameterType();
-        return ServletResponse.class.isAssignableFrom(paramType) || OutputStream.class.isAssignableFrom(paramType) || Writer.class.isAssignableFrom(paramType);
+        return ServletResponse.class.isAssignableFrom(paramType) ||
+            OutputStream.class.isAssignableFrom(paramType) ||
+            Writer.class.isAssignableFrom(paramType);
     }
 
     @Override

@@ -7,10 +7,10 @@ public class MappingJacksonValue {
 
     private Object value;
 
-    @Nullable
+    
     private Class<?> serializationView;
 
-    @Nullable
+    
     private FilterProvider filters;
 
     public MappingJacksonValue(Object value) {
@@ -25,20 +25,20 @@ public class MappingJacksonValue {
         return this.value;
     }
 
-    public void setSerializationView(@Nullable Class<?> serializationView) {
+    public void setSerializationView( Class<?> serializationView) {
         this.serializationView = serializationView;
     }
 
-    @Nullable
+    
     public Class<?> getSerializationView() {
         return this.serializationView;
     }
 
-    public void setFilters(@Nullable FilterProvider filters) {
+    public void setFilters( FilterProvider filters) {
         this.filters = filters;
     }
 
-    @Nullable
+    
     public FilterProvider getFilters() {
         return this.filters;
     }

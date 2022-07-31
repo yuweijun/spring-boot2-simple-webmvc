@@ -167,11 +167,11 @@ public class MediaType extends MimeType implements Serializable {
         super(other, charset);
     }
 
-    public MediaType(MediaType other, @Nullable Map<String, String> parameters) {
+    public MediaType(MediaType other,  Map<String, String> parameters) {
         super(other.getType(), other.getSubtype(), parameters);
     }
 
-    public MediaType(String type, String subtype, @Nullable Map<String, String> parameters) {
+    public MediaType(String type, String subtype,  Map<String, String> parameters) {
         super(type, subtype, parameters);
     }
 
@@ -191,11 +191,11 @@ public class MediaType extends MimeType implements Serializable {
         return (qualityFactor != null ? Double.parseDouble(unquote(qualityFactor)) : 1D);
     }
 
-    public boolean includes(@Nullable MediaType other) {
+    public boolean includes( MediaType other) {
         return super.includes(other);
     }
 
-    public boolean isCompatibleWith(@Nullable MediaType other) {
+    public boolean isCompatibleWith( MediaType other) {
         return super.isCompatibleWith(other);
     }
 
@@ -235,7 +235,7 @@ public class MediaType extends MimeType implements Serializable {
         }
     }
 
-    public static List<MediaType> parseMediaTypes(@Nullable String mediaTypes) {
+    public static List<MediaType> parseMediaTypes( String mediaTypes) {
         if (!StringUtils.hasLength(mediaTypes)) {
             return Collections.emptyList();
         }
@@ -250,7 +250,7 @@ public class MediaType extends MimeType implements Serializable {
         return result;
     }
 
-    public static List<MediaType> parseMediaTypes(@Nullable List<String> mediaTypes) {
+    public static List<MediaType> parseMediaTypes( List<String> mediaTypes) {
         if (CollectionUtils.isEmpty(mediaTypes)) {
             return Collections.emptyList();
         } else if (mediaTypes.size() == 1) {

@@ -3,13 +3,17 @@ package com.example.simple.spring.web.mvc.servlet.handler;
 import com.example.simple.spring.web.mvc.bind.ExtendedServletRequestDataBinder;
 import com.example.simple.spring.web.mvc.bind.annotation.ModelAttribute;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
+import com.example.simple.spring.web.mvc.bind.support.DefaultSessionAttributeStore;
+import com.example.simple.spring.web.mvc.bind.support.SessionAttributeStore;
+import com.example.simple.spring.web.mvc.contex.support.WebApplicationObjectSupport;
+import com.example.simple.spring.web.mvc.context.request.SessionAttributesHandler;
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.converter.StringHttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
+import com.example.simple.spring.web.mvc.method.ControllerAdviceBean;
 import com.example.simple.spring.web.mvc.method.HandlerMethod;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolverComposite;
-import com.example.simple.spring.web.mvc.method.HandlerMethodSelector;
 import com.example.simple.spring.web.mvc.method.HttpEntityMethodProcessor;
 import com.example.simple.spring.web.mvc.method.InvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
@@ -19,6 +23,8 @@ import com.example.simple.spring.web.mvc.method.RequestParamMethodArgumentResolv
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ServletInvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.method.ServletModelAttributeMethodProcessor;
+import com.example.simple.spring.web.mvc.method.ServletRequestMethodArgumentResolver;
+import com.example.simple.spring.web.mvc.method.ServletResponseMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.servlet.HandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.support.HandlerMethodReturnValueHandlerComposite;
 import org.slf4j.Logger;
@@ -28,6 +34,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.MethodIntrospector;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -38,20 +45,27 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactoryAware, InitializingBean {
+public class RequestMappingHandlerAdapter extends WebApplicationObjectSupport implements HandlerAdapter, BeanFactoryAware, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerAdapter.class);
 
     private List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
 
-    private final Map<Class<?>, Set<Method>> modelFactoryCache = new ConcurrentHashMap<Class<?>, Set<Method>>();
+    private final Map<Class<?>, Set<Method>> modelAttributeCache = new ConcurrentHashMap<>(64);
+
+    private final Map<Class<?>, SessionAttributesHandler> sessionAttributesHandlerCache = new ConcurrentHashMap<>(64);
+
+    private final Map<ControllerAdviceBean, Set<Method>> modelAttributeAdviceCache = new LinkedHashMap<>();
 
     private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+
+    private SessionAttributeStore sessionAttributeStore = new DefaultSessionAttributeStore();
 
     private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
 
@@ -94,10 +108,35 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
 
     @Override
     public void afterPropertiesSet() {
+        initControllerAdviceCache();
         if (this.argumentResolvers == null) {
             List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
             this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
         }
+    }
+
+    private void initControllerAdviceCache() {
+        if (getApplicationContext() == null) {
+            return;
+        }
+
+        List<ControllerAdviceBean> adviceBeans = ControllerAdviceBean.findAnnotatedBeans(getApplicationContext());
+
+        for (ControllerAdviceBean adviceBean : adviceBeans) {
+            Class<?> beanType = adviceBean.getBeanType();
+            if (beanType == null) {
+                throw new IllegalStateException("Unresolvable type for ControllerAdviceBean: " + adviceBean);
+            }
+
+            Set<Method> attrMethods = MethodIntrospector.selectMethods(beanType, MODEL_ATTRIBUTE_METHODS);
+            if (!attrMethods.isEmpty()) {
+                this.modelAttributeAdviceCache.put(adviceBean, attrMethods);
+            }
+
+        }
+
+        int modelSize = this.modelAttributeAdviceCache.size();
+        logger.debug("ControllerAdvice beans: " + modelSize + " @ModelAttribute");
     }
 
     private HandlerMethodReturnValueHandlerComposite getReturnValueHandlers() {
@@ -120,31 +159,15 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
         List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
 
         // Annotation-based argument resolution
-
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
-        // resolvers.add(new RequestParamMapMethodArgumentResolver());
-        // resolvers.add(new PathVariableMethodArgumentResolver());
         resolvers.add(new ServletModelAttributeMethodProcessor());
-
         resolvers.add(new RequestResponseBodyMethodProcessor(messageConverters));
 
-        // resolvers.add(new RequestPartMethodArgumentResolver(getMessageConverters()));
-        // resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
-        // resolvers.add(new RequestHeaderMapMethodArgumentResolver());
-        // resolvers.add(new ServletCookieValueMethodArgumentResolver(getBeanFactory()));
-        // resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
-
         // Type-based argument resolution
-
-        // resolvers.add(new ServletRequestMethodArgumentResolver());
-        // resolvers.add(new ServletResponseMethodArgumentResolver());
+        resolvers.add(new ServletRequestMethodArgumentResolver());
+        resolvers.add(new ServletResponseMethodArgumentResolver());
         resolvers.add(new HttpEntityMethodProcessor(messageConverters));
-        // resolvers.add(new RedirectAttributesMethodArgumentResolver());
-        // resolvers.add(new ModelMethodProcessor());
         resolvers.add(new MapMethodProcessor());
-        // resolvers.add(new ErrorsMethodArgumentResolver());
-        // resolvers.add(new SessionStatusMethodArgumentResolver());
-        // resolvers.add(new UriComponentsBuilderMethodArgumentResolver());
 
         // Catch-all
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
@@ -189,28 +212,50 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, BeanFactory
     }
 
     private ModelFactory getModelFactory(HandlerMethod handlerMethod, HttpServletRequest request, HttpServletResponse response) {
+        SessionAttributesHandler sessionAttrHandler = getSessionAttributesHandler(handlerMethod);
         Class<?> handlerType = handlerMethod.getBeanType();
-        Set<Method> methods = this.modelFactoryCache.get(handlerType);
+        Set<Method> methods = this.modelAttributeCache.get(handlerType);
         if (methods == null) {
-            methods = HandlerMethodSelector.selectMethods(handlerType, MODEL_ATTRIBUTE_METHODS);
-            this.modelFactoryCache.put(handlerType, methods);
+            methods = MethodIntrospector.selectMethods(handlerType, MODEL_ATTRIBUTE_METHODS);
+            logger.info("get @ModelAttribute methods : " + methods);
+            this.modelAttributeCache.put(handlerType, methods);
         }
 
         List<InvocableHandlerMethod> attrMethods = new ArrayList<>();
+
+        // Global methods first
+        this.modelAttributeAdviceCache.forEach((controllerAdviceBean, methodSet) -> {
+            if (controllerAdviceBean.isApplicableToBeanType(handlerType)) {
+                Object bean = controllerAdviceBean.resolveBean();
+                for (Method method : methodSet) {
+                    attrMethods.add(createModelAttributeMethod(bean, method, request, response));
+                }
+            }
+        });
         for (Method method : methods) {
-            InvocableHandlerMethod attrMethod = new InvocableHandlerMethod(handlerMethod.getBean(), method, request, response);
-            attrMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
-            attrMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
-            attrMethods.add(attrMethod);
+            Object bean = handlerMethod.getBean();
+            attrMethods.add(createModelAttributeMethod(bean, method, request, response));
         }
 
-        return new ModelFactory(attrMethods);
+        return new ModelFactory(attrMethods, sessionAttrHandler);
+    }
+
+    private InvocableHandlerMethod createModelAttributeMethod(Object bean, Method method, HttpServletRequest request, HttpServletResponse response) {
+        InvocableHandlerMethod attrMethod = new InvocableHandlerMethod(bean, method, request, response);
+        if (this.argumentResolvers != null) {
+            attrMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
+        }
+        attrMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
+        return attrMethod;
+    }
+
+    private SessionAttributesHandler getSessionAttributesHandler(HandlerMethod handlerMethod) {
+        return this.sessionAttributesHandlerCache.computeIfAbsent(handlerMethod.getBeanType(), type -> new SessionAttributesHandler(type, this.sessionAttributeStore));
     }
 
     public static final ReflectionUtils.MethodFilter MODEL_ATTRIBUTE_METHODS = new ReflectionUtils.MethodFilter() {
         public boolean matches(Method method) {
-            return ((AnnotationUtils.findAnnotation(method, ModelAttribute.class) != null) &&
-                (AnnotationUtils.findAnnotation(method, RequestMapping.class) == null));
+            return ((AnnotationUtils.findAnnotation(method, ModelAttribute.class) != null) && (AnnotationUtils.findAnnotation(method, RequestMapping.class) == null));
         }
     };
 }

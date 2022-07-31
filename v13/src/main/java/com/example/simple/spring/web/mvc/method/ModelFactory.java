@@ -1,51 +1,55 @@
 package com.example.simple.spring.web.mvc.method;
 
 import com.example.simple.spring.web.mvc.bind.annotation.ModelAttribute;
+import com.example.simple.spring.web.mvc.bind.support.SessionStatus;
+import com.example.simple.spring.web.mvc.context.request.SessionAttributesHandler;
 import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.Conventions;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public final class ModelFactory {
 
+    private final Log logger = LogFactory.getLog(getClass());
+
     private final List<InvocableHandlerMethod> attributeMethods;
 
     // private final WebDataBinderFactory binderFactory;
 
-    // private final SessionAttributesHandler sessionAttributesHandler;
+    private final SessionAttributesHandler sessionAttributesHandler;
 
-    public ModelFactory(List<InvocableHandlerMethod> attributeMethods) {
-        // SessionAttributesHandler sessionAttributesHandler
+    public ModelFactory(List<InvocableHandlerMethod> attributeMethods, SessionAttributesHandler sessionAttributesHandler) {
         this.attributeMethods = (attributeMethods != null) ? attributeMethods : new ArrayList<InvocableHandlerMethod>();
-        // this.sessionAttributesHandler = sessionAttributesHandler;
+        this.sessionAttributesHandler = sessionAttributesHandler;
     }
 
     public void initModel(HttpServletRequest request, HandlerMethod handlerMethod) throws Exception {
-        // Map<String, ?> attributesInSession = this.sessionAttributesHandler.retrieveAttributes(request);
-        // mavContainer.mergeAttributes(attributesInSession);
+        Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
+        final ModelMap model = ModelAndView.getModel(request);
+        model.mergeAttributes(sessionAttributes);
 
         invokeModelAttributeMethods(request);
 
-        // for (String name : findSessionAttributeArguments(handlerMethod)) {
-        //     if (!mavContainer.containsAttribute(name)) {
-        //         Object value = this.sessionAttributesHandler.retrieveAttribute(request, name);
-        //         if (value == null) {
-        //             throw new HttpSessionRequiredException("Expected session attribute '" + name + "'");
-        //         }
-        //         ModelAndView.addAttribute(request, name, value);
-        //     }
-        // }
+        for (String name : findSessionAttributeArguments(handlerMethod)) {
+            if (!model.containsAttribute(name)) {
+                Object value = this.sessionAttributesHandler.retrieveAttribute(request, name);
+                if (value == null) {
+                    throw new ServletException("Expected session attribute '" + name + "'");
+                }
+                ModelAndView.addAttribute(request, name, value);
+            }
+        }
 
     }
 
@@ -53,6 +57,7 @@ public final class ModelFactory {
         for (InvocableHandlerMethod attrMethod : this.attributeMethods) {
             String modelName = attrMethod.getMethodAnnotation(ModelAttribute.class).value();
             if (ModelAndView.containsAttribute(request, modelName)) {
+                logger.debug(modelName + " attribute has been exist in model, skip method invocation: " + attrMethod.getMethod() + " invokeForRequest(request)");
                 continue;
             }
 
@@ -67,18 +72,18 @@ public final class ModelFactory {
         }
     }
 
-    // private List<String> findSessionAttributeArguments(HandlerMethod handlerMethod) {
-    // 	List<String> result = new ArrayList<String>();
-    // 	for (MethodParameter param : handlerMethod.getMethodParameters()) {
-    // 		if (param.hasParameterAnnotation(ModelAttribute.class)) {
-    // 			String name = getNameForParameter(param);
-    // 			if (this.sessionAttributesHandler.isHandlerSessionAttribute(name, param.getParameterType())) {
-    // 				result.add(name);
-    // 			}
-    // 		}
-    // 	}
-    // 	return result;
-    // }
+    private List<String> findSessionAttributeArguments(HandlerMethod handlerMethod) {
+        List<String> result = new ArrayList<>();
+        for (MethodParameter param : handlerMethod.getMethodParameters()) {
+            if (param.hasParameterAnnotation(ModelAttribute.class)) {
+                String name = getNameForParameter(param);
+                if (this.sessionAttributesHandler.isHandlerSessionAttribute(name, param.getParameterType())) {
+                    result.add(name);
+                }
+            }
+        }
+        return result;
+    }
 
     public static String getNameForReturnValue(Object returnValue, MethodParameter returnType) {
         ModelAttribute annot = returnType.getMethodAnnotation(ModelAttribute.class);
@@ -98,52 +103,14 @@ public final class ModelFactory {
     }
 
     public void updateModel(HttpServletRequest request) throws Exception {
-
-        // if (mavContainer.getSessionStatus().isComplete()){
-        // 	this.sessionAttributesHandler.cleanupAttributes(request);
-        // }
-        // else {
-        // 	this.sessionAttributesHandler.storeAttributes(request, mavContainer.getModel());
-        // }
-
-        updateBindingResult(request);
-    }
-
-    private void updateBindingResult(HttpServletRequest request) throws Exception {
-        final ModelAndView modelAndView = ModelAndView.get(request);
-        if (modelAndView == null) {
-            return;
-        }
-        final ModelMap model = modelAndView.getModelMap();
-        List<String> keyNames = new ArrayList<>(model.keySet());
-        for (String name : keyNames) {
-            Object value = model.get(name);
-
-            if (isBindingCandidate(name, value)) {
-                String bindingResultKey = BindingResult.MODEL_KEY_PREFIX + name;
-
-                // if (!model.containsAttribute(bindingResultKey)) {
-                // 	WebDataBinder dataBinder = binderFactory.createBinder(request, value, name);
-                // 	model.put(bindingResultKey, dataBinder.getBindingResult());
-                // }
-
-            }
-        }
-    }
-
-    private boolean isBindingCandidate(String attributeName, Object value) {
-        if (attributeName.startsWith(BindingResult.MODEL_KEY_PREFIX)) {
-            return false;
+        final ModelMap model = ModelAndView.getModel(request);
+        final SessionStatus sessionStatus = ModelAndView.getSessionStatus(request);
+        if (sessionStatus.isComplete()) {
+            this.sessionAttributesHandler.cleanupAttributes(request);
+        } else {
+            this.sessionAttributesHandler.storeAttributes(request, model);
         }
 
-        Class<?> attrType = (value != null) ? value.getClass() : null;
-
-        // if (this.sessionAttributesHandler.isHandlerSessionAttribute(attributeName, attrType)) {
-        // 	return true;
-        // }
-
-        return (value != null && !value.getClass().isArray() && !(value instanceof Collection) &&
-            !(value instanceof Map) && !BeanUtils.isSimpleValueType(value.getClass()));
     }
 
 }

@@ -26,16 +26,30 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<M
 
     @Override
     protected Map<String, Object> getMappingForMethod(Method method, Class<?> handlerType) {
+        // AnnotationUtils.findAnnotation not support @GetMapping and @PostMapping
+        // RequestMapping methodAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+        final Set<RequestMapping> allMergedAnnotations = AnnotatedElementUtils.getAllMergedAnnotations(method, RequestMapping.class);
+
         Map<String, Object> info = null;
-        RequestMapping methodAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
-        if (methodAnnotation != null) {
-            info = createRequestMappingInfo(methodAnnotation, method);
-            RequestMapping typeAnnotation = AnnotationUtils.findAnnotation(handlerType, RequestMapping.class);
-            if (typeAnnotation != null) {
-                info = createRequestMappingInfo(typeAnnotation, handlerType);
-            }
+        if (!allMergedAnnotations.isEmpty()) {
+            info = createRequestMappingInfo(allMergedAnnotations.iterator().next(), method);
         }
+
+        final Map<String, Object> mappingInfoFromType = getMappingInfoFromType(handlerType);
+        return mergeMappingInfo(info, mappingInfoFromType);
+    }
+
+    private Map<String, Object> mergeMappingInfo(Map<String, Object> info, Map<String, Object> mappingInfoFromType) {
+        // ignore class mapping info for simplicity
         return info;
+    }
+
+    private Map<String, Object> getMappingInfoFromType(Class<?> handlerType) {
+        RequestMapping typeAnnotation = AnnotationUtils.findAnnotation(handlerType, RequestMapping.class);
+        if (typeAnnotation != null) {
+            return createRequestMappingInfo(typeAnnotation, handlerType);
+        }
+        return null;
     }
 
     @Override

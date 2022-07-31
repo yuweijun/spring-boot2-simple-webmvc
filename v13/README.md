@@ -1,11 +1,14 @@
-# ModelAttribute support and add example IndexController
+# SessionAttributes and RequestAttribute
 
 RequestMappingHandlerAdapter
-ModelAttributeMethodProcessor
-ServletModelAttributeMethodProcessor
-ModelFactory
+RedirectAttributes
+SessionAttributeStore
+SessionStatus
+DefaultSessionAttributeStore
+SimpleSessionStatus
+SessionAttribute
+SessionAttributes
+RequestAttribute
+SessionAttributesHandler
 
-# add config for RequestParamMethodArgumentResolver support simple type such as String
-
-    // Catch-all
-    resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+# SessionAttributes and RequestAttribute example AttributesController

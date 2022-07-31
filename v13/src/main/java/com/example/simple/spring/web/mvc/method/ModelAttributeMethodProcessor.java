@@ -33,8 +33,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
     @Override
     public final Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response, ServletRequestDataBinder servletRequestDataBinder) throws Exception {
         String name = ModelFactory.getNameForParameter(parameter);
-        final ModelAndView modelAndView = ModelAndView.get(request);
-        final ModelMap model = modelAndView.getModelMap();
+        final ModelMap model = ModelAndView.getModel(request);
         Object target = (model.containsAttribute(name)) ? model.get(name) : createAttribute(name, parameter, request);
         logger.info("resolveArgument target is " + target + ", name is " + name);
 

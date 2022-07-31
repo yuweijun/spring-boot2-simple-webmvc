@@ -1,20 +1,21 @@
-package com.example.spring.boot.controller;
+package com.example.simple.spring.web.mvc.controller;
 
+import com.example.simple.spring.web.mvc.bind.annotation.GetMapping;
+import com.example.simple.spring.web.mvc.bind.annotation.ModelAttribute;
+import com.example.simple.spring.web.mvc.bind.annotation.RequestAttribute;
+import com.example.simple.spring.web.mvc.bind.annotation.ResponseBody;
+import com.example.simple.spring.web.mvc.bind.annotation.SessionAttributes;
+import com.example.simple.spring.web.mvc.bind.support.SessionStatus;
+import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -24,48 +25,41 @@ public class AttributesController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AttributesController.class);
 
     @ModelAttribute("todos")
-    public List<String> todos(HttpServletRequest request, Model model) {
+    public List<String> todos(HttpServletRequest request) {
         LOGGER.info("add request attribute for @RequestAttribute");
-        request.setAttribute("request_attr", "request_attribute_value");
+        request.setAttribute("request_attr", "request_attribute_value_" + new Date());
 
+        ModelMap model = ModelAndView.getModel(request);
         if (model.containsAttribute("session_attr")) {
             LOGGER.info("session attribute exists in model : {}", model.getAttribute("session_attr"));
         } else {
-            model.addAttribute("session_attr", "add_session_value_in_@ModelAttribute_method");
-        }
-
-        if (model.containsAttribute("flash_attr")) {
-            LOGGER.info("flash attribute exists in model : {}", model.getAttribute("flash_attr"));
-        } else {
-            model.addAttribute("flash_attr", "add_flash_value_in_@ModelAttribute_method");
+            model.addAttribute("session_attr", "add_session_value_in_@ModelAttribute_method_" + new Date());
         }
 
         final List<String> list = new ArrayList<>();
-        list.add("todo1");
+        list.add("todo1_" + model.getAttribute("session_attr"));
         return list;
     }
 
     @GetMapping("/show")
     @ResponseBody
-    public List<String> show(Model model, HttpSession httpSession, SessionStatus sessionStatus,
+    public List<String> show(HttpServletRequest request, HttpSession httpSession,
         @RequestAttribute("request_attr") String requestAttr,
         @ModelAttribute("session_attr") String sessionAttr,
-        @ModelAttribute("flash_attr") String flashAttr,
         @ModelAttribute("todos") List<String> todos) {
 
         LOGGER.info("get request attribute in show : {}", requestAttr);
         LOGGER.info("get session key which will not clear after sessionStatus.setComplete() : {}", httpSession.getAttribute("session_key"));
         LOGGER.info("get session attribute which will clear after sessionStatus.setComplete() : {}", sessionAttr);
-        LOGGER.info("get flash attribute which will clear after sessionStatus.setComplete() : {}", flashAttr);
-
+        SessionStatus sessionStatus = ModelAndView.getSessionStatus(request);
         sessionStatus.setComplete();
 
-        todos.add("todo2");
+        todos.add("todo2_" + System.currentTimeMillis());
         return todos;
     }
 
     @GetMapping("/create")
-    public String create(HttpServletRequest request, HttpSession httpSession, Model model, RedirectAttributes attributes,
+    public void create(HttpServletRequest request, HttpSession httpSession,
         @RequestAttribute("request_attr") String requestAttr,
         @ModelAttribute("todos") List<String> todos) {
 
@@ -74,9 +68,10 @@ public class AttributesController {
 
         httpSession.setAttribute("session_key", "session_value");
 
-        attributes.addFlashAttribute("flash_attr", "flash_attribute_value");
+        ModelMap model = ModelAndView.getModel(request);
         model.addAttribute("session_attr", "session_attribute_value");
-        return "redirect:/show";
+
+        ModelAndView.setViewName(request, "redirect:/show");
     }
 
 }

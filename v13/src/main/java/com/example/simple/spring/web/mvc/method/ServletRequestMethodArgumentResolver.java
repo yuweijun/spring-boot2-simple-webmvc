@@ -19,8 +19,12 @@ public class ServletRequestMethodArgumentResolver implements HandlerMethodArgume
 
     public boolean supportsParameter(MethodParameter parameter) {
         Class<?> paramType = parameter.getParameterType();
-        return ServletRequest.class.isAssignableFrom(paramType) || HttpSession.class.isAssignableFrom(paramType) || Principal.class.isAssignableFrom(paramType)
-            || Locale.class.equals(paramType) || InputStream.class.isAssignableFrom(paramType) || Reader.class.isAssignableFrom(paramType);
+        return ServletRequest.class.isAssignableFrom(paramType) ||
+            HttpSession.class.isAssignableFrom(paramType) ||
+            Principal.class.isAssignableFrom(paramType) ||
+            Locale.class.equals(paramType) ||
+            InputStream.class.isAssignableFrom(paramType) ||
+            Reader.class.isAssignableFrom(paramType);
     }
 
     @Override

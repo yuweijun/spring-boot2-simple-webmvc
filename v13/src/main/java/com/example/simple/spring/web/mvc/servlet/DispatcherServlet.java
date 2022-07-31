@@ -18,6 +18,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.OrderComparator;
+import org.springframework.ui.ModelMap;
 import org.springframework.ui.context.ThemeSource;
 
 import javax.servlet.ServletException;
@@ -319,9 +320,8 @@ public class DispatcherServlet extends FrameworkServlet {
                 processHandlerException(request, response, (mappedHandler != null ? mappedHandler.getHandler() : null), ex);
             }
 
-            ModelAndView mv = ModelAndView.get(request);
-            if (mv != null && !mv.wasCleared()) {
-                render(mv, request, response);
+            if (ModelAndView.hasView(request)) {
+                render(request, response);
             }
 
             // Trigger after-completion for successful outcome.
@@ -349,27 +349,22 @@ public class DispatcherServlet extends FrameworkServlet {
         return null;
     }
 
-    protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        View view;
-        if (mv.isReference()) {
+    protected void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        View view = ModelAndView.getView(request);
+        ModelMap model = ModelAndView.getModel(request);
+        if (view == null) {
             // We need to resolve the view name.
-            view = resolveViewName(mv.getViewName(), mv.getModelInternal(), request);
+            final String viewName = ModelAndView.getViewName(request);
+            logger.debug("render ModelAndView by viewName : " + viewName);
+            view = resolveViewName(viewName, model, request);
             if (view == null) {
-                throw new ServletException("Could not resolve view with name '" + mv.getViewName() + "' in servlet with name '" + getServletName() + "'");
-            }
-        } else {
-            // No need to lookup: the ModelAndView object contains the actual View object.
-            view = mv.getView();
-            if (view == null) {
-                throw new ServletException("ModelAndView [" + mv + "] neither contains a view name nor a " + "View object in servlet with name '" + getServletName() + "'");
+                throw new ServletException("Could not resolve view with name '" + viewName + "' in servlet with name '" + getServletName() + "'");
             }
         }
 
         // Delegate to the View object for rendering.
-        if (logger.isDebugEnabled()) {
-            logger.debug("Rendering view [" + view + "] in DispatcherServlet with name '" + getServletName() + "'");
-        }
-        view.render(mv.getModelInternal(), request, response);
+        logger.debug("Rendering view [" + view + "] in DispatcherServlet with name '" + getServletName() + "'");
+        view.render(model, request, response);
     }
 
     protected View resolveViewName(String viewName, Map<String, Object> model, HttpServletRequest request) throws Exception {

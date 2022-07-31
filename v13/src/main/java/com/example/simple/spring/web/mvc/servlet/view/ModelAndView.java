@@ -1,167 +1,173 @@
 package com.example.simple.spring.web.mvc.servlet.view;
 
+import com.example.simple.spring.web.mvc.bind.support.SessionStatus;
+import com.example.simple.spring.web.mvc.bind.support.SimpleSessionStatus;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 public class ModelAndView {
 
     public static final String MODEL_AND_VIEW = ModelAndView.class.getName();
 
-    private Object view;
+    public static final String MODEL = ModelAndView.class.getName() + ".MODEL";
+
+    public static final String SESSION_STATUS = ModelAndView.class.getName() + ".SESSION_STATUS";
+
+    public static final String VIEW = ModelAndView.class.getName() + ".VIEW";
+
+    public static final String VIEW_NAME = ModelAndView.class.getName() + ".VIEW_NAME";
+
+    private HttpServletRequest request;
+
+    private View view;
+
+    private String viewName;
 
     private ModelMap model;
 
-    private boolean cleared = false;
+    private SessionStatus sessionStatus;
 
-    public ModelAndView() {
-    }
-
-    public ModelAndView(String viewName) {
-        this.view = viewName;
-    }
-
-    public ModelAndView(View view) {
-        this.view = view;
-    }
-
-    public ModelAndView(String viewName, Map<String, ?> model) {
-        this.view = viewName;
-        if (model != null) {
-            getModelMap().addAllAttributes(model);
-        }
-    }
-
-    public ModelAndView(View view, Map<String, ?> model) {
-        this.view = view;
-        if (model != null) {
-            getModelMap().addAllAttributes(model);
-        }
-    }
-
-    public ModelAndView(String viewName, String modelName, Object modelObject) {
-        this.view = viewName;
-        addObject(modelName, modelObject);
-    }
-
-    public ModelAndView(View view, String modelName, Object modelObject) {
-        this.view = view;
-        addObject(modelName, modelObject);
-    }
-
-    public String getViewName() {
-        return (this.view instanceof String ? (String) this.view : null);
-    }
-
-    public void setViewName(String viewName) {
-        this.view = viewName;
-    }
-
-    public View getView() {
-        return (this.view instanceof View ? (View) this.view : null);
-    }
-
-    public void setView(View view) {
-        this.view = view;
-    }
-
-    public boolean hasView() {
-        return (this.view != null);
-    }
-
-    public boolean isReference() {
-        return (this.view instanceof String);
-    }
-
-    public Map<String, Object> getModelInternal() {
-        return this.model;
-    }
-
-    public ModelMap getModelMap() {
-        if (this.model == null) {
-            this.model = new ModelMap();
-        }
-        return this.model;
-    }
-
-    public Map<String, Object> getModel() {
-        return getModelMap();
-    }
-
-    public ModelAndView addObject(String attributeName, Object attributeValue) {
-        getModelMap().addAttribute(attributeName, attributeValue);
-        return this;
-    }
-
-    public ModelAndView addObject(Object attributeValue) {
-        getModelMap().addAttribute(attributeValue);
-        return this;
-    }
-
-    public ModelAndView addAllObjects(Map<String, ?> modelMap) {
-        getModelMap().addAllAttributes(modelMap);
-        return this;
-    }
-
-    public void clear() {
-        this.view = null;
-        this.model = null;
-        this.cleared = true;
-    }
-
-    public boolean isEmpty() {
-        return (this.view == null && CollectionUtils.isEmpty(this.model));
-    }
-
-    public boolean wasCleared() {
-        return (this.cleared && isEmpty());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("ModelAndView: ");
-        if (isReference()) {
-            sb.append("reference to view with name '").append(this.view).append("'");
-        } else {
-            sb.append("materialized View is [").append(this.view).append(']');
-        }
-        sb.append("; model is ").append(this.model);
-        return sb.toString();
-    }
-
-    public void apply(HttpServletRequest request) {
-        ModelAndView.put(request, this);
-    }
-
-    public static void put(HttpServletRequest request, ModelAndView modelAndView) {
-        request.setAttribute(ModelAndView.class.getName(), modelAndView);
-    }
-
-    public static void clear(HttpServletRequest request) {
-        put(request, null);
+    private ModelAndView() {
     }
 
     public static ModelAndView get(HttpServletRequest request) {
-        return (ModelAndView) request.getAttribute(ModelAndView.class.getName());
+        final Object mav = request.getAttribute(MODEL_AND_VIEW);
+        if (mav != null) {
+            return (ModelAndView) mav;
+        }
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.request = request;
+        modelAndView.sessionStatus = getSessionStatus(request);
+        modelAndView.model = getModel(request);
+
+        request.setAttribute(MODEL_AND_VIEW, modelAndView);
+        return modelAndView;
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public String getViewName() {
+        return viewName;
+    }
+
+    public ModelAndView setView(View view) {
+        this.view = view;
+        setView(request, view);
+        return this;
+    }
+
+    public ModelAndView setViewName(String viewName) {
+        this.viewName = viewName;
+        setViewName(request, viewName);
+        return this;
+    }
+
+    public ModelMap getModel() {
+        return getModel(request);
+    }
+
+    public boolean hasView() {
+        return view != null || viewName != null;
+    }
+
+    public ModelMap addObject(String attributeName, Object attributeValue) {
+        getModel().addAttribute(attributeName, attributeValue);
+        return model;
+    }
+
+    public ModelMap addObject(Object attributeValue) {
+        getModel().addAttribute(attributeValue);
+        return model;
+    }
+
+    public void addAttribute(String name, Object value) {
+        getModel().addAttribute(name, value);
+    }
+
+    public boolean containsAttribute(String modelName) {
+        return getModel().containsAttribute(modelName);
+    }
+
+    public static boolean hasView(HttpServletRequest request) {
+        return request.getAttribute(VIEW) != null || request.getAttribute(VIEW_NAME) != null;
+    }
+
+    public static View getView(HttpServletRequest request) {
+        final Object view = request.getAttribute(VIEW);
+        if (view != null) {
+            return (View) view;
+        }
+
+        return null;
+    }
+
+    public static void setView(HttpServletRequest request, View view) {
+        request.setAttribute(VIEW, view);
+    }
+
+    public static String getViewName(HttpServletRequest request) {
+        final Object view = request.getAttribute(VIEW_NAME);
+        if (view != null) {
+            return (String) view;
+        }
+
+        return null;
+    }
+
+    public static void setViewName(HttpServletRequest request, String viewName) {
+        request.setAttribute(VIEW_NAME, viewName);
+    }
+
+    public static SessionStatus getSessionStatus(HttpServletRequest request) {
+        final Object object = request.getAttribute(SESSION_STATUS);
+        if (object != null) {
+            return (SessionStatus) object;
+        }
+
+        SessionStatus sessionStatus = new SimpleSessionStatus();
+        request.setAttribute(SESSION_STATUS, sessionStatus);
+        return sessionStatus;
+    }
+
+    public static ModelMap getModel(HttpServletRequest request) {
+        final Object model = request.getAttribute(MODEL);
+        if (model != null) {
+            return (ModelMap) model;
+        }
+
+        ModelMap modelMap = new ModelMap();
+        request.setAttribute(MODEL, modelMap);
+        return modelMap;
+    }
+
+    public static ModelMap addObject(HttpServletRequest request, String attributeName, Object attributeValue) {
+        final ModelMap model = getModel(request);
+        model.addAttribute(attributeName, attributeValue);
+        return model;
+    }
+
+    public static ModelMap addObject(HttpServletRequest request, Object attributeValue) {
+        final ModelMap model = getModel(request);
+        model.addAttribute(attributeValue);
+        return model;
     }
 
     public static void addAttribute(HttpServletRequest request, String name, Object value) {
-        ModelAndView modelAndView = get(request);
-        if (modelAndView == null) {
-            modelAndView = new ModelAndView();
-            put(request, modelAndView);
-        }
-
-        modelAndView.getModelMap().addAttribute(name, value);
+        final ModelMap model = getModel(request);
+        model.addAttribute(name, value);
     }
 
     public static boolean containsAttribute(HttpServletRequest request, String modelName) {
-        ModelAndView modelAndView = get(request);
-        if (modelAndView != null) {
-            return modelAndView.getModelMap().containsAttribute(modelName);
-        }
-        return false;
+        final ModelMap model = getModel(request);
+        return model.containsAttribute(modelName);
+    }
+
+    public static void clear(HttpServletRequest request) {
+        setView(request, null);
+        setViewName(request, null);
     }
 }

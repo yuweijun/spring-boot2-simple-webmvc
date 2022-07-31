@@ -23,14 +23,13 @@ public class IndexController {
         LOGGER.info("@ModelAttribute(map) is {}", map);
         LOGGER.info("index");
         LOGGER.info("time is : {}", time);
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index");
 
-        final ModelMap modelMap = modelAndView.getModelMap();
+        final ModelMap modelMap = ModelAndView.getModel(request);
         modelMap.addAttribute("map", map);
         modelMap.addAttribute("time", time);
         modelMap.addAttribute("hello", "yu");
-        modelAndView.apply(request);
+
+        ModelAndView.setViewName(request, "index");
     }
 
     @ModelAttribute

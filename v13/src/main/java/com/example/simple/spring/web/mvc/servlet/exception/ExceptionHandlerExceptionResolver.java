@@ -7,6 +7,7 @@ import com.example.simple.spring.web.mvc.method.HandlerMethod;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.HandlerMethodArgumentResolverComposite;
 import com.example.simple.spring.web.mvc.method.HandlerMethodReturnValueHandler;
+import com.example.simple.spring.web.mvc.method.HttpEntityMethodProcessor;
 import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ModelAttributeMethodProcessor;
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
@@ -107,20 +108,6 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         return this.messageConverters;
     }
 
-    // public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
-    //     this.contentNegotiationManager = contentNegotiationManager;
-    // }
-
-    // public ContentNegotiationManager getContentNegotiationManager() {
-    //     return this.contentNegotiationManager;
-    // }
-
-    // public void setResponseBodyAdvice( List<ResponseBodyAdvice<?>> responseBodyAdvice) {
-    //     if (responseBodyAdvice != null) {
-    //         this.responseBodyAdvice.addAll(responseBodyAdvice);
-    //     }
-    // }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -161,10 +148,6 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
             if (resolver.hasExceptionMappings()) {
                 this.exceptionHandlerAdviceCache.put(adviceBean, resolver);
             }
-
-            // if (ResponseBodyAdvice.class.isAssignableFrom(beanType)) {
-            //     this.responseBodyAdvice.add(adviceBean);
-            // }
         }
 
         int handlerSize = this.exceptionHandlerAdviceCache.size();
@@ -199,10 +182,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>();
 
         // Single-purpose return value types
-        // handlers.add(new ModelAndViewMethodReturnValueHandler());
-        // handlers.add(new ModelMethodProcessor());
-        // handlers.add(new ViewMethodReturnValueHandler());
-        // handlers.add(new HttpEntityMethodProcessor(getMessageConverters()));
+        handlers.add(new HttpEntityMethodProcessor(getMessageConverters()));
 
         // Annotation-based return value types
         handlers.add(new ModelAttributeMethodProcessor());

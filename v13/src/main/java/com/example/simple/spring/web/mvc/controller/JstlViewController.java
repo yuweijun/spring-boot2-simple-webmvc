@@ -3,6 +3,7 @@ package com.example.simple.spring.web.mvc.controller;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,20 +13,16 @@ public class JstlViewController {
 
     @RequestMapping("/redirectView")
     public void redirectView(HttpServletRequest request, HttpServletResponse response) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/jstlView");
+        final ModelAndView modelAndView = ModelAndView.get(request);
         modelAndView.addObject("msg", "World");
-
-        modelAndView.apply(request);
+        modelAndView.setViewName("redirect:/jstlView");
     }
 
     @RequestMapping("/jstlView")
     public void jstlView(HttpServletRequest request, HttpServletResponse response) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("jstl");
-        modelAndView.addObject("msg", "World");
-
-        modelAndView.apply(request);
+        final ModelMap model = ModelAndView.getModel(request);
+        model.addAttribute("msg", "World");
+        ModelAndView.setViewName(request, "jstl");
     }
 
 }
