@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.http;
+package com.example.simple.spring.web.mvc.controller;
 
 public enum HttpResponseStatus {
 

@@ -2,6 +2,8 @@
 
 package com.example.simple.spring.web.mvc.bind.annotation;
 
+import com.example.simple.spring.web.mvc.bind.ValueConstants;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,6 +19,6 @@ public @interface RequestParam {
   
 	boolean required() default true;
 
-	String defaultValue() default "\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n";
+	String defaultValue() default ValueConstants.DEFAULT_NONE;
 
 }

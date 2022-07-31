@@ -1,6 +1,7 @@
 package com.example.simple.spring.web.mvc.method;
 
 import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
+import com.example.simple.spring.web.mvc.bind.ValueConstants;
 import com.example.simple.spring.web.mvc.context.request.RequestScope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +26,11 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
     private final BeanExpressionContext expressionContext;
 
     private Map<MethodParameter, NamedValueInfo> namedValueInfoCache = new ConcurrentHashMap<>();
+
+    public AbstractNamedValueMethodArgumentResolver() {
+        configurableBeanFactory = null;
+        expressionContext = null;
+    }
 
     public AbstractNamedValueMethodArgumentResolver(ConfigurableBeanFactory beanFactory) {
         this.configurableBeanFactory = beanFactory;
@@ -78,7 +84,7 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
             Assert.notNull(name,
                 "Name for argument type [" + parameter.getParameterType().getName() + "] not available, and parameter name information not found in class file either.");
         }
-        String defaultValue = (DEFAULT_NONE.equals(info.defaultValue) ? null : info.defaultValue);
+        String defaultValue = (ValueConstants.DEFAULT_NONE.equals(info.defaultValue) ? null : info.defaultValue);
         return new NamedValueInfo(name, info.required, defaultValue);
     }
 

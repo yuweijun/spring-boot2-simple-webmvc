@@ -10,10 +10,12 @@ import com.example.simple.spring.web.mvc.method.HandlerMethodReturnValueHandler;
 import com.example.simple.spring.web.mvc.method.HttpEntityMethodProcessor;
 import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ModelAttributeMethodProcessor;
+import com.example.simple.spring.web.mvc.method.RequestAttributeMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ServletInvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.method.ServletRequestMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.ServletResponseMethodArgumentResolver;
+import com.example.simple.spring.web.mvc.method.SessionAttributeMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.servlet.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -165,6 +167,10 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 
     protected List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
         List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
+
+        // Annotation-based argument resolution
+        resolvers.add(new SessionAttributeMethodArgumentResolver());
+        resolvers.add(new RequestAttributeMethodArgumentResolver());
 
         // Type-based argument resolution
         resolvers.add(new ServletRequestMethodArgumentResolver());

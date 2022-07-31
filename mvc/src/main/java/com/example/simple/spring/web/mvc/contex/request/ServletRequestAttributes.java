@@ -11,11 +11,10 @@ import java.util.Map;
 
 public class ServletRequestAttributes extends AbstractRequestAttributes {
 
-    public static final String DESTRUCTION_CALLBACK_NAME_PREFIX =
-        ServletRequestAttributes.class.getName() + ".DESTRUCTION_CALLBACK.";
+    public static final String DESTRUCTION_CALLBACK_NAME_PREFIX = ServletRequestAttributes.class.getName() + ".DESTRUCTION_CALLBACK.";
 
     private final HttpServletRequest request;
-    private final Map<String, Object> sessionAttributesToUpdate =  new HashMap<>();
+    private final Map<String, Object> sessionAttributesToUpdate = new HashMap<>();
     private volatile HttpSession session;
 
     public ServletRequestAttributes(HttpServletRequest request) {
@@ -33,8 +32,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
         } else {
             // Access through stored session reference, if any...
             if (this.session == null && allowCreate) {
-                throw new IllegalStateException(
-                    "No session found and request already completed - cannot create new session!");
+                throw new IllegalStateException("No session found and request already completed - cannot create new session!");
             }
             return this.session;
         }
@@ -43,8 +41,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
     public Object getAttribute(String name, int scope) {
         if (scope == SCOPE_REQUEST) {
             if (!isRequestActive()) {
-                throw new IllegalStateException(
-                    "Cannot ask for request attribute - request is not active anymore!");
+                throw new IllegalStateException("Cannot ask for request attribute - request is not active anymore!");
             }
             return this.request.getAttribute(name);
         } else {
@@ -69,8 +66,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
     public void setAttribute(String name, Object value, int scope) {
         if (scope == SCOPE_REQUEST) {
             if (!isRequestActive()) {
-                throw new IllegalStateException(
-                    "Cannot set request attribute - request is not active anymore!");
+                throw new IllegalStateException("Cannot set request attribute - request is not active anymore!");
             }
             this.request.setAttribute(name, value);
         } else {
@@ -109,8 +105,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
     public String[] getAttributeNames(int scope) {
         if (scope == SCOPE_REQUEST) {
             if (!isRequestActive()) {
-                throw new IllegalStateException(
-                    "Cannot ask for request attributes - request is not active anymore!");
+                throw new IllegalStateException("Cannot ask for request attributes - request is not active anymore!");
             }
             return StringUtils.toStringArray(this.request.getAttributeNames());
         } else {

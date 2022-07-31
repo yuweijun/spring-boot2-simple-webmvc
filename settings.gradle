@@ -2,6 +2,5 @@ rootProject.name = 'spring-boot2-simple-webmvc'
 include('spring-mvc-3.10')
 include('spring-boot2-jsp')
 include('boot')
-include('mvc-test')
 include('mvc')
 include('v13')

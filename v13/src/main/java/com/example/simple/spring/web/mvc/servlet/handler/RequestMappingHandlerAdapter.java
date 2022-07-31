@@ -19,12 +19,14 @@ import com.example.simple.spring.web.mvc.method.InvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.method.MapMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ModelAttributeMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ModelFactory;
+import com.example.simple.spring.web.mvc.method.RequestAttributeMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.RequestParamMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.RequestResponseBodyMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ServletInvocableHandlerMethod;
 import com.example.simple.spring.web.mvc.method.ServletModelAttributeMethodProcessor;
 import com.example.simple.spring.web.mvc.method.ServletRequestMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.method.ServletResponseMethodArgumentResolver;
+import com.example.simple.spring.web.mvc.method.SessionAttributeMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.servlet.HandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.support.HandlerMethodReturnValueHandlerComposite;
 import org.slf4j.Logger;
@@ -162,6 +164,8 @@ public class RequestMappingHandlerAdapter extends WebApplicationObjectSupport im
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
         resolvers.add(new ServletModelAttributeMethodProcessor());
         resolvers.add(new RequestResponseBodyMethodProcessor(messageConverters));
+        resolvers.add(new SessionAttributeMethodArgumentResolver());
+        resolvers.add(new RequestAttributeMethodArgumentResolver());
 
         // Type-based argument resolution
         resolvers.add(new ServletRequestMethodArgumentResolver());

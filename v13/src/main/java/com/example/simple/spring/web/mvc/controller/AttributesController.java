@@ -2,10 +2,14 @@ package com.example.simple.spring.web.mvc.controller;
 
 import com.example.simple.spring.web.mvc.bind.annotation.GetMapping;
 import com.example.simple.spring.web.mvc.bind.annotation.ModelAttribute;
+import com.example.simple.spring.web.mvc.bind.annotation.PostMapping;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestAttribute;
+import com.example.simple.spring.web.mvc.bind.annotation.RequestBody;
 import com.example.simple.spring.web.mvc.bind.annotation.ResponseBody;
+import com.example.simple.spring.web.mvc.bind.annotation.SessionAttribute;
 import com.example.simple.spring.web.mvc.bind.annotation.SessionAttributes;
 import com.example.simple.spring.web.mvc.bind.support.SessionStatus;
+import com.example.simple.spring.web.mvc.controller.dto.UserDTO;
 import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,57 +23,68 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@SessionAttributes("session_attr")
+@SessionAttributes("session_attributes_1")
 public class AttributesController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttributesController.class);
 
-    @ModelAttribute("todos")
-    public List<String> todos(HttpServletRequest request) {
+    @ModelAttribute("listReturnedFromModelAttributeMethod")
+    public List<String> modelAttributeMethod(HttpServletRequest request) {
         LOGGER.info("add request attribute for @RequestAttribute");
-        request.setAttribute("request_attr", "request_attribute_value_" + new Date());
+        final List<String> list = new ArrayList<>();
+        list.add("time1_" + System.currentTimeMillis());
+
+        request.setAttribute("request_attribute_1", "request_attribute_1_value_in_@ModelAttribute method at" + new Date());
 
         ModelMap model = ModelAndView.getModel(request);
-        if (model.containsAttribute("session_attr")) {
-            LOGGER.info("session attribute exists in model : {}", model.getAttribute("session_attr"));
+        if (model.containsAttribute("session_attributes_1")) {
+            LOGGER.info("session attribute exists in model : {}", model.getAttribute("session_attributes_1"));
         } else {
-            model.addAttribute("session_attr", "add_session_value_in_@ModelAttribute_method_" + new Date());
+            model.addAttribute("session_attributes_1", "session_attributes_1_value_in_@ModelAttribute method at " + new Date());
         }
 
-        final List<String> list = new ArrayList<>();
-        list.add("todo1_" + model.getAttribute("session_attr"));
         return list;
     }
 
     @GetMapping("/show")
     @ResponseBody
-    public List<String> show(HttpServletRequest request, HttpSession httpSession,
-        @RequestAttribute("request_attr") String requestAttr,
-        @ModelAttribute("session_attr") String sessionAttr,
-        @ModelAttribute("todos") List<String> todos) {
+    public ModelMap show(HttpServletRequest request, HttpSession httpSession,
+        @RequestAttribute("request_attribute_1") String requestAttr,
+        @SessionAttribute("httpsession_key") String sessionValue,
+        @ModelAttribute("session_attributes_1") String sessionAttr,
+        @ModelAttribute("listReturnedFromModelAttributeMethod") List<String> list) {
+
+        list.add("time2_" + System.currentTimeMillis());
+        final Object getAttributeFromHttpSession = httpSession.getAttribute("httpsession_key");
 
         LOGGER.info("get request attribute in show : {}", requestAttr);
-        LOGGER.info("get session key which will not clear after sessionStatus.setComplete() : {}", httpSession.getAttribute("session_key"));
+        LOGGER.info("get session value which inject using @SessionAttribute : {}", sessionValue);
+        LOGGER.info("get session key which will not clear after sessionStatus.setComplete() : {}", getAttributeFromHttpSession);
         LOGGER.info("get session attribute which will clear after sessionStatus.setComplete() : {}", sessionAttr);
+
+        final ModelMap model = ModelAndView.getModel(request);
+        model.addAttribute("httpsession_key", getAttributeFromHttpSession);
+        model.addAttribute("request_attribute_1", requestAttr);
+
         SessionStatus sessionStatus = ModelAndView.getSessionStatus(request);
         sessionStatus.setComplete();
-
-        todos.add("todo2_" + System.currentTimeMillis());
-        return todos;
+        return model;
     }
 
-    @GetMapping("/create")
+    @PostMapping("/create")
     public void create(HttpServletRequest request, HttpSession httpSession,
-        @RequestAttribute("request_attr") String requestAttr,
-        @ModelAttribute("todos") List<String> todos) {
+        @RequestAttribute("request_attribute_1") String requestAttr,
+        @ModelAttribute("listReturnedFromModelAttributeMethod") List<String> list,
+        @RequestBody UserDTO userDTO) {
 
         LOGGER.info("get request attribute in create : {}", requestAttr);
-        LOGGER.info("get todos from @ModelAttribute : {}", todos);
+        LOGGER.info("get modelAttributeMethod from @ModelAttribute : {}", list);
 
-        httpSession.setAttribute("session_key", "session_value");
+        httpSession.setAttribute("httpsession_key", "httpsession_value");
 
         ModelMap model = ModelAndView.getModel(request);
-        model.addAttribute("session_attr", "session_attribute_value");
+        model.addAttribute("session_attributes_1", "session_attributes_1_value");
+        model.addAttribute("userDTO@RequestBody", userDTO);
 
         ModelAndView.setViewName(request, "redirect:/show");
     }

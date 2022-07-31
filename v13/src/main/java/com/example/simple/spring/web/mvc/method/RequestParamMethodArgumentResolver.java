@@ -1,5 +1,6 @@
 package com.example.simple.spring.web.mvc.method;
 
+import com.example.simple.spring.web.mvc.bind.ValueConstants;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,7 +68,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 
     private class RequestParamNamedValueInfo extends NamedValueInfo {
         private RequestParamNamedValueInfo() {
-            super("", false, DEFAULT_NONE);
+            super("", false, ValueConstants.DEFAULT_NONE);
         }
 
         private RequestParamNamedValueInfo(RequestParam annotation) {
