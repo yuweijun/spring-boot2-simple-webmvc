@@ -24,6 +24,20 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<M
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerMapping.class);
 
+    private static Set<String> prependLeadingSlash(Collection<String> patterns) {
+        if (patterns == null) {
+            return Collections.emptySet();
+        }
+        Set<String> result = new LinkedHashSet<>(patterns.size());
+        for (String pattern : patterns) {
+            if (StringUtils.hasLength(pattern) && !pattern.startsWith("/")) {
+                pattern = "/" + pattern;
+            }
+            result.add(pattern);
+        }
+        return result;
+    }
+
     @Override
     protected Map<String, Object> getMappingForMethod(Method method, Class<?> handlerType) {
         // AnnotationUtils.findAnnotation not support @GetMapping and @PostMapping
@@ -89,20 +103,6 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<M
         final String[] value = (String[]) mapping.get("value");
 
         return prependLeadingSlash(Arrays.asList(value));
-    }
-
-    private static Set<String> prependLeadingSlash(Collection<String> patterns) {
-        if (patterns == null) {
-            return Collections.emptySet();
-        }
-        Set<String> result = new LinkedHashSet<>(patterns.size());
-        for (String pattern : patterns) {
-            if (StringUtils.hasLength(pattern) && !pattern.startsWith("/")) {
-                pattern = "/" + pattern;
-            }
-            result.add(pattern);
-        }
-        return result;
     }
 
     @Override

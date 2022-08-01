@@ -20,15 +20,10 @@ public class ControllerAdviceBean implements Ordered {
     private final Object beanOrName;
 
     private final boolean isSingleton;
-
-    private Object resolvedBean;
-
     private final Class<?> beanType;
-
     private final HandlerTypePredicate beanTypePredicate;
-
     private final BeanFactory beanFactory;
-
+    private Object resolvedBean;
     private Integer order;
 
     public ControllerAdviceBean(Object bean) {
@@ -57,6 +52,45 @@ public class ControllerAdviceBean implements Ordered {
         this.beanTypePredicate = (controllerAdvice != null ? createBeanTypePredicate(controllerAdvice) :
             createBeanTypePredicate(this.beanType));
         this.beanFactory = beanFactory;
+    }
+
+    public static List<ControllerAdviceBean> findAnnotatedBeans(ApplicationContext context) {
+        List<ControllerAdviceBean> adviceBeans = new ArrayList<>();
+        for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context, Object.class)) {
+            if (!ScopedProxyUtils.isScopedTarget(name)) {
+                ControllerAdvice controllerAdvice = context.findAnnotationOnBean(name, ControllerAdvice.class);
+                if (controllerAdvice != null) {
+                    // Use the @ControllerAdvice annotation found by findAnnotationOnBean()
+                    // in order to avoid a subsequent lookup of the same annotation.
+                    adviceBeans.add(new ControllerAdviceBean(name, context, controllerAdvice));
+                }
+            }
+        }
+        OrderComparator.sort(adviceBeans);
+        return adviceBeans;
+    }
+
+    private static Class<?> getBeanType(String beanName, BeanFactory beanFactory) {
+        Class<?> beanType = beanFactory.getType(beanName);
+        return (beanType != null ? ClassUtils.getUserClass(beanType) : null);
+    }
+
+    private static HandlerTypePredicate createBeanTypePredicate(Class<?> beanType) {
+        ControllerAdvice controllerAdvice = (beanType != null ?
+            AnnotatedElementUtils.findMergedAnnotation(beanType, ControllerAdvice.class) : null);
+        return createBeanTypePredicate(controllerAdvice);
+    }
+
+    private static HandlerTypePredicate createBeanTypePredicate(ControllerAdvice controllerAdvice) {
+        if (controllerAdvice != null) {
+            return HandlerTypePredicate.builder()
+                                       .basePackage(controllerAdvice.basePackages())
+                                       .basePackageClass(controllerAdvice.basePackageClasses())
+                                       .assignableType(controllerAdvice.assignableTypes())
+                                       .annotation(controllerAdvice.annotations())
+                                       .build();
+        }
+        return HandlerTypePredicate.forAnyHandlerType();
     }
 
     @Override
@@ -136,45 +170,6 @@ public class ControllerAdviceBean implements Ordered {
     @Override
     public String toString() {
         return this.beanOrName.toString();
-    }
-
-    public static List<ControllerAdviceBean> findAnnotatedBeans(ApplicationContext context) {
-        List<ControllerAdviceBean> adviceBeans = new ArrayList<>();
-        for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context, Object.class)) {
-            if (!ScopedProxyUtils.isScopedTarget(name)) {
-                ControllerAdvice controllerAdvice = context.findAnnotationOnBean(name, ControllerAdvice.class);
-                if (controllerAdvice != null) {
-                    // Use the @ControllerAdvice annotation found by findAnnotationOnBean()
-                    // in order to avoid a subsequent lookup of the same annotation.
-                    adviceBeans.add(new ControllerAdviceBean(name, context, controllerAdvice));
-                }
-            }
-        }
-        OrderComparator.sort(adviceBeans);
-        return adviceBeans;
-    }
-
-    private static Class<?> getBeanType(String beanName, BeanFactory beanFactory) {
-        Class<?> beanType = beanFactory.getType(beanName);
-        return (beanType != null ? ClassUtils.getUserClass(beanType) : null);
-    }
-
-    private static HandlerTypePredicate createBeanTypePredicate(Class<?> beanType) {
-        ControllerAdvice controllerAdvice = (beanType != null ?
-            AnnotatedElementUtils.findMergedAnnotation(beanType, ControllerAdvice.class) : null);
-        return createBeanTypePredicate(controllerAdvice);
-    }
-
-    private static HandlerTypePredicate createBeanTypePredicate(ControllerAdvice controllerAdvice) {
-        if (controllerAdvice != null) {
-            return HandlerTypePredicate.builder()
-                                       .basePackage(controllerAdvice.basePackages())
-                                       .basePackageClass(controllerAdvice.basePackageClasses())
-                                       .assignableType(controllerAdvice.assignableTypes())
-                                       .annotation(controllerAdvice.annotations())
-                                       .build();
-        }
-        return HandlerTypePredicate.forAnyHandlerType();
     }
 
 }

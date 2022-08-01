@@ -31,13 +31,13 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
         setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
     }
 
-    public void setSupportedMediaTypes(List<MediaType> supportedMediaTypes) {
-        Assert.notEmpty(supportedMediaTypes, "'supportedMediaTypes' must not be empty");
-        this.supportedMediaTypes= new ArrayList<>(supportedMediaTypes);
-    }
-
     public List<MediaType> getSupportedMediaTypes() {
         return Collections.unmodifiableList(this.supportedMediaTypes);
+    }
+
+    public void setSupportedMediaTypes(List<MediaType> supportedMediaTypes) {
+        Assert.notEmpty(supportedMediaTypes, "'supportedMediaTypes' must not be empty");
+        this.supportedMediaTypes = new ArrayList<>(supportedMediaTypes);
     }
 
     public boolean canRead(Class<?> clazz, MediaType mediaType) {

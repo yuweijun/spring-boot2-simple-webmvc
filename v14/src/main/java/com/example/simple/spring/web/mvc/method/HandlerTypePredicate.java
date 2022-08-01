@@ -27,6 +27,33 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
         this.annotations = Collections.unmodifiableList(annotations);
     }
 
+    public static HandlerTypePredicate forAnyHandlerType() {
+        return new HandlerTypePredicate(Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+    }
+
+    public static HandlerTypePredicate forBasePackage(String... packages) {
+        return new Builder().basePackage(packages).build();
+    }
+
+    // Static factory methods
+
+    public static HandlerTypePredicate forBasePackageClass(Class<?>... packageClasses) {
+        return new Builder().basePackageClass(packageClasses).build();
+    }
+
+    public static HandlerTypePredicate forAssignableType(Class<?>... types) {
+        return new Builder().assignableType(types).build();
+    }
+
+    @SafeVarargs
+    public static HandlerTypePredicate forAnnotation(Class<? extends Annotation>... annotations) {
+        return new Builder().annotation(annotations).build();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     public boolean test(Class<?> controllerType) {
         if (!hasSelectors()) {
@@ -53,33 +80,6 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 
     private boolean hasSelectors() {
         return (!this.basePackages.isEmpty() || !this.assignableTypes.isEmpty() || !this.annotations.isEmpty());
-    }
-
-    // Static factory methods
-
-    public static HandlerTypePredicate forAnyHandlerType() {
-        return new HandlerTypePredicate(Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
-    }
-
-    public static HandlerTypePredicate forBasePackage(String... packages) {
-        return new Builder().basePackage(packages).build();
-    }
-
-    public static HandlerTypePredicate forBasePackageClass(Class<?>... packageClasses) {
-        return new Builder().basePackageClass(packageClasses).build();
-    }
-
-    public static HandlerTypePredicate forAssignableType(Class<?>... types) {
-        return new Builder().assignableType(types).build();
-    }
-
-    @SafeVarargs
-    public static HandlerTypePredicate forAnnotation(Class<? extends Annotation>... annotations) {
-        return new Builder().annotation(annotations).build();
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static class Builder {

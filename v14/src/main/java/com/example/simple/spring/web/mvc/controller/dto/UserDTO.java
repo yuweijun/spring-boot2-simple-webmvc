@@ -1,5 +1,5 @@
 package com.example.simple.spring.web.mvc.controller.dto;
-  
+
 public class UserDTO {
 
     private int id;

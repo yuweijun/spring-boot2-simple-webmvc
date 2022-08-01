@@ -22,11 +22,9 @@ import java.util.Set;
 
 public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMapping {
 
+    private final Map<T, HandlerMethod> handlerMethods = new LinkedHashMap<>();
+    private final MultiValueMap<String, T> urlMap = new LinkedMultiValueMap<>();
     private boolean detectHandlerMethodsInAncestorContexts = false;
-
-    private final Map<T, HandlerMethod> handlerMethods= new LinkedHashMap<>();
-
-    private final MultiValueMap<String, T> urlMap= new LinkedMultiValueMap<>();
 
     protected abstract boolean isHandler(Class<?> beanType);
 
@@ -134,7 +132,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
     protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
         List<T> mappings = urlMap.get(lookupPath);
         if (mappings == null) {
-            mappings= new ArrayList<>(handlerMethods.keySet());
+            mappings = new ArrayList<>(handlerMethods.keySet());
         }
 
         List<Match> matches = new ArrayList<>();

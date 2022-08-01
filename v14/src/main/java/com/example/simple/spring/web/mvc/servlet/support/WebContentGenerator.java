@@ -42,7 +42,7 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 
     public WebContentGenerator(boolean restrictDefaultSupportedMethods) {
         if (restrictDefaultSupportedMethods) {
-            this.supportedMethods= new HashSet<>(4);
+            this.supportedMethods = new HashSet<>(4);
             this.supportedMethods.add(METHOD_GET);
             this.supportedMethods.add(METHOD_HEAD);
             this.supportedMethods.add(METHOD_POST);
@@ -50,59 +50,59 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
     }
 
     public WebContentGenerator(String... supportedMethods) {
-        this.supportedMethods= new HashSet<>(Arrays.asList(supportedMethods));
-    }
-
-    public final void setSupportedMethods(String[] methods) {
-        if (methods != null) {
-            this.supportedMethods= new HashSet<>(Arrays.asList(methods));
-        } else {
-            this.supportedMethods = null;
-        }
+        this.supportedMethods = new HashSet<>(Arrays.asList(supportedMethods));
     }
 
     public final String[] getSupportedMethods() {
         return StringUtils.toStringArray(this.supportedMethods);
     }
 
-    public final void setRequireSession(boolean requireSession) {
-        this.requireSession = requireSession;
+    public final void setSupportedMethods(String[] methods) {
+        if (methods != null) {
+            this.supportedMethods = new HashSet<>(Arrays.asList(methods));
+        } else {
+            this.supportedMethods = null;
+        }
     }
 
     public final boolean isRequireSession() {
         return this.requireSession;
     }
 
-    public final void setUseExpiresHeader(boolean useExpiresHeader) {
-        this.useExpiresHeader = useExpiresHeader;
+    public final void setRequireSession(boolean requireSession) {
+        this.requireSession = requireSession;
     }
 
     public final boolean isUseExpiresHeader() {
         return this.useExpiresHeader;
     }
 
-    public final void setUseCacheControlHeader(boolean useCacheControlHeader) {
-        this.useCacheControlHeader = useCacheControlHeader;
+    public final void setUseExpiresHeader(boolean useExpiresHeader) {
+        this.useExpiresHeader = useExpiresHeader;
     }
 
     public final boolean isUseCacheControlHeader() {
         return this.useCacheControlHeader;
     }
 
-    public final void setUseCacheControlNoStore(boolean useCacheControlNoStore) {
-        this.useCacheControlNoStore = useCacheControlNoStore;
+    public final void setUseCacheControlHeader(boolean useCacheControlHeader) {
+        this.useCacheControlHeader = useCacheControlHeader;
     }
 
     public final boolean isUseCacheControlNoStore() {
         return this.useCacheControlNoStore;
     }
 
-    public final void setCacheSeconds(int seconds) {
-        this.cacheSeconds = seconds;
+    public final void setUseCacheControlNoStore(boolean useCacheControlNoStore) {
+        this.useCacheControlNoStore = useCacheControlNoStore;
     }
 
     public final int getCacheSeconds() {
         return this.cacheSeconds;
+    }
+
+    public final void setCacheSeconds(int seconds) {
+        this.cacheSeconds = seconds;
     }
 
     protected final void checkAndPrepare(HttpServletRequest request, HttpServletResponse response, boolean lastModified) throws ServletException {

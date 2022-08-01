@@ -10,12 +10,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StringHttpMessageConverter extends AbstractHttpMessageConverter<String> {
 
-    public static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.ISO_8859_1;
 
     private final List<Charset> availableCharsets;
 

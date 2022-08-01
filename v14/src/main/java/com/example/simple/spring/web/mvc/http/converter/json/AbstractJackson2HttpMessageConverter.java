@@ -49,11 +49,9 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
         ENCODINGS.put("US-ASCII", JsonEncoding.UTF8);
     }
 
-    protected ObjectMapper objectMapper;
-
-    private Boolean prettyPrint;
-
     private final PrettyPrinter ssePrettyPrinter;
+    protected ObjectMapper objectMapper;
+    private Boolean prettyPrint;
 
     protected AbstractJackson2HttpMessageConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -72,14 +70,22 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
         setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
     }
 
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        Assert.notNull(objectMapper, "ObjectMapper must not be null");
-        this.objectMapper = objectMapper;
-        configurePrettyPrint();
+    private static Charset getCharset(MediaType contentType) {
+        if (contentType != null && contentType.getCharset() != null) {
+            return contentType.getCharset();
+        } else {
+            return StandardCharsets.UTF_8;
+        }
     }
 
     public ObjectMapper getObjectMapper() {
         return this.objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        Assert.notNull(objectMapper, "ObjectMapper must not be null");
+        this.objectMapper = objectMapper;
+        configurePrettyPrint();
     }
 
     public void setPrettyPrint(boolean prettyPrint) {
@@ -196,14 +202,6 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
             throw new HttpMessageException("Type definition error: " + ex.getType(), ex);
         } catch (JsonProcessingException ex) {
             throw new HttpMessageException("JSON parse error: " + ex.getOriginalMessage(), ex);
-        }
-    }
-
-    private static Charset getCharset(MediaType contentType) {
-        if (contentType != null && contentType.getCharset() != null) {
-            return contentType.getCharset();
-        } else {
-            return StandardCharsets.UTF_8;
         }
     }
 

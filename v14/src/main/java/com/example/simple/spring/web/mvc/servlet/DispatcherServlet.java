@@ -19,7 +19,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.OrderComparator;
 import org.springframework.ui.ModelMap;
-import org.springframework.ui.context.ThemeSource;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -226,14 +225,6 @@ public class DispatcherServlet extends FrameworkServlet {
         }
     }
 
-    public final ThemeSource getThemeSource() {
-        if (getWebApplicationContext() instanceof ThemeSource) {
-            return (ThemeSource) getWebApplicationContext();
-        } else {
-            return null;
-        }
-    }
-
     @Override
     protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String requestUri = urlPathHelper.getRequestUri(request);
@@ -256,7 +247,6 @@ public class DispatcherServlet extends FrameworkServlet {
 
         // Make framework objects available to handlers and view objects.
         request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());
-        request.setAttribute(THEME_SOURCE_ATTRIBUTE, getThemeSource());
 
         try {
             doDispatch(request, response);
@@ -349,6 +339,16 @@ public class DispatcherServlet extends FrameworkServlet {
         return null;
     }
 
+    protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
+        for (HandlerAdapter handlerAdapter : this.handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                logger.debug("match handler adapter [" + handlerAdapter + "]");
+                return handlerAdapter;
+            }
+        }
+        throw new ServletException("No adapter for handler [" + handler + "]: Does your handler implement a supported interface like Controller?");
+    }
+
     protected void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
         View view = ModelAndView.getView(request);
         ModelMap model = ModelAndView.getModel(request);
@@ -384,16 +384,6 @@ public class DispatcherServlet extends FrameworkServlet {
             pageNotFoundLogger.warn("No mapping found for HTTP request with URI [" + requestUri + "] in DispatcherServlet with name '" + getServletName() + "'");
         }
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-
-    protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
-        for (HandlerAdapter handlerAdapter : this.handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                logger.debug("match handler adapter [" + handlerAdapter + "]");
-                return handlerAdapter;
-            }
-        }
-        throw new ServletException("No adapter for handler [" + handler + "]: Does your handler implement a supported interface like Controller?");
     }
 
     protected void processHandlerException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {

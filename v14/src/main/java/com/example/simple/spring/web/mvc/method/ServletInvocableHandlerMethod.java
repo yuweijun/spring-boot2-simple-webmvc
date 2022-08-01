@@ -1,5 +1,3 @@
-
-
 package com.example.simple.spring.web.mvc.method;
 
 import com.example.simple.spring.web.mvc.bind.annotation.ResponseStatus;
@@ -41,6 +39,16 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
         return this.responseStatus;
     }
 
+    private void setResponseStatus(HttpServletResponse response) throws IOException {
+        if (this.responseStatus != null) {
+            if (StringUtils.hasText(this.responseReason)) {
+                response.sendError(this.responseStatus.code(), this.responseReason);
+            } else {
+                response.setStatus(this.responseStatus.code());
+            }
+        }
+    }
+
     public void setHandlerMethodReturnValueHandlers(HandlerMethodReturnValueHandlerComposite returnValueHandlers) {
         this.returnValueHandlers = returnValueHandlers;
     }
@@ -68,16 +76,6 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
         }
         sb.append("[value=" + returnValue + "]");
         return getDetailedErrorMessage(sb.toString());
-    }
-
-    private void setResponseStatus(HttpServletResponse response) throws IOException {
-        if (this.responseStatus != null) {
-            if (StringUtils.hasText(this.responseReason)) {
-                response.sendError(this.responseStatus.code(), this.responseReason);
-            } else {
-                response.setStatus(this.responseStatus.code());
-            }
-        }
     }
 
 }

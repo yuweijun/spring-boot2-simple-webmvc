@@ -1,6 +1,5 @@
 package com.example.simple.spring.web.mvc.controller;
 
-
 import com.example.simple.spring.web.mvc.bind.annotation.ModelAttribute;
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;

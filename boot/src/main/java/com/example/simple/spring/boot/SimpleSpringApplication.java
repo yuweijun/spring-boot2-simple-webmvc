@@ -10,6 +10,7 @@ public class SimpleSpringApplication extends SpringApplication {
         super(null, primarySources);
     }
 
+    @Override
     protected ConfigurableApplicationContext createApplicationContext() {
         return new SimpleAnnotationConfigServletWebServerApplicationContext();
     }

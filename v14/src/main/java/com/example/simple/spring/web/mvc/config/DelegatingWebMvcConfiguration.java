@@ -1,8 +1,8 @@
 package com.example.simple.spring.web.mvc.config;
 
+import com.example.simple.spring.web.mvc.controller.interceptor.ResponseStatusInterceptor;
+import com.example.simple.spring.web.mvc.controller.interceptor.ResponseTimeInterceptor;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
-import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.ResponseStatusInterceptor;
-import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.ResponseTimeInterceptor;
 import com.example.simple.spring.web.mvc.servlet.view.InternalResourceViewResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

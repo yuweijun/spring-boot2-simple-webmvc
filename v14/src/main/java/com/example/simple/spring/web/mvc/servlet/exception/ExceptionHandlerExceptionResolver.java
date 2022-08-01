@@ -35,37 +35,33 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExceptionResolver implements ApplicationContextAware, InitializingBean {
 
+    private final List<Object> responseBodyAdvice = new ArrayList<>();
+    private final Map<Class<?>, ExceptionHandlerMethodResolver> exceptionHandlerCache = new ConcurrentHashMap<>(64);
+    private final Map<ControllerAdviceBean, ExceptionHandlerMethodResolver> exceptionHandlerAdviceCache = new LinkedHashMap<>();
     private List<HandlerMethodArgumentResolver> customArgumentResolvers;
-
     private HandlerMethodArgumentResolverComposite argumentResolvers;
 
-    private List<HandlerMethodReturnValueHandler> customReturnValueHandlers;
-
-    private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
-
-    private List<HttpMessageConverter<?>> messageConverters;
-
     // private ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
-
-    private final List<Object> responseBodyAdvice = new ArrayList<>();
-
+    private List<HandlerMethodReturnValueHandler> customReturnValueHandlers;
+    private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
+    private List<HttpMessageConverter<?>> messageConverters;
     private ApplicationContext applicationContext;
-
-    private final Map<Class<?>, ExceptionHandlerMethodResolver> exceptionHandlerCache = new ConcurrentHashMap<>(64);
-
-    private final Map<ControllerAdviceBean, ExceptionHandlerMethodResolver> exceptionHandlerAdviceCache = new LinkedHashMap<>();
 
     public ExceptionHandlerExceptionResolver() {
         this.messageConverters = new ArrayList<>();
         this.messageConverters.add(new StringHttpMessageConverter());
     }
 
+    public List<HandlerMethodArgumentResolver> getCustomArgumentResolvers() {
+        return this.customArgumentResolvers;
+    }
+
     public void setCustomArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         this.customArgumentResolvers = argumentResolvers;
     }
 
-    public List<HandlerMethodArgumentResolver> getCustomArgumentResolvers() {
-        return this.customArgumentResolvers;
+    public HandlerMethodArgumentResolverComposite getArgumentResolvers() {
+        return this.argumentResolvers;
     }
 
     public void setArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
@@ -77,16 +73,16 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         }
     }
 
-    public HandlerMethodArgumentResolverComposite getArgumentResolvers() {
-        return this.argumentResolvers;
+    public List<HandlerMethodReturnValueHandler> getCustomReturnValueHandlers() {
+        return this.customReturnValueHandlers;
     }
 
     public void setCustomReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         this.customReturnValueHandlers = returnValueHandlers;
     }
 
-    public List<HandlerMethodReturnValueHandler> getCustomReturnValueHandlers() {
-        return this.customReturnValueHandlers;
+    public HandlerMethodReturnValueHandlerComposite getReturnValueHandlers() {
+        return this.returnValueHandlers;
     }
 
     public void setReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
@@ -98,25 +94,21 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         }
     }
 
-    public HandlerMethodReturnValueHandlerComposite getReturnValueHandlers() {
-        return this.returnValueHandlers;
+    public List<HttpMessageConverter<?>> getMessageConverters() {
+        return this.messageConverters;
     }
 
     public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
         this.messageConverters = messageConverters;
     }
 
-    public List<HttpMessageConverter<?>> getMessageConverters() {
-        return this.messageConverters;
+    public ApplicationContext getApplicationContext() {
+        return this.applicationContext;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    public ApplicationContext getApplicationContext() {
-        return this.applicationContext;
     }
 
     @Override

@@ -21,17 +21,12 @@ import java.util.Map;
 
 public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport implements HandlerMapping, Ordered {
 
-    private int order = Integer.MAX_VALUE;  // default: same as non-Ordered
-
-    private Object defaultHandler;
-
-    private UrlPathHelper urlPathHelper = new UrlPathHelper();
-
-    private PathMatcher pathMatcher = new AntPathMatcher();
-
     private final List<HandlerInterceptor> interceptors = new ArrayList<>();
-
     private final List<MappedInterceptor> mappedInterceptors = new ArrayList<>();
+    private int order = Integer.MAX_VALUE;  // default: same as non-Ordered
+    private Object defaultHandler;
+    private UrlPathHelper urlPathHelper = new UrlPathHelper();
+    private PathMatcher pathMatcher = new AntPathMatcher();
 
     protected abstract Object getHandlerInternal(HttpServletRequest request) throws Exception;
 
@@ -77,10 +72,6 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         this.pathMatcher = pathMatcher;
     }
 
-    public void setInterceptors(HandlerInterceptor[] interceptors) {
-        this.interceptors.addAll(Arrays.asList(interceptors));
-    }
-
     @Override
     protected void initApplicationContext() throws BeansException {
         detectMappedInterceptors();
@@ -102,6 +93,10 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         return (count > 0) ? interceptors.toArray(new HandlerInterceptor[count]) : null;
     }
 
+    public void setInterceptors(HandlerInterceptor[] interceptors) {
+        this.interceptors.addAll(Arrays.asList(interceptors));
+    }
+
     public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         Object handler = getHandlerInternal(request);
         if (handler == null) {
@@ -121,7 +116,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
     }
 
     protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) {
-        HandlerExecutionChain chain = HandlerExecutionChain.class.isInstance(handler) ? (HandlerExecutionChain) handler : new HandlerExecutionChain(handler);
+        HandlerExecutionChain chain = handler instanceof HandlerExecutionChain ? (HandlerExecutionChain) handler : new HandlerExecutionChain(handler);
         chain.addInterceptors(getInterceptors());
 
         String lookupPath = urlPathHelper.getLookupPathForRequest(request);

@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.servlet.handler.intercerptor;
+package com.example.simple.spring.web.mvc.controller.interceptor;
 
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import org.slf4j.Logger;
@@ -6,13 +6,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
- 
-public class ResponseStatusInterceptor implements HandlerInterceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResponseStatusInterceptor.class);
+public class RequestLoggerInterceptor implements HandlerInterceptor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestLoggerInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        LOGGER.info("request uri : {}", request.getRequestURI());
         return true;
     }
 
@@ -23,8 +24,6 @@ public class ResponseStatusInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        final int status = response.getStatus();
-        final String requestURI = request.getRequestURI();
-        LOGGER.info("response status of request [{}] is : {}", requestURI, status);
     }
+
 }

@@ -88,29 +88,17 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         return new HttpHeaders(headers, true);
     }
 
-    public void setAccept(List<MediaType> acceptableMediaTypes) {
-        set(ACCEPT, MediaType.toString(acceptableMediaTypes));
-    }
-
     public List<MediaType> getAccept() {
         String value = getFirst(ACCEPT);
         return (value != null ? MediaType.parseMediaTypes(value) : Collections.emptyList());
     }
 
-    public void setAcceptCharset(List<Charset> acceptableCharsets) {
-        StringBuilder builder = new StringBuilder();
-        for (Iterator<Charset> iterator = acceptableCharsets.iterator(); iterator.hasNext(); ) {
-            Charset charset = iterator.next();
-            builder.append(charset.name().toLowerCase(Locale.ENGLISH));
-            if (iterator.hasNext()) {
-                builder.append(", ");
-            }
-        }
-        set(ACCEPT_CHARSET, builder.toString());
+    public void setAccept(List<MediaType> acceptableMediaTypes) {
+        set(ACCEPT, MediaType.toString(acceptableMediaTypes));
     }
 
     public List<Charset> getAcceptCharset() {
-        List<Charset> result= new ArrayList<>();
+        List<Charset> result = new ArrayList<>();
         String value = getFirst(ACCEPT_CHARSET);
         if (value != null) {
             String[] tokens = value.split(",\\s*");
@@ -130,14 +118,22 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         return result;
     }
 
-    public void setAllow(Set<HttpMethod> allowedMethods) {
-        set(ALLOW, StringUtils.collectionToCommaDelimitedString(allowedMethods));
+    public void setAcceptCharset(List<Charset> acceptableCharsets) {
+        StringBuilder builder = new StringBuilder();
+        for (Iterator<Charset> iterator = acceptableCharsets.iterator(); iterator.hasNext(); ) {
+            Charset charset = iterator.next();
+            builder.append(charset.name().toLowerCase(Locale.ENGLISH));
+            if (iterator.hasNext()) {
+                builder.append(", ");
+            }
+        }
+        set(ACCEPT_CHARSET, builder.toString());
     }
 
     public Set<HttpMethod> getAllow() {
         String value = getFirst(ALLOW);
         if (value != null) {
-            List<HttpMethod> allowedMethod= new ArrayList<>(5);
+            List<HttpMethod> allowedMethod = new ArrayList<>(5);
             String[] tokens = value.split(",\\s*");
             for (String token : tokens) {
                 allowedMethod.add(HttpMethod.valueOf(token));
@@ -148,12 +144,16 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         }
     }
 
-    public void setCacheControl(String cacheControl) {
-        set(CACHE_CONTROL, cacheControl);
+    public void setAllow(Set<HttpMethod> allowedMethods) {
+        set(ALLOW, StringUtils.collectionToCommaDelimitedString(allowedMethods));
     }
 
     public String getCacheControl() {
         return getFirst(CACHE_CONTROL);
+    }
+
+    public void setCacheControl(String cacheControl) {
+        set(CACHE_CONTROL, cacheControl);
     }
 
     public void setContentDispositionFormData(String name, String filename) {
@@ -167,13 +167,18 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         set(CONTENT_DISPOSITION, builder.toString());
     }
 
+    public long getContentLength() {
+        String value = getFirst(CONTENT_LENGTH);
+        return (value != null ? Long.parseLong(value) : -1);
+    }
+
     public void setContentLength(long contentLength) {
         set(CONTENT_LENGTH, Long.toString(contentLength));
     }
 
-    public long getContentLength() {
-        String value = getFirst(CONTENT_LENGTH);
-        return (value != null ? Long.parseLong(value) : -1);
+    public MediaType getContentType() {
+        String value = getFirst(CONTENT_TYPE);
+        return (value != null ? MediaType.parseMediaType(value) : null);
     }
 
     public void setContentType(MediaType mediaType) {
@@ -182,17 +187,16 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         set(CONTENT_TYPE, mediaType.toString());
     }
 
-    public MediaType getContentType() {
-        String value = getFirst(CONTENT_TYPE);
-        return (value != null ? MediaType.parseMediaType(value) : null);
+    public long getDate() {
+        return getFirstDate(DATE);
     }
 
     public void setDate(long date) {
         setDate(DATE, date);
     }
 
-    public long getDate() {
-        return getFirstDate(DATE);
+    public String getETag() {
+        return getFirst(ETAG);
     }
 
     public void setETag(String eTag) {
@@ -203,16 +207,12 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         set(ETAG, eTag);
     }
 
-    public String getETag() {
-        return getFirst(ETAG);
+    public long getExpires() {
+        return getFirstDate(EXPIRES);
     }
 
     public void setExpires(long expires) {
         setDate(EXPIRES, expires);
-    }
-
-    public long getExpires() {
-        return getFirstDate(EXPIRES);
     }
 
     public void setIfModifiedSince(long ifModifiedSince) {
@@ -221,6 +221,19 @@ public class HttpHeaders implements MultiValueMap<String, String> {
 
     public long getIfNotModifiedSince() {
         return getFirstDate(IF_MODIFIED_SINCE);
+    }
+
+    public List<String> getIfNoneMatch() {
+        List<String> result = new ArrayList<>();
+
+        String value = getFirst(IF_NONE_MATCH);
+        if (value != null) {
+            String[] tokens = value.split(",\\s*");
+            for (String token : tokens) {
+                result.add(token);
+            }
+        }
+        return result;
     }
 
     public void setIfNoneMatch(String ifNoneMatch) {
@@ -239,29 +252,12 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         set(IF_NONE_MATCH, builder.toString());
     }
 
-    public List<String> getIfNoneMatch() {
-        List<String> result= new ArrayList<>();
-
-        String value = getFirst(IF_NONE_MATCH);
-        if (value != null) {
-            String[] tokens = value.split(",\\s*");
-            for (String token : tokens) {
-                result.add(token);
-            }
-        }
-        return result;
-    }
-
-    public void setLastModified(long lastModified) {
-        setDate(LAST_MODIFIED, lastModified);
-    }
-
     public long getLastModified() {
         return getFirstDate(LAST_MODIFIED);
     }
 
-    public void setLocation(URI location) {
-        set(LOCATION, location.toASCIIString());
+    public void setLastModified(long lastModified) {
+        setDate(LAST_MODIFIED, lastModified);
     }
 
     public URI getLocation() {
@@ -269,12 +265,16 @@ public class HttpHeaders implements MultiValueMap<String, String> {
         return (value != null ? URI.create(value) : null);
     }
 
-    public void setPragma(String pragma) {
-        set(PRAGMA, pragma);
+    public void setLocation(URI location) {
+        set(LOCATION, location.toASCIIString());
     }
 
     public String getPragma() {
         return getFirst(PRAGMA);
+    }
+
+    public void setPragma(String pragma) {
+        set(PRAGMA, pragma);
     }
 
     // Utility methods
@@ -313,7 +313,7 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     public void add(String headerName, String headerValue) {
         List<String> headerValues = headers.get(headerName);
         if (headerValues == null) {
-            headerValues= new LinkedList<>();
+            headerValues = new LinkedList<>();
             this.headers.put(headerName, headerValues);
         }
         headerValues.add(headerValue);
@@ -330,7 +330,7 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     }
 
     public void set(String headerName, String headerValue) {
-        List<String> headerValues= new LinkedList<>();
+        List<String> headerValues = new LinkedList<>();
         headerValues.add(headerValue);
         headers.put(headerName, headerValues);
     }
@@ -342,7 +342,7 @@ public class HttpHeaders implements MultiValueMap<String, String> {
     }
 
     public Map<String, String> toSingleValueMap() {
-        LinkedHashMap<String, String> singleValueMap= new LinkedHashMap<>(this.headers.size());
+        LinkedHashMap<String, String> singleValueMap = new LinkedHashMap<>(this.headers.size());
         for (Entry<String, List<String>> entry : headers.entrySet()) {
             singleValueMap.put(entry.getKey(), entry.getValue().get(0));
         }

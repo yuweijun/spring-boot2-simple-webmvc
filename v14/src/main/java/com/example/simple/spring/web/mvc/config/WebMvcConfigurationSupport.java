@@ -3,6 +3,7 @@ package com.example.simple.spring.web.mvc.config;
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.controller.RootController;
 import com.example.simple.spring.web.mvc.controller.exception.NotFoundHandlerExceptionResolver;
+import com.example.simple.spring.web.mvc.controller.interceptor.RequestLoggerInterceptor;
 import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
@@ -14,7 +15,6 @@ import com.example.simple.spring.web.mvc.servlet.handler.HttpRequestHandlerAdapt
 import com.example.simple.spring.web.mvc.servlet.handler.RequestMappingHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.SimpleControllerHandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.MappedInterceptor;
-import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.RequestLoggerInterceptor;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.BeanNameUrlHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.RequestMappingHandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.mapping.SimpleUrlHandlerMapping;

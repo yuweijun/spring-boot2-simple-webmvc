@@ -28,12 +28,11 @@ public class ServletContextAwareProcessor implements BeanPostProcessor {
         this(null, servletConfig);
     }
 
-    public ServletContextAwareProcessor(  ServletContext servletContext,   ServletConfig servletConfig) {
+    public ServletContextAwareProcessor(ServletContext servletContext, ServletConfig servletConfig) {
         this.servletContext = servletContext;
         this.servletConfig = servletConfig;
     }
 
-     
     protected ServletContext getServletContext() {
         if (this.servletContext == null && getServletConfig() != null) {
             final ServletContext context = getServletConfig().getServletContext();
@@ -43,7 +42,6 @@ public class ServletContextAwareProcessor implements BeanPostProcessor {
         return this.servletContext;
     }
 
-     
     protected ServletConfig getServletConfig() {
         return this.servletConfig;
     }

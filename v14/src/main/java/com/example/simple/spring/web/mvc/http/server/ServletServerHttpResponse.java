@@ -9,51 +9,51 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
- 
+
 public class ServletServerHttpResponse implements ServerHttpResponse {
 
-	private final HttpServletResponse servletResponse;
+    private final HttpServletResponse servletResponse;
 
-	private final HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
 
-	private boolean headersWritten = false;
- 
-	public ServletServerHttpResponse(HttpServletResponse servletResponse) {
-		Assert.notNull(servletResponse, "'servletResponse' must not be null");
-		this.servletResponse = servletResponse;
-	}
- 
-	public HttpServletResponse getServletResponse() {
-		return this.servletResponse;
-	}
+    private boolean headersWritten = false;
 
-	public void setStatusCode(HttpStatus status) {
-		this.servletResponse.setStatus(status.code());
-	}
+    public ServletServerHttpResponse(HttpServletResponse servletResponse) {
+        Assert.notNull(servletResponse, "'servletResponse' must not be null");
+        this.servletResponse = servletResponse;
+    }
 
-	public HttpHeaders getHeaders() {
-		return (this.headersWritten ? HttpHeaders.readOnlyHttpHeaders(this.headers) : this.headers);
-	}
+    public HttpServletResponse getServletResponse() {
+        return this.servletResponse;
+    }
 
-	public OutputStream getBody() throws IOException {
-		writeHeaders();
-		return this.servletResponse.getOutputStream();
-	}
+    public void setStatusCode(HttpStatus status) {
+        this.servletResponse.setStatus(status.code());
+    }
 
-	public void close() {
-		writeHeaders();
-	}
+    public HttpHeaders getHeaders() {
+        return (this.headersWritten ? HttpHeaders.readOnlyHttpHeaders(this.headers) : this.headers);
+    }
 
-	private void writeHeaders() {
-		if (!this.headersWritten) {
-			for (Map.Entry<String, List<String>> entry : this.headers.entrySet()) {
-				String headerName = entry.getKey();
-				for (String headerValue : entry.getValue()) {
-					this.servletResponse.addHeader(headerName, headerValue);
-				}
-			}
-			this.headersWritten = true;
-		}
-	}
+    public OutputStream getBody() throws IOException {
+        writeHeaders();
+        return this.servletResponse.getOutputStream();
+    }
+
+    public void close() {
+        writeHeaders();
+    }
+
+    private void writeHeaders() {
+        if (!this.headersWritten) {
+            for (Map.Entry<String, List<String>> entry : this.headers.entrySet()) {
+                String headerName = entry.getKey();
+                for (String headerValue : entry.getValue()) {
+                    this.servletResponse.addHeader(headerName, headerValue);
+                }
+            }
+            this.headersWritten = true;
+        }
+    }
 
 }

@@ -14,20 +14,20 @@ public class HandlerExceptionResolverComposite implements HandlerExceptionResolv
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
     public int getOrder() {
         return this.order;
     }
 
-    public void setExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        this.resolvers = exceptionResolvers;
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public List<HandlerExceptionResolver> getExceptionResolvers() {
         return Collections.unmodifiableList(resolvers);
+    }
+
+    public void setExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+        this.resolvers = exceptionResolvers;
     }
 
     public boolean resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {

@@ -44,16 +44,11 @@ public class HandlerMethod {
     private final Method bridgedMethod;
 
     private final MethodParameter[] parameters;
-
-    private HttpStatus responseStatus;
-
-    private String responseStatusReason;
-
-    private HandlerMethod resolvedFromHandlerMethod;
-
-    private volatile List<Annotation[][]> interfaceParameterAnnotations;
-
     private final String description;
+    private HttpStatus responseStatus;
+    private String responseStatusReason;
+    private HandlerMethod resolvedFromHandlerMethod;
+    private volatile List<Annotation[][]> interfaceParameterAnnotations;
 
     public HandlerMethod(Object bean, Method method) {
         this(bean, method, null);
@@ -145,6 +140,29 @@ public class HandlerMethod {
         this.description = handlerMethod.description;
     }
 
+    private static String initDescription(Class<?> beanType, Method method) {
+        StringJoiner joiner = new StringJoiner(", ", "(", ")");
+        for (Class<?> paramType : method.getParameterTypes()) {
+            joiner.add(paramType.getSimpleName());
+        }
+        return beanType.getName() + "#" + method.getName() + joiner;
+    }
+
+    protected static Object findProvidedArgument(MethodParameter parameter, Object... providedArgs) {
+        if (!ObjectUtils.isEmpty(providedArgs)) {
+            for (Object providedArg : providedArgs) {
+                if (parameter.getParameterType().isInstance(providedArg)) {
+                    return providedArg;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected static String formatArgumentError(MethodParameter param, String message) {
+        return "Could not resolve parameter [" + param.getParameterIndex() + "] in " + param.getExecutable().toGenericString() + (StringUtils.hasText(message) ? ": " + message : "");
+    }
+
     private MethodParameter[] initMethodParameters() {
         int count = this.bridgedMethod.getParameterCount();
         MethodParameter[] result = new MethodParameter[count];
@@ -166,14 +184,6 @@ public class HandlerMethod {
             this.responseStatus = annotation.value();
             this.responseStatusReason = resolvedReason;
         }
-    }
-
-    private static String initDescription(Class<?> beanType, Method method) {
-        StringJoiner joiner = new StringJoiner(", ", "(", ")");
-        for (Class<?> paramType : method.getParameterTypes()) {
-            joiner.add(paramType.getSimpleName());
-        }
-        return beanType.getName() + "#" + method.getName() + joiner.toString();
     }
 
     public Object getBean() {
@@ -286,6 +296,8 @@ public class HandlerMethod {
         return (this.bean.equals(otherMethod.bean) && this.method.equals(otherMethod.method));
     }
 
+    // Support methods for use in "InvocableHandlerMethod" sub-class variants..
+
     @Override
     public int hashCode() {
         return (this.bean.hashCode() * 31 + this.method.hashCode());
@@ -294,23 +306,6 @@ public class HandlerMethod {
     @Override
     public String toString() {
         return this.description;
-    }
-
-    // Support methods for use in "InvocableHandlerMethod" sub-class variants..
-
-    protected static Object findProvidedArgument(MethodParameter parameter, Object... providedArgs) {
-        if (!ObjectUtils.isEmpty(providedArgs)) {
-            for (Object providedArg : providedArgs) {
-                if (parameter.getParameterType().isInstance(providedArg)) {
-                    return providedArg;
-                }
-            }
-        }
-        return null;
-    }
-
-    protected static String formatArgumentError(MethodParameter param, String message) {
-        return "Could not resolve parameter [" + param.getParameterIndex() + "] in " + param.getExecutable().toGenericString() + (StringUtils.hasText(message) ? ": " + message : "");
     }
 
     protected void assertTargetBean(Method method, Object targetBean, Object[] args) {

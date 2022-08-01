@@ -34,6 +34,23 @@ public final class ModelFactory {
         this.sessionAttributesHandler = sessionAttributesHandler;
     }
 
+    public static String getNameForReturnValue(Object returnValue, MethodParameter returnType) {
+        ModelAttribute annot = returnType.getMethodAnnotation(ModelAttribute.class);
+        if (annot != null && StringUtils.hasText(annot.value())) {
+            return annot.value();
+        } else {
+            Method method = returnType.getMethod();
+            Class<?> resolvedType = GenericTypeResolver.resolveReturnType(method, returnType.getDeclaringClass());
+            return Conventions.getVariableNameForReturnType(method, resolvedType, returnValue);
+        }
+    }
+
+    public static String getNameForParameter(MethodParameter parameter) {
+        ModelAttribute annot = parameter.getParameterAnnotation(ModelAttribute.class);
+        String attrName = (annot != null) ? annot.value() : null;
+        return StringUtils.hasText(attrName) ? attrName : Conventions.getVariableNameForParameter(parameter);
+    }
+
     public void initModel(HttpServletRequest request, HandlerMethod handlerMethod) throws Exception {
         Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
         final ModelMap model = ModelAndView.getModel(request);
@@ -83,23 +100,6 @@ public final class ModelFactory {
             }
         }
         return result;
-    }
-
-    public static String getNameForReturnValue(Object returnValue, MethodParameter returnType) {
-        ModelAttribute annot = returnType.getMethodAnnotation(ModelAttribute.class);
-        if (annot != null && StringUtils.hasText(annot.value())) {
-            return annot.value();
-        } else {
-            Method method = returnType.getMethod();
-            Class<?> resolvedType = GenericTypeResolver.resolveReturnType(method, returnType.getDeclaringClass());
-            return Conventions.getVariableNameForReturnType(method, resolvedType, returnValue);
-        }
-    }
-
-    public static String getNameForParameter(MethodParameter parameter) {
-        ModelAttribute annot = parameter.getParameterAnnotation(ModelAttribute.class);
-        String attrName = (annot != null) ? annot.value() : null;
-        return StringUtils.hasText(attrName) ? attrName : Conventions.getVariableNameForParameter(parameter);
     }
 
     public void updateModel(HttpServletRequest request) throws Exception {

@@ -136,7 +136,6 @@ public class UrlPathHelper {
         return decodeRequestString(request, contextPath);
     }
 
-    
     public String getOriginatingServletPath(HttpServletRequest request) {
         String servletPath = (String) request.getAttribute(WebUtils.FORWARD_SERVLET_PATH_ATTRIBUTE);
         if (servletPath == null) {
@@ -145,7 +144,6 @@ public class UrlPathHelper {
         return servletPath;
     }
 
-    
     public String getOriginatingQueryString(HttpServletRequest request) {
         if ((request.getAttribute(WebUtils.FORWARD_REQUEST_URI_ATTRIBUTE) != null) ||
             (request.getAttribute(WebUtils.ERROR_REQUEST_URI_ATTRIBUTE) != null)) {
@@ -161,7 +159,6 @@ public class UrlPathHelper {
         return (semicolonIndex != -1 ? uri.substring(0, semicolonIndex) : uri);
     }
 
-    
     public String decodeRequestString(HttpServletRequest request, String source) {
         if (this.urlDecode) {
             String enc = determineEncoding(request);

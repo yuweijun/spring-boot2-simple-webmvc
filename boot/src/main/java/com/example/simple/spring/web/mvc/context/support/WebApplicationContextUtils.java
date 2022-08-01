@@ -44,7 +44,6 @@ public abstract class WebApplicationContextUtils {
     }
 
     public static void registerEnvironmentBeans(ConfigurableListableBeanFactory bf, ServletContext sc, ServletConfig config) {
-
         if (sc != null && !bf.containsBean(SimpleWebApplicationContext.SERVLET_CONTEXT_BEAN_NAME)) {
             bf.registerSingleton(SimpleWebApplicationContext.SERVLET_CONTEXT_BEAN_NAME, sc);
         }
@@ -54,7 +53,7 @@ public abstract class WebApplicationContextUtils {
         }
 
         if (!bf.containsBean(SimpleWebApplicationContext.CONTEXT_PARAMETERS_BEAN_NAME)) {
-            Map<String, String> parameterMap =  new HashMap<>();
+            Map<String, String> parameterMap = new HashMap<>();
             if (sc != null) {
                 Enumeration<?> paramNameEnum = sc.getInitParameterNames();
                 while (paramNameEnum.hasMoreElements()) {
@@ -73,7 +72,7 @@ public abstract class WebApplicationContextUtils {
         }
 
         if (!bf.containsBean(SimpleWebApplicationContext.CONTEXT_ATTRIBUTES_BEAN_NAME)) {
-            Map<String, Object> attributeMap =  new HashMap<>();
+            Map<String, Object> attributeMap = new HashMap<>();
             if (sc != null) {
                 Enumeration<?> attrNameEnum = sc.getAttributeNames();
                 while (attrNameEnum.hasMoreElements()) {

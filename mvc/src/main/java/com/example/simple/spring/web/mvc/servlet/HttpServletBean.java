@@ -22,7 +22,7 @@ public abstract class HttpServletBean extends HttpServlet {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private final Set<String> requiredProperties =  new HashSet<>();
+    private final Set<String> requiredProperties = new HashSet<>();
 
     protected final void addRequiredProperty(String property) {
         this.requiredProperties.add(property);
@@ -75,7 +75,7 @@ public abstract class HttpServletBean extends HttpServlet {
             throws ServletException {
 
             Set<String> missingProps = (requiredProperties != null && !requiredProperties.isEmpty()) ?
-                 new HashSet<>(requiredProperties) : null;
+                new HashSet<>(requiredProperties) : null;
 
             Enumeration en = config.getInitParameterNames();
             while (en.hasMoreElements()) {

@@ -104,7 +104,6 @@ public abstract class WebUtils {
         return (File) servletContext.getAttribute(TEMP_DIR_CONTEXT_ATTRIBUTE);
     }
 
-    
     public static String getRealPath(ServletContext servletContext, String path) throws FileNotFoundException {
         Assert.notNull(servletContext, "ServletContext must not be null");
         // Interpret location as relative to the web application root directory.
@@ -120,21 +119,18 @@ public abstract class WebUtils {
         return realPath;
     }
 
-    
     public static String getSessionId(HttpServletRequest request) {
         Assert.notNull(request, "Request must not be null");
         HttpSession session = request.getSession(false);
         return (session != null ? session.getId() : null);
     }
 
-    
     public static Object getSessionAttribute(HttpServletRequest request, String name) {
         Assert.notNull(request, "Request must not be null");
         HttpSession session = request.getSession(false);
         return (session != null ? session.getAttribute(name) : null);
     }
 
-    
     public static Object getRequiredSessionAttribute(HttpServletRequest request, String name)
         throws IllegalStateException {
 
@@ -145,7 +141,6 @@ public abstract class WebUtils {
         return attr;
     }
 
-    
     public static void setSessionAttribute(HttpServletRequest request, String name, Object value) {
         Assert.notNull(request, "Request must not be null");
         if (value != null) {
@@ -158,7 +153,6 @@ public abstract class WebUtils {
         }
     }
 
-    
     public static Object getOrCreateSessionAttribute(HttpSession session, String name, Class clazz)
         throws IllegalArgumentException {
 
@@ -181,7 +175,6 @@ public abstract class WebUtils {
         return sessionObject;
     }
 
-    
     public static Object getSessionMutex(HttpSession session) {
         Assert.notNull(session, "Session must not be null");
         Object mutex = session.getAttribute(SESSION_MUTEX_ATTRIBUTE);
@@ -191,7 +184,6 @@ public abstract class WebUtils {
         return mutex;
     }
 
-    
     @SuppressWarnings("unchecked")
     public static <T> T getNativeRequest(ServletRequest request, Class<T> requiredType) {
         if (requiredType != null) {
@@ -204,7 +196,6 @@ public abstract class WebUtils {
         return null;
     }
 
-    
     @SuppressWarnings("unchecked")
     public static <T> T getNativeResponse(ServletResponse response, Class<T> requiredType) {
         if (requiredType != null) {
@@ -217,12 +208,10 @@ public abstract class WebUtils {
         return null;
     }
 
-    
     public static boolean isIncludeRequest(ServletRequest request) {
         return (request.getAttribute(INCLUDE_REQUEST_URI_ATTRIBUTE) != null);
     }
 
-    
     public static void exposeForwardRequestAttributes(HttpServletRequest request) {
         exposeRequestAttributeIfNotPresent(request, FORWARD_REQUEST_URI_ATTRIBUTE, request.getRequestURI());
         exposeRequestAttributeIfNotPresent(request, FORWARD_CONTEXT_PATH_ATTRIBUTE, request.getContextPath());
@@ -231,7 +220,6 @@ public abstract class WebUtils {
         exposeRequestAttributeIfNotPresent(request, FORWARD_QUERY_STRING_ATTRIBUTE, request.getQueryString());
     }
 
-    
     public static void exposeErrorRequestAttributes(HttpServletRequest request, Throwable ex, String servletName) {
         exposeRequestAttributeIfNotPresent(request, ERROR_STATUS_CODE_ATTRIBUTE, HttpServletResponse.SC_OK);
         exposeRequestAttributeIfNotPresent(request, ERROR_EXCEPTION_TYPE_ATTRIBUTE, ex.getClass());
@@ -241,14 +229,12 @@ public abstract class WebUtils {
         exposeRequestAttributeIfNotPresent(request, ERROR_SERVLET_NAME_ATTRIBUTE, servletName);
     }
 
-    
     private static void exposeRequestAttributeIfNotPresent(ServletRequest request, String name, Object value) {
         if (request.getAttribute(name) == null) {
             request.setAttribute(name, value);
         }
     }
 
-    
     public static void clearErrorRequestAttributes(HttpServletRequest request) {
         request.removeAttribute(ERROR_STATUS_CODE_ATTRIBUTE);
         request.removeAttribute(ERROR_EXCEPTION_TYPE_ATTRIBUTE);
@@ -258,7 +244,6 @@ public abstract class WebUtils {
         request.removeAttribute(ERROR_SERVLET_NAME_ATTRIBUTE);
     }
 
-    
     public static void exposeRequestAttributes(ServletRequest request, Map<String, ?> attributes) {
         Assert.notNull(request, "Request must not be null");
         Assert.notNull(attributes, "Attributes Map must not be null");
@@ -267,7 +252,6 @@ public abstract class WebUtils {
         }
     }
 
-    
     public static Cookie getCookie(HttpServletRequest request, String name) {
         Assert.notNull(request, "Request must not be null");
         Cookie[] cookies = request.getCookies();
@@ -281,7 +265,6 @@ public abstract class WebUtils {
         return null;
     }
 
-    
     public static boolean hasSubmitParameter(ServletRequest request, String name) {
         Assert.notNull(request, "Request must not be null");
         if (request.getParameter(name) != null) {
@@ -295,13 +278,11 @@ public abstract class WebUtils {
         return false;
     }
 
-    
     @SuppressWarnings("unchecked")
     public static String findParameterValue(ServletRequest request, String name) {
         return findParameterValue(request.getParameterMap(), name);
     }
 
-    
     public static String findParameterValue(Map<String, ?> parameters, String name) {
         // First try to get it as a normal name=value parameter
         Object value = parameters.get(name);
@@ -328,11 +309,10 @@ public abstract class WebUtils {
         return null;
     }
 
-    
     public static Map<String, Object> getParametersStartingWith(ServletRequest request, String prefix) {
         Assert.notNull(request, "Request must not be null");
         Enumeration paramNames = request.getParameterNames();
-        Map<String, Object> params =  new TreeMap<>();
+        Map<String, Object> params = new TreeMap<>();
         if (prefix == null) {
             prefix = "";
         }
@@ -353,7 +333,6 @@ public abstract class WebUtils {
         return params;
     }
 
-    
     public static int getTargetPage(ServletRequest request, String paramPrefix, int currentPage) {
         Enumeration paramNames = request.getParameterNames();
         while (paramNames.hasMoreElements()) {
@@ -371,7 +350,6 @@ public abstract class WebUtils {
         return currentPage;
     }
 
-    
     public static String extractFilenameFromUrlPath(String urlPath) {
         String filename = extractFullFilenameFromUrlPath(urlPath);
         int dotIndex = filename.lastIndexOf('.');
@@ -381,7 +359,6 @@ public abstract class WebUtils {
         return filename;
     }
 
-    
     public static String extractFullFilenameFromUrlPath(String urlPath) {
         int end = urlPath.indexOf(';');
         if (end == -1) {

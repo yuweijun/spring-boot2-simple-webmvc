@@ -1,5 +1,3 @@
-
-
 package com.example.simple.spring.web.mvc.method;
 
 import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
@@ -20,9 +18,9 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private final List<HandlerMethodArgumentResolver> argumentResolvers= new ArrayList<>();
+    private final List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
 
-    private final Map<MethodParameter, HandlerMethodArgumentResolver> argumentResolverCache= new ConcurrentHashMap<>();
+    private final Map<MethodParameter, HandlerMethodArgumentResolver> argumentResolverCache = new ConcurrentHashMap<>();
 
     public List<HandlerMethodArgumentResolver> getResolvers() {
         return Collections.unmodifiableList(this.argumentResolvers);

@@ -27,11 +27,8 @@ public class RequestContext {
     public static final String DEFAULT_THEME_NAME = "theme";
 
     public static final String WEB_APPLICATION_CONTEXT_ATTRIBUTE = RequestContext.class.getName() + ".CONTEXT";
-
-    private static final String REQUEST_DATA_VALUE_PROCESSOR_BEAN_NAME = "requestDataValueProcessor";
-
     protected static final boolean jstlPresent = ClassUtils.isPresent("javax.servlet.jsp.jstl.core.Config", RequestContext.class.getClassLoader());
-
+    private static final String REQUEST_DATA_VALUE_PROCESSOR_BEAN_NAME = "requestDataValueProcessor";
     private HttpServletRequest request;
 
     private HttpServletResponse response;
@@ -122,10 +119,6 @@ public class RequestContext {
         return this.locale;
     }
 
-    public void setDefaultHtmlEscape(boolean defaultHtmlEscape) {
-        this.defaultHtmlEscape = defaultHtmlEscape;
-    }
-
     public boolean isDefaultHtmlEscape() {
         return (this.defaultHtmlEscape != null && this.defaultHtmlEscape.booleanValue());
     }
@@ -134,13 +127,17 @@ public class RequestContext {
         return this.defaultHtmlEscape;
     }
 
-    public void setUrlPathHelper(UrlPathHelper urlPathHelper) {
-        Assert.notNull(urlPathHelper, "UrlPathHelper must not be null");
-        this.urlPathHelper = urlPathHelper;
+    public void setDefaultHtmlEscape(boolean defaultHtmlEscape) {
+        this.defaultHtmlEscape = defaultHtmlEscape;
     }
 
     public UrlPathHelper getUrlPathHelper() {
         return this.urlPathHelper;
+    }
+
+    public void setUrlPathHelper(UrlPathHelper urlPathHelper) {
+        Assert.notNull(urlPathHelper, "UrlPathHelper must not be null");
+        this.urlPathHelper = urlPathHelper;
     }
 
     // public RequestDataValueProcessor getRequestDataValueProcessor() {

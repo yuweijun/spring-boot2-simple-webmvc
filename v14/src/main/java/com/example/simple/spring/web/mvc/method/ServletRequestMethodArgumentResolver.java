@@ -1,5 +1,3 @@
-
-
 package com.example.simple.spring.web.mvc.method;
 
 import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;

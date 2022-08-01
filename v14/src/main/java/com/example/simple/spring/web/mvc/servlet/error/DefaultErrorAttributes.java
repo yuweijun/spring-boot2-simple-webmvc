@@ -1,5 +1,3 @@
-
-
 package com.example.simple.spring.web.mvc.servlet.error;
 
 import com.example.simple.spring.web.mvc.bind.annotation.ResponseStatus;
@@ -27,6 +25,14 @@ import java.util.Map;
 public class DefaultErrorAttributes implements ErrorAttributes, HandlerExceptionResolver {
 
     private static final String ERROR_INTERNAL_ATTRIBUTE = DefaultErrorAttributes.class.getName() + ".ERROR";
+
+    public static Throwable getErrorFromRequest(HttpServletRequest request) {
+        return (Throwable) request.getAttribute(ERROR_INTERNAL_ATTRIBUTE);
+    }
+
+    public static void storeErrorInRequest(HttpServletRequest request, Throwable error) {
+        request.setAttribute(ERROR_INTERNAL_ATTRIBUTE, error);
+    }
 
     @Override
     public Map<String, Object> getErrorAttributes(HttpServletRequest request, ErrorAttributeOptions options) {
@@ -124,14 +130,6 @@ public class DefaultErrorAttributes implements ErrorAttributes, HandlerException
 
     private void storeErrorInformation(HttpServletRequest request, Throwable error) {
         storeErrorInRequest(request, error);
-    }
-
-    public static Throwable getErrorFromRequest(HttpServletRequest request) {
-        return (Throwable) request.getAttribute(ERROR_INTERNAL_ATTRIBUTE);
-    }
-
-    public static void storeErrorInRequest(HttpServletRequest request, Throwable error) {
-        request.setAttribute(ERROR_INTERNAL_ATTRIBUTE, error);
     }
 
 }

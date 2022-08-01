@@ -89,6 +89,10 @@ public class Jackson2ObjectMapperBuilder {
 
     private Consumer<ObjectMapper> configurer;
 
+    public static Jackson2ObjectMapperBuilder json() {
+        return new Jackson2ObjectMapperBuilder();
+    }
+
     public Jackson2ObjectMapperBuilder factory(JsonFactory factory) {
         this.factory = factory;
         return this;
@@ -451,6 +455,8 @@ public class Jackson2ObjectMapperBuilder {
         }
     }
 
+    // Convenience factory methods
+
     @SuppressWarnings("unchecked")
     private void registerWellKnownModulesIfAvailable(MultiValueMap<Object, Module> modulesToRegister) {
         try {
@@ -494,12 +500,6 @@ public class Jackson2ObjectMapperBuilder {
                 // jackson-module-kotlin not available
             }
         }
-    }
-
-    // Convenience factory methods
-
-    public static Jackson2ObjectMapperBuilder json() {
-        return new Jackson2ObjectMapperBuilder();
     }
 
 }

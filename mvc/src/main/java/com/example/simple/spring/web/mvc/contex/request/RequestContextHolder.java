@@ -10,10 +10,10 @@ public abstract class RequestContextHolder {
         ClassUtils.isPresent("javax.faces.context.FacesContext", RequestContextHolder.class.getClassLoader());
 
     private static final ThreadLocal<RequestAttributes> requestAttributesHolder =
-         new NamedThreadLocal<>("Request attributes");
+        new NamedThreadLocal<>("Request attributes");
 
     private static final ThreadLocal<RequestAttributes> inheritableRequestAttributesHolder =
-         new NamedInheritableThreadLocal<>("Request context");
+        new NamedInheritableThreadLocal<>("Request context");
 
     public static void resetRequestAttributes() {
         requestAttributesHolder.remove();

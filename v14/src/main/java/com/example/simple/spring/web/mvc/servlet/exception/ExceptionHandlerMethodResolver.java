@@ -1,5 +1,3 @@
-
-
 package com.example.simple.spring.web.mvc.servlet.exception;
 
 import com.example.simple.spring.web.mvc.bind.annotation.ExceptionHandler;
@@ -23,12 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ExceptionHandlerMethodResolver {
 
-    private final Log logger = LogFactory.getLog(getClass());
-
+    public final static MethodFilter EXCEPTION_HANDLER_METHODS = new MethodFilter() {
+        public boolean matches(Method method) {
+            return AnnotationUtils.findAnnotation(method, ExceptionHandler.class) != null;
+        }
+    };
     private static final Method NO_METHOD_FOUND = ClassUtils.getMethodIfAvailable(System.class, "currentTimeMillis");
-
+    private final Log logger = LogFactory.getLog(getClass());
     private final Map<Class<? extends Throwable>, Method> mappedMethods = new ConcurrentHashMap<>();
-
     private final Map<Class<? extends Throwable>, Method> exceptionLookupCache = new ConcurrentHashMap<>();
 
     public ExceptionHandlerMethodResolver(Class<?> handlerType) {
@@ -92,12 +92,6 @@ public class ExceptionHandlerMethodResolver {
             return null;
         }
     }
-
-    public final static MethodFilter EXCEPTION_HANDLER_METHODS = new MethodFilter() {
-        public boolean matches(Method method) {
-            return AnnotationUtils.findAnnotation(method, ExceptionHandler.class) != null;
-        }
-    };
 
     public boolean hasExceptionMappings() {
         return !this.mappedMethods.isEmpty();

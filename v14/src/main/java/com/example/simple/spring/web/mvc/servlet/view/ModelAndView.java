@@ -46,52 +46,6 @@ public class ModelAndView {
         return modelAndView;
     }
 
-    public View getView() {
-        return view;
-    }
-
-    public String getViewName() {
-        return viewName;
-    }
-
-    public ModelAndView setView(View view) {
-        this.view = view;
-        setView(request, view);
-        return this;
-    }
-
-    public ModelAndView setViewName(String viewName) {
-        this.viewName = viewName;
-        setViewName(request, viewName);
-        return this;
-    }
-
-    public ModelMap getModel() {
-        return getModel(request);
-    }
-
-    public boolean hasView() {
-        return view != null || viewName != null;
-    }
-
-    public ModelMap addObject(String attributeName, Object attributeValue) {
-        getModel().addAttribute(attributeName, attributeValue);
-        return model;
-    }
-
-    public ModelMap addObject(Object attributeValue) {
-        getModel().addAttribute(attributeValue);
-        return model;
-    }
-
-    public void addAttribute(String name, Object value) {
-        getModel().addAttribute(name, value);
-    }
-
-    public boolean containsAttribute(String modelName) {
-        return getModel().containsAttribute(modelName);
-    }
-
     public static boolean hasView(HttpServletRequest request) {
         return request.getAttribute(VIEW) != null || request.getAttribute(VIEW_NAME) != null;
     }
@@ -169,5 +123,51 @@ public class ModelAndView {
     public static void clear(HttpServletRequest request) {
         setView(request, null);
         setViewName(request, null);
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public ModelAndView setView(View view) {
+        this.view = view;
+        setView(request, view);
+        return this;
+    }
+
+    public String getViewName() {
+        return viewName;
+    }
+
+    public ModelAndView setViewName(String viewName) {
+        this.viewName = viewName;
+        setViewName(request, viewName);
+        return this;
+    }
+
+    public ModelMap getModel() {
+        return getModel(request);
+    }
+
+    public boolean hasView() {
+        return view != null || viewName != null;
+    }
+
+    public ModelMap addObject(String attributeName, Object attributeValue) {
+        getModel().addAttribute(attributeName, attributeValue);
+        return model;
+    }
+
+    public ModelMap addObject(Object attributeValue) {
+        getModel().addAttribute(attributeValue);
+        return model;
+    }
+
+    public void addAttribute(String name, Object value) {
+        getModel().addAttribute(name, value);
+    }
+
+    public boolean containsAttribute(String modelName) {
+        return getModel().containsAttribute(modelName);
     }
 }

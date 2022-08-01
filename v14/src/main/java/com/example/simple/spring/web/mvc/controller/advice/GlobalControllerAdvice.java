@@ -18,9 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    private final Log logger = LogFactory.getLog(getClass());
-
     private static final AtomicInteger ai = new AtomicInteger(0);
+    private final Log logger = LogFactory.getLog(getClass());
 
     @ExceptionHandler(value = {AuthenticationFailedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)

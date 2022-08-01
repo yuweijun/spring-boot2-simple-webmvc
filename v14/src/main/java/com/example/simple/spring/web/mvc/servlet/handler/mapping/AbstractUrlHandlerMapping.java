@@ -19,8 +19,6 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
     private Object rootHandler;
 
-    private boolean lazyInitHandlers = false;
-
     public Object getRootHandler() {
         return this.rootHandler;
     }
@@ -71,7 +69,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
             return buildPathExposingHandler(handler, urlPath, urlPath, null);
         }
         // Pattern match?
-        List<String> matchingPatterns =  new ArrayList<>();
+        List<String> matchingPatterns = new ArrayList<>();
         for (String registeredPattern : this.handlerMap.keySet()) {
             if (getPathMatcher().match(registeredPattern, urlPath)) {
                 matchingPatterns.add(registeredPattern);
@@ -81,9 +79,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         Comparator<String> patternComparator = getPathMatcher().getPatternComparator(urlPath);
         if (!matchingPatterns.isEmpty()) {
             Collections.sort(matchingPatterns, patternComparator);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Matching patterns for request [" + urlPath + "] are " + matchingPatterns);
-            }
+            logger.debug("Matching patterns for request [" + urlPath + "] are " + matchingPatterns);
             bestPatternMatch = matchingPatterns.get(0);
         }
         if (bestPatternMatch != null) {
@@ -98,15 +94,13 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
             // There might be multiple 'best patterns', let's make sure we have the correct URI template variables
             // for all of them
-            Map<String, String> uriTemplateVariables =  new LinkedHashMap<>();
+            Map<String, String> uriTemplateVariables = new LinkedHashMap<>();
             for (String matchingPattern : matchingPatterns) {
                 if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
                     uriTemplateVariables.putAll(getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath));
                 }
             }
-            if (logger.isDebugEnabled()) {
-                logger.debug("URI Template variables for request [" + urlPath + "] are " + uriTemplateVariables);
-            }
+            logger.debug("URI Template variables for request [" + urlPath + "] are " + uriTemplateVariables);
             return buildPathExposingHandler(handler, bestPatternMatch, pathWithinMapping, uriTemplateVariables);
         }
         // No handler found...
@@ -145,7 +139,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         Object resolvedHandler = handler;
 
         // Eagerly resolve handler if referencing singleton via name.
-        if (!this.lazyInitHandlers && handler instanceof String) {
+        if (handler instanceof String) {
             String handlerName = (String) handler;
             if (getApplicationContext().isSingleton(handlerName)) {
                 resolvedHandler = getApplicationContext().getBean(handlerName);
@@ -155,25 +149,18 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         Object mappedHandler = this.handlerMap.get(urlPath);
         if (mappedHandler != null) {
             if (mappedHandler != resolvedHandler) {
-                throw new IllegalStateException(
-                    "Cannot map " + getHandlerDescription(handler) + " to URL path [" + urlPath + "]: There is already " + getHandlerDescription(mappedHandler) + " mapped.");
+                throw new IllegalStateException("Cannot map " + getHandlerDescription(handler) + " to URL path [" + urlPath + "]: There is already " + getHandlerDescription(mappedHandler) + " mapped.");
             }
         } else {
             if (urlPath.equals("/")) {
-                if (logger.isInfoEnabled()) {
-                    logger.info("Root mapping to " + getHandlerDescription(handler));
-                }
+                logger.info("Root mapping to " + getHandlerDescription(handler));
                 setRootHandler(resolvedHandler);
             } else if (urlPath.equals("/*")) {
-                if (logger.isInfoEnabled()) {
-                    logger.info("Default mapping to " + getHandlerDescription(handler));
-                }
+                logger.info("Default mapping to " + getHandlerDescription(handler));
                 setDefaultHandler(resolvedHandler);
             } else {
                 this.handlerMap.put(urlPath, resolvedHandler);
-                if (logger.isInfoEnabled()) {
-                    logger.info("Mapped URL path [" + urlPath + "] onto " + getHandlerDescription(handler));
-                }
+                logger.info("Mapped URL path [" + urlPath + "] onto " + getHandlerDescription(handler));
             }
         }
     }

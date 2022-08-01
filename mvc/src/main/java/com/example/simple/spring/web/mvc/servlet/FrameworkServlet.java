@@ -42,34 +42,20 @@ public abstract class FrameworkServlet extends HttpServletBean {
     public static final String SERVLET_CONTEXT_PREFIX = FrameworkServlet.class.getName() + ".CONTEXT.";
 
     private static final String INIT_PARAM_DELIMITERS = ",; \t\n";
-
+    private final ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers = new ArrayList<>();
     private String contextAttribute;
-
     private Class<?> contextClass = DEFAULT_CONTEXT_CLASS;
-
     private String contextId;
-
     private String namespace;
-
     private String contextConfigLocation;
-
     private boolean publishContext = true;
-
     private boolean publishEvents = true;
-
     private boolean threadContextInheritable = false;
-
     private boolean dispatchOptionsRequest = false;
-
     private boolean dispatchTraceRequest = false;
-
     private SimpleWebApplicationContext simpleWebApplicationContext;
-
     private boolean refreshEventReceived = false;
-
     private String contextInitializerClasses;
-
-    private final ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers =  new ArrayList<>();
 
     public FrameworkServlet() {
     }
@@ -244,7 +230,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
     protected SimpleWebApplicationContext createWebApplicationContext(ApplicationContext parent) {
         Class<?> contextClass = getContextClass();
         this.logger.debug("Servlet with name '" + getServletName() + "' will try to create custom WebApplicationContext context of class '" + contextClass.getName() + "'"
-                + ", using parent context [" + parent + "]");
+            + ", using parent context [" + parent + "]");
         if (!SimpleConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
             throw new ApplicationContextException(
                 "Fatal initialization error in servlet with name '" + getServletName() + "': custom WebApplicationContext class [" + contextClass.getName()

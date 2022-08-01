@@ -15,15 +15,11 @@ import java.util.Arrays;
 
 public class InvocableHandlerMethod extends HandlerMethod {
 
-    private HandlerMethodArgumentResolverComposite argumentResolvers = new HandlerMethodArgumentResolverComposite();
-
-    private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
-
-    private ServletRequestDataBinder servletRequestDataBinder;
-
     protected HttpServletRequest request;
-
     protected HttpServletResponse response;
+    private HandlerMethodArgumentResolverComposite argumentResolvers = new HandlerMethodArgumentResolverComposite();
+    private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+    private ServletRequestDataBinder servletRequestDataBinder;
 
     public InvocableHandlerMethod(Object bean, Method method, HttpServletRequest request, HttpServletResponse response) {
         super(bean, method);

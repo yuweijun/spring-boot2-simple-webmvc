@@ -120,8 +120,7 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
             throw new MissingWebServerFactoryBeanException(getClass(), ServletWebServerFactory.class, WebApplicationType.SERVLET);
         }
         if (beanNames.length > 1) {
-            throw new ApplicationContextException(
-                "Unable to start ServletWebServerApplicationContext due to multiple " + "ServletWebServerFactory beans : " + StringUtils.arrayToCommaDelimitedString(beanNames));
+            throw new ApplicationContextException("Unable to start ServletWebServerApplicationContext due to multiple " + "ServletWebServerFactory beans : " + StringUtils.arrayToCommaDelimitedString(beanNames));
         }
         return getBeanFactory().getBean(beanNames[0], ServletWebServerFactory.class);
     }
@@ -160,8 +159,7 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
         Object rootContext = servletContext.getAttribute(SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         if (rootContext != null) {
             if (rootContext == this) {
-                throw new IllegalStateException(
-                    "Cannot initialize context because there is already a root application context present - " + "check whether you have multiple ServletContextInitializers!");
+                throw new IllegalStateException("Cannot initialize context because there is already a root application context present - " + "check whether you have multiple ServletContextInitializers!");
             }
             return;
         }
@@ -169,8 +167,7 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
         try {
             servletContext.setAttribute(SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this);
             if (logger.isDebugEnabled()) {
-                logger.debug(
-                    "Published root WebApplicationContext as ServletContext attribute with name [" + SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE + "]");
+                logger.debug("Published root WebApplicationContext as ServletContext attribute with name [" + SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE + "]");
             }
             setServletContext(servletContext);
             if (logger.isInfoEnabled()) {

@@ -15,17 +15,17 @@ import java.lang.annotation.Target;
 @Documented
 @Component
 public @interface ControllerAdvice {
-  
+
     @AliasFor("basePackages")
     String[] value() default {};
-  
+
     @AliasFor("value")
     String[] basePackages() default {};
-  
+
     Class<?>[] basePackageClasses() default {};
-  
+
     Class<?>[] assignableTypes() default {};
-  
+
     Class<? extends Annotation>[] annotations() default {};
 
 }

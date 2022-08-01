@@ -55,24 +55,22 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestMappingHandlerAdapter extends WebApplicationObjectSupport implements HandlerAdapter, BeanFactoryAware, InitializingBean {
 
+    public static final ReflectionUtils.MethodFilter MODEL_ATTRIBUTE_METHODS = new ReflectionUtils.MethodFilter() {
+        public boolean matches(Method method) {
+            return ((AnnotationUtils.findAnnotation(method, ModelAttribute.class) != null) && (AnnotationUtils.findAnnotation(method, RequestMapping.class) == null));
+        }
+    };
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerAdapter.class);
-
-    private List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-
     private final Map<Class<?>, Set<Method>> modelAttributeCache = new ConcurrentHashMap<>(64);
 
     private final Map<Class<?>, SessionAttributesHandler> sessionAttributesHandlerCache = new ConcurrentHashMap<>(64);
 
     private final Map<ControllerAdviceBean, Set<Method>> modelAttributeAdviceCache = new LinkedHashMap<>();
-
+    private List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
     private ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
-
-    private SessionAttributeStore sessionAttributeStore = new DefaultSessionAttributeStore();
-
+    private final SessionAttributeStore sessionAttributeStore = new DefaultSessionAttributeStore();
     private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
-
     private HandlerMethodArgumentResolverComposite argumentResolvers;
-
     private ConfigurableBeanFactory beanFactory;
 
     public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
@@ -93,19 +91,12 @@ public class RequestMappingHandlerAdapter extends WebApplicationObjectSupport im
 
     @Override
     public final boolean supports(Object handler) {
-        return HandlerMethod.class.isInstance(handler);
+        return handler instanceof HandlerMethod;
     }
 
     @Override
     public final void handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         handleInternal(request, response, (HandlerMethod) handler);
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) {
-        if (beanFactory instanceof ConfigurableBeanFactory) {
-            this.beanFactory = (ConfigurableBeanFactory) beanFactory;
-        }
     }
 
     @Override
@@ -183,6 +174,13 @@ public class RequestMappingHandlerAdapter extends WebApplicationObjectSupport im
         return this.beanFactory;
     }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        if (beanFactory instanceof ConfigurableBeanFactory) {
+            this.beanFactory = (ConfigurableBeanFactory) beanFactory;
+        }
+    }
+
     protected final void handleInternal(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         invokeHandlerMethod(request, response, handlerMethod);
     }
@@ -256,10 +254,4 @@ public class RequestMappingHandlerAdapter extends WebApplicationObjectSupport im
     private SessionAttributesHandler getSessionAttributesHandler(HandlerMethod handlerMethod) {
         return this.sessionAttributesHandlerCache.computeIfAbsent(handlerMethod.getBeanType(), type -> new SessionAttributesHandler(type, this.sessionAttributeStore));
     }
-
-    public static final ReflectionUtils.MethodFilter MODEL_ATTRIBUTE_METHODS = new ReflectionUtils.MethodFilter() {
-        public boolean matches(Method method) {
-            return ((AnnotationUtils.findAnnotation(method, ModelAttribute.class) != null) && (AnnotationUtils.findAnnotation(method, RequestMapping.class) == null));
-        }
-    };
 }

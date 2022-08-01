@@ -44,7 +44,7 @@ public class BeanNameUrlHandlerMapping extends AbstractUrlHandlerMapping {
     }
 
     protected String[] determineUrlsForHandler(String beanName) {
-        List<String> urls =  new ArrayList<>();
+        List<String> urls = new ArrayList<>();
         if (beanName.startsWith("/")) {
             logger.debug("bean name is " + beanName);
             urls.add(beanName);
