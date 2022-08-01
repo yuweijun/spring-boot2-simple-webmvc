@@ -14,13 +14,13 @@ import java.util.Map;
 
 public abstract class WebApplicationContextUtils {
 
-    public static SimpleWebApplicationContext getWebApplicationContext(ServletContext sc) {
-        return getWebApplicationContext(sc, SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+    public static SimpleWebApplicationContext getWebApplicationContext(ServletContext servletContext) {
+        return getWebApplicationContext(servletContext, SimpleWebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
     }
 
-    public static SimpleWebApplicationContext getWebApplicationContext(ServletContext sc, String attrName) {
-        Assert.notNull(sc, "ServletContext must not be null");
-        Object attr = sc.getAttribute(attrName);
+    public static SimpleWebApplicationContext getWebApplicationContext(ServletContext servletContext, String attrName) {
+        Assert.notNull(servletContext, "ServletContext must not be null");
+        Object attr = servletContext.getAttribute(attrName);
         if (attr == null) {
             return null;
         }
@@ -39,13 +39,13 @@ public abstract class WebApplicationContextUtils {
         return (SimpleWebApplicationContext) attr;
     }
 
-    public static void registerEnvironmentBeans(ConfigurableListableBeanFactory bf, ServletContext sc) {
-        registerEnvironmentBeans(bf, sc, null);
+    public static void registerEnvironmentBeans(ConfigurableListableBeanFactory beanFactory, ServletContext servletContext) {
+        registerEnvironmentBeans(beanFactory, servletContext, null);
     }
 
-    public static void registerEnvironmentBeans(ConfigurableListableBeanFactory bf, ServletContext sc, ServletConfig config) {
-        if (sc != null && !bf.containsBean(SimpleWebApplicationContext.SERVLET_CONTEXT_BEAN_NAME)) {
-            bf.registerSingleton(SimpleWebApplicationContext.SERVLET_CONTEXT_BEAN_NAME, sc);
+    public static void registerEnvironmentBeans(ConfigurableListableBeanFactory bf, ServletContext servletContext, ServletConfig config) {
+        if (servletContext != null && !bf.containsBean(SimpleWebApplicationContext.SERVLET_CONTEXT_BEAN_NAME)) {
+            bf.registerSingleton(SimpleWebApplicationContext.SERVLET_CONTEXT_BEAN_NAME, servletContext);
         }
 
         if (config != null && !bf.containsBean(SimpleConfigurableWebApplicationContext.SERVLET_CONFIG_BEAN_NAME)) {
@@ -54,11 +54,11 @@ public abstract class WebApplicationContextUtils {
 
         if (!bf.containsBean(SimpleWebApplicationContext.CONTEXT_PARAMETERS_BEAN_NAME)) {
             Map<String, String> parameterMap = new HashMap<>();
-            if (sc != null) {
-                Enumeration<?> paramNameEnum = sc.getInitParameterNames();
+            if (servletContext != null) {
+                Enumeration<?> paramNameEnum = servletContext.getInitParameterNames();
                 while (paramNameEnum.hasMoreElements()) {
                     String paramName = (String) paramNameEnum.nextElement();
-                    parameterMap.put(paramName, sc.getInitParameter(paramName));
+                    parameterMap.put(paramName, servletContext.getInitParameter(paramName));
                 }
             }
             if (config != null) {
@@ -73,14 +73,29 @@ public abstract class WebApplicationContextUtils {
 
         if (!bf.containsBean(SimpleWebApplicationContext.CONTEXT_ATTRIBUTES_BEAN_NAME)) {
             Map<String, Object> attributeMap = new HashMap<>();
-            if (sc != null) {
-                Enumeration<?> attrNameEnum = sc.getAttributeNames();
+            if (servletContext != null) {
+                Enumeration<?> attrNameEnum = servletContext.getAttributeNames();
                 while (attrNameEnum.hasMoreElements()) {
                     String attrName = (String) attrNameEnum.nextElement();
-                    attributeMap.put(attrName, sc.getAttribute(attrName));
+                    attributeMap.put(attrName, servletContext.getAttribute(attrName));
                 }
             }
             bf.registerSingleton(SimpleWebApplicationContext.CONTEXT_ATTRIBUTES_BEAN_NAME, Collections.unmodifiableMap(attributeMap));
+        }
+    }
+
+    public static void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory) {
+        registerWebApplicationScopes(beanFactory, null);
+    }
+
+    public static void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory, ServletContext servletContext) {
+        beanFactory.registerScope(SimpleWebApplicationContext.SCOPE_REQUEST, new RequestScope());
+        beanFactory.registerScope(SimpleWebApplicationContext.SCOPE_SESSION, new SessionScope());
+        if (servletContext != null) {
+            ServletContextScope appScope = new ServletContextScope(servletContext);
+            beanFactory.registerScope(SimpleWebApplicationContext.SCOPE_APPLICATION, appScope);
+            // Register as ServletContext attribute, for ContextCleanupListener to detect it.
+            servletContext.setAttribute(ServletContextScope.class.getName(), appScope);
         }
     }
 

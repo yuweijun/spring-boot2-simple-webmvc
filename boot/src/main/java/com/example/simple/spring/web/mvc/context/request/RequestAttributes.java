@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.contex.request;
+package com.example.simple.spring.web.mvc.context.request;
 
 public interface RequestAttributes {
 

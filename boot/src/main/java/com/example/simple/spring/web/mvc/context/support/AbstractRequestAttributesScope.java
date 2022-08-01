@@ -1,13 +1,14 @@
-package com.example.simple.spring.web.mvc.context.request;
+package com.example.simple.spring.web.mvc.context.support;
 
-import com.example.simple.spring.web.mvc.contex.request.RequestAttributes;
-import com.example.simple.spring.web.mvc.contex.request.RequestContextHolder;
+import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
+import com.example.simple.spring.web.mvc.context.request.RequestContextHolder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
 public abstract class AbstractRequestAttributesScope implements Scope {
 
-    public Object get(String name, ObjectFactory objectFactory) {
+    @Override
+    public Object get(String name, ObjectFactory<?> objectFactory) {
         RequestAttributes attributes = RequestContextHolder.currentRequestAttributes();
         Object scopedObject = attributes.getAttribute(name, getScope());
         if (scopedObject == null) {
@@ -17,6 +18,7 @@ public abstract class AbstractRequestAttributesScope implements Scope {
         return scopedObject;
     }
 
+    @Override
     public Object remove(String name) {
         RequestAttributes attributes = RequestContextHolder.currentRequestAttributes();
         Object scopedObject = attributes.getAttribute(name, getScope());
@@ -28,6 +30,7 @@ public abstract class AbstractRequestAttributesScope implements Scope {
         }
     }
 
+    @Override
     public void registerDestructionCallback(String name, Runnable callback) {
         RequestAttributes attributes = RequestContextHolder.currentRequestAttributes();
         attributes.registerDestructionCallback(name, callback, getScope());

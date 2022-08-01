@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.contex.request;
+package com.example.simple.spring.web.mvc.context.request;
 
 import org.springframework.core.NamedInheritableThreadLocal;
 import org.springframework.core.NamedThreadLocal;

@@ -1,7 +1,7 @@
 package com.example.simple.spring.web.mvc.servlet;
 
-import com.example.simple.spring.web.mvc.contex.request.RequestAttributes;
-import com.example.simple.spring.web.mvc.contex.request.RequestContextHolder;
+import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
+import com.example.simple.spring.web.mvc.context.request.RequestContextHolder;
 import com.example.simple.spring.web.mvc.contex.request.ServletRequestAttributes;
 import com.example.simple.spring.web.mvc.context.SimpleConfigurableWebApplicationContext;
 import com.example.simple.spring.web.mvc.context.SimpleServletWebServerApplicationContext;

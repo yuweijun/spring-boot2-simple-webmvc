@@ -2,7 +2,7 @@ package com.example.simple.spring.web.mvc.method;
 
 import com.example.simple.spring.web.mvc.bind.ServletRequestDataBinder;
 import com.example.simple.spring.web.mvc.bind.ValueConstants;
-import com.example.simple.spring.web.mvc.context.request.RequestScope;
+import com.example.simple.spring.web.mvc.context.support.RequestScope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanExpressionContext;

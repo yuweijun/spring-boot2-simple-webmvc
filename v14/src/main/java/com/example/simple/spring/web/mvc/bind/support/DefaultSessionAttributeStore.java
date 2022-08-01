@@ -1,12 +1,12 @@
 package com.example.simple.spring.web.mvc.bind.support;
 
-import com.example.simple.spring.web.mvc.contex.request.RequestAttributes;
+import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static com.example.simple.spring.web.mvc.contex.request.RequestAttributes.SCOPE_REQUEST;
+import static com.example.simple.spring.web.mvc.context.request.RequestAttributes.SCOPE_REQUEST;
 
 public class DefaultSessionAttributeStore implements SessionAttributeStore {
 

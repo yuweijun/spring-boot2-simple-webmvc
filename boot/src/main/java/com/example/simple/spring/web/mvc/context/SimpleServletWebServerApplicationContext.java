@@ -1,6 +1,7 @@
 package com.example.simple.spring.web.mvc.context;
 
 import com.example.simple.spring.boot.config.SimpleWebApplicationContextServletContextAwareProcessor;
+import com.example.simple.spring.web.mvc.context.support.ServletContextScope;
 import com.example.simple.spring.web.mvc.context.support.WebApplicationContextUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -139,15 +140,15 @@ public class SimpleServletWebServerApplicationContext extends SimpleGenericWebAp
     }
 
     private void registerApplicationScope(ServletContext servletContext) {
-        // ServletContextScope appScope = new ServletContextScope(servletContext);
-        // getBeanFactory().registerScope(WebApplicationContext.SCOPE_APPLICATION, appScope);
+        ServletContextScope appScope = new ServletContextScope(servletContext);
+        getBeanFactory().registerScope(SimpleWebApplicationContext.SCOPE_APPLICATION, appScope);
         // Register as ServletContext attribute, for ContextCleanupListener to detect it.
-        // servletContext.setAttribute(ServletContextScope.class.getName(), appScope);
+        servletContext.setAttribute(ServletContextScope.class.getName(), appScope);
     }
 
     private void registerWebApplicationScopes() {
         ExistingWebApplicationScopes existingScopes = new ExistingWebApplicationScopes(getBeanFactory());
-        // WebApplicationContextUtils.registerWebApplicationScopes(getBeanFactory());
+        WebApplicationContextUtils.registerWebApplicationScopes(getBeanFactory());
         existingScopes.restore();
     }
 
