@@ -21,7 +21,7 @@ public class RequestAttributeMethodArgumentResolver extends AbstractNamedValueMe
     protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
         RequestAttribute ann = parameter.getParameterAnnotation(RequestAttribute.class);
         Assert.state(ann != null, "No RequestAttribute annotation");
-        return new NamedValueInfo(ann.value(), ann.required(), ValueConstants.DEFAULT_NONE);
+        return new NamedValueInfo(ann.name(), ann.required(), ValueConstants.DEFAULT_NONE);
     }
 
     @Override

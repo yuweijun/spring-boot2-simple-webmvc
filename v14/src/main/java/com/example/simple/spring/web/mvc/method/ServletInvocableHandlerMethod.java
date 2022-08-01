@@ -31,12 +31,14 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
         getResponseStatus();
     }
 
-    private void getResponseStatus() {
+    @Override
+    protected HttpStatus getResponseStatus() {
         ResponseStatus annotation = getMethodAnnotation(ResponseStatus.class);
         if (annotation != null) {
             this.responseStatus = annotation.value();
             this.responseReason = annotation.reason();
         }
+        return this.responseStatus;
     }
 
     public void setHandlerMethodReturnValueHandlers(HandlerMethodReturnValueHandlerComposite returnValueHandlers) {

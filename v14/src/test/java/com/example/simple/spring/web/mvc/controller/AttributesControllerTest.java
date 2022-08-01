@@ -10,10 +10,10 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
-public class AttributesControllerTest {
+class AttributesControllerTest {
 
     @Test
-    public void create() {
+    void create() {
         CookieFilter filter = new CookieFilter();
 
         UserDTO userDTO = new UserDTO();
@@ -46,7 +46,7 @@ public class AttributesControllerTest {
     }
 
     @Test
-    public void show() {
+    void show() {
         final RequestSpecification request = given();
         request.header("Content-Type", APPLICATION_JSON_VALUE)
                .get("/show")
