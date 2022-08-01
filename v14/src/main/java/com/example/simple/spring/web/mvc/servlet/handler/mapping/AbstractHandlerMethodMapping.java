@@ -82,7 +82,9 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
         for (Method method : methods) {
             T mapping = getMappingForMethod(method, userType);
-            registerHandlerMethod(handler, method, mapping);
+            if (mapping != null) {
+                registerHandlerMethod(handler, method, mapping);
+            }
         }
     }
 

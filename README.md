@@ -2,7 +2,7 @@
 
 Spring web MVC learning
 
-# TODO
+# Test with gradle
 
-ResponseStatusExceptionResolver
-ResponseBodyAdvice
+    gradle :v:bootRun
+    gradle :v:build
