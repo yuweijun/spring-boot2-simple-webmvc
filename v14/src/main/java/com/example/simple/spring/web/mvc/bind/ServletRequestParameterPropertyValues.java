@@ -1,6 +1,6 @@
 package com.example.simple.spring.web.mvc.bind;
 
-import com.example.simple.spring.web.mvc.util.WebUtils;
+import com.example.simple.spring.web.util.WebUtils;
 import org.springframework.beans.MutablePropertyValues;
 
 import javax.servlet.ServletRequest;

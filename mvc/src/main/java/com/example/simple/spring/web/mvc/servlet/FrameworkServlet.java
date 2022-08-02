@@ -2,12 +2,12 @@ package com.example.simple.spring.web.mvc.servlet;
 
 import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
 import com.example.simple.spring.web.mvc.context.request.RequestContextHolder;
-import com.example.simple.spring.web.mvc.contex.request.ServletRequestAttributes;
+import com.example.simple.spring.web.mvc.context.request.ServletRequestAttributes;
 import com.example.simple.spring.web.mvc.context.SimpleConfigurableWebApplicationContext;
 import com.example.simple.spring.web.mvc.context.SimpleServletWebServerApplicationContext;
 import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
 import com.example.simple.spring.web.mvc.context.support.WebApplicationContextUtils;
-import com.example.simple.spring.web.mvc.util.NestedServletException;
+import com.example.simple.spring.web.util.NestedServletException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;

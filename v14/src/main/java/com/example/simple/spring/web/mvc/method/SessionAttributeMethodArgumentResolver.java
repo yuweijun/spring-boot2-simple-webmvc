@@ -3,7 +3,7 @@ package com.example.simple.spring.web.mvc.method;
 import com.example.simple.spring.web.mvc.bind.ValueConstants;
 import com.example.simple.spring.web.mvc.bind.annotation.SessionAttribute;
 import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
-import com.example.simple.spring.web.mvc.contex.request.ServletRequestAttributes;
+import com.example.simple.spring.web.mvc.context.request.ServletRequestAttributes;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
 

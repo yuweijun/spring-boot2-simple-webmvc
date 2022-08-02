@@ -1,8 +1,8 @@
 package com.example.simple.spring.web.mvc.servlet.support;
 
 import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
-import com.example.simple.spring.web.mvc.util.UrlPathHelper;
-import com.example.simple.spring.web.mvc.util.WebUtils;
+import com.example.simple.spring.web.util.UrlPathHelper;
+import com.example.simple.spring.web.util.WebUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;

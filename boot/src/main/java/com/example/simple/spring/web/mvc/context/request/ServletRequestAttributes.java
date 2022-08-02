@@ -1,6 +1,6 @@
-package com.example.simple.spring.web.mvc.contex.request;
+package com.example.simple.spring.web.mvc.context.request;
 
-import com.example.simple.spring.web.mvc.util.WebUtils;
+import com.example.simple.spring.web.util.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 

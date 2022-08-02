@@ -9,9 +9,9 @@ import com.example.simple.spring.web.mvc.servlet.view.InternalResourceViewResolv
 import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;
 import com.example.simple.spring.web.mvc.servlet.view.View;
 import com.example.simple.spring.web.mvc.servlet.view.ViewResolver;
-import com.example.simple.spring.web.mvc.util.NestedServletException;
-import com.example.simple.spring.web.mvc.util.UrlPathHelper;
-import com.example.simple.spring.web.mvc.util.WebUtils;
+import com.example.simple.spring.web.util.NestedServletException;
+import com.example.simple.spring.web.util.UrlPathHelper;
+import com.example.simple.spring.web.util.WebUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;

@@ -5,7 +5,7 @@ import com.example.simple.spring.web.mvc.servlet.HandlerExecutionChain;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
 import com.example.simple.spring.web.mvc.servlet.HandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.handler.intercerptor.MappedInterceptor;
-import com.example.simple.spring.web.mvc.util.UrlPathHelper;
+import com.example.simple.spring.web.util.UrlPathHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.Ordered;

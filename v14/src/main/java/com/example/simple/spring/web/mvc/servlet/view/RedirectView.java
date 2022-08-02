@@ -3,7 +3,7 @@ package com.example.simple.spring.web.mvc.servlet.view;
 import com.example.simple.spring.web.mvc.http.HttpStatus;
 import com.example.simple.spring.web.mvc.servlet.HandlerMapping;
 import com.example.simple.spring.web.mvc.servlet.support.RequestContext;
-import com.example.simple.spring.web.mvc.util.WebUtils;
+import com.example.simple.spring.web.util.WebUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;

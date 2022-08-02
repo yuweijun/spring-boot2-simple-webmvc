@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.contex.request;
+package com.example.simple.spring.web.mvc.context.request;
 
 import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
 import org.springframework.util.Assert;

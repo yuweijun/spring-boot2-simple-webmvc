@@ -83,6 +83,7 @@ public final class ModelFactory {
             if (!attrMethod.isVoid()) {
                 String returnValueName = getNameForReturnValue(returnValue, attrMethod.getReturnType());
                 if (!ModelAndView.containsAttribute(request, returnValueName)) {
+                    logger.debug("add return value to model : " + returnValueName);
                     ModelAndView.addAttribute(request, returnValueName, returnValue);
                 }
             }

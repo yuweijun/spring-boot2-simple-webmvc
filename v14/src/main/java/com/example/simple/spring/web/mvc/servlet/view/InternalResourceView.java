@@ -1,6 +1,6 @@
 package com.example.simple.spring.web.mvc.servlet.view;
 
-import com.example.simple.spring.web.mvc.util.WebUtils;
+import com.example.simple.spring.web.util.WebUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.RequestDispatcher;

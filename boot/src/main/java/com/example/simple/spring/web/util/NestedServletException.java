@@ -1,4 +1,4 @@
-package com.example.simple.spring.web.mvc.util;
+package com.example.simple.spring.web.util;
 
 import org.springframework.core.NestedExceptionUtils;
 

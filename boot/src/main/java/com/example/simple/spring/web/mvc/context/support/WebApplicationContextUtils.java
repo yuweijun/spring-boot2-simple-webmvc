@@ -2,11 +2,18 @@ package com.example.simple.spring.web.mvc.context.support;
 
 import com.example.simple.spring.web.mvc.context.SimpleConfigurableWebApplicationContext;
 import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
+import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
+import com.example.simple.spring.web.mvc.context.request.RequestContextHolder;
+import com.example.simple.spring.web.mvc.context.request.ServletRequestAttributes;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.util.Assert;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -91,11 +98,47 @@ public abstract class WebApplicationContextUtils {
     public static void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory, ServletContext servletContext) {
         beanFactory.registerScope(SimpleWebApplicationContext.SCOPE_REQUEST, new RequestScope());
         beanFactory.registerScope(SimpleWebApplicationContext.SCOPE_SESSION, new SessionScope());
+        beanFactory.registerResolvableDependency(ServletRequest.class, new RequestObjectFactory());
+        beanFactory.registerResolvableDependency(HttpSession.class, new SessionObjectFactory());
+
         if (servletContext != null) {
             ServletContextScope appScope = new ServletContextScope(servletContext);
             beanFactory.registerScope(SimpleWebApplicationContext.SCOPE_APPLICATION, appScope);
             // Register as ServletContext attribute, for ContextCleanupListener to detect it.
             servletContext.setAttribute(ServletContextScope.class.getName(), appScope);
+        }
+    }
+
+    private static ServletRequestAttributes currentRequestAttributes() {
+        RequestAttributes requestAttr = RequestContextHolder.currentRequestAttributes();
+        if (!(requestAttr instanceof ServletRequestAttributes)) {
+            throw new IllegalStateException("Current request is not a servlet request");
+        }
+        return (ServletRequestAttributes) requestAttr;
+    }
+
+    private static class RequestObjectFactory implements ObjectFactory<ServletRequest>, Serializable {
+        @Override
+        public ServletRequest getObject() {
+            return currentRequestAttributes().getRequest();
+        }
+
+        @Override
+        public String toString() {
+            return "Current HttpServletRequest";
+        }
+    }
+
+    private static class SessionObjectFactory implements ObjectFactory<HttpSession>, Serializable {
+
+        @Override
+        public HttpSession getObject() {
+            return currentRequestAttributes().getRequest().getSession();
+        }
+
+        @Override
+        public String toString() {
+            return "Current HttpSession";
         }
     }
 

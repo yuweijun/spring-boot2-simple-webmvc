@@ -2,12 +2,14 @@ package com.example.spring.boot.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,11 +18,17 @@ public class HelloController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HelloController.class);
 
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
     @RequestMapping("/index")
-    public String index(@ModelAttribute("map") Map<String, Integer> map, String time, Model model) {
+    public String index(@ModelAttribute("map") Map<String, Integer> map, String time, Model model, HttpServletRequest request) {
         LOGGER.info("@ModelAttribute(map) is {}", map);
-        LOGGER.info("index");
         LOGGER.info("time is : {}", time);
+        LOGGER.info("current method argument HttpServletRequest : {}", request);
+        LOGGER.info("AutowireUtils.ObjectFactoryDelegatingInvocationHandler for httpServletRequest : {}", httpServletRequest);
+        LOGGER.info("httpServletRequest.getServerPort() : {}", httpServletRequest.getServerPort());
+
         model.addAttribute("hello", "yu");
         return "index";
     }

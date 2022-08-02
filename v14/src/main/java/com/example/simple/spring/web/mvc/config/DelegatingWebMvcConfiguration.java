@@ -1,5 +1,9 @@
 package com.example.simple.spring.web.mvc.config;
 
+import com.example.simple.spring.web.mvc.bind.annotation.RequestScope;
+import com.example.simple.spring.web.mvc.bind.annotation.SessionScope;
+import com.example.simple.spring.web.mvc.controller.dto.RequestScopeBean;
+import com.example.simple.spring.web.mvc.controller.dto.SessionScopeBean;
 import com.example.simple.spring.web.mvc.controller.interceptor.ResponseStatusInterceptor;
 import com.example.simple.spring.web.mvc.controller.interceptor.ResponseTimeInterceptor;
 import com.example.simple.spring.web.mvc.servlet.HandlerInterceptor;
@@ -41,6 +45,22 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
         resolver.setPrefix("/WEB-INF/jsp/");
         resolver.setSuffix(".jsp");
         return resolver;
+    }
+
+    @Bean
+    @RequestScope
+    public RequestScopeBean requestScopeBean() {
+        final RequestScopeBean requestScopeBean = new RequestScopeBean();
+        logger.info("get RequestScopeBean with index : " + requestScopeBean.getIndex());
+        return requestScopeBean;
+    }
+
+    @Bean
+    @SessionScope
+    public SessionScopeBean sessionScopeBean() {
+        final SessionScopeBean sessionScopeBean = new SessionScopeBean();
+        logger.info("get SessionScopeBean with index : " + sessionScopeBean.getIndex());
+        return sessionScopeBean;
     }
 
 }

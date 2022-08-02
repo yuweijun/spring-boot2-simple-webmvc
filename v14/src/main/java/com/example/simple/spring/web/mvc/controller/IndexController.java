@@ -5,6 +5,7 @@ import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
 import com.example.simple.spring.web.mvc.servlet.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 
@@ -17,14 +18,18 @@ public class IndexController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexController.class);
 
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
     @RequestMapping("/index")
     public void index(@ModelAttribute("map") Map<String, Integer> map, String time, HttpServletRequest request) {
         LOGGER.info("@ModelAttribute(map) is {}", map);
-        LOGGER.info("index");
         LOGGER.info("time is : {}", time);
+        LOGGER.info("AutowireUtils.ObjectFactoryDelegatingInvocationHandler for httpServletRequest : {}", httpServletRequest);
+        LOGGER.info("httpServletRequest.getServerPort() : {}", httpServletRequest.getServerPort());
 
         final ModelMap modelMap = ModelAndView.getModel(request);
-        modelMap.addAttribute("map", map);
+        // modelMap.addAttribute("map", map);
         modelMap.addAttribute("time", time);
         modelMap.addAttribute("hello", "yu");
 

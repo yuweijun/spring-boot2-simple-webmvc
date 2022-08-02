@@ -2,10 +2,14 @@ package com.example.simple.spring.web.mvc.context.support;
 
 import com.example.simple.spring.web.mvc.context.request.RequestAttributes;
 import com.example.simple.spring.web.mvc.context.request.RequestContextHolder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
 public abstract class AbstractRequestAttributesScope implements Scope {
+
+    private final Log logger = LogFactory.getLog(getClass());
 
     @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
@@ -13,6 +17,7 @@ public abstract class AbstractRequestAttributesScope implements Scope {
         Object scopedObject = attributes.getAttribute(name, getScope());
         if (scopedObject == null) {
             scopedObject = objectFactory.getObject();
+            logger.debug("put scoped bean to request attributes : " + name);
             attributes.setAttribute(name, scopedObject, getScope());
         }
         return scopedObject;

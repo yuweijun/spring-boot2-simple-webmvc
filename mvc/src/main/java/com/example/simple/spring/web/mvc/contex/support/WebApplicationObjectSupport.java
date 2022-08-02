@@ -2,7 +2,7 @@ package com.example.simple.spring.web.mvc.contex.support;
 
 import com.example.simple.spring.web.mvc.context.ServletContextAware;
 import com.example.simple.spring.web.mvc.context.SimpleWebApplicationContext;
-import com.example.simple.spring.web.mvc.util.WebUtils;
+import com.example.simple.spring.web.util.WebUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ApplicationObjectSupport;
 
