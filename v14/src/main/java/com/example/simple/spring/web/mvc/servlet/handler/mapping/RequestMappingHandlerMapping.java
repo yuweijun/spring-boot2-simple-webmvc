@@ -11,6 +11,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -42,16 +43,8 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<R
 
     @Override
     protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
-        // AnnotationUtils.findAnnotation not support @GetMapping and @PostMapping
-        // RequestMapping methodAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
-        final Set<RequestMapping> allMergedAnnotations = AnnotatedElementUtils.getAllMergedAnnotations(method, RequestMapping.class);
-
-        RequestMappingInfo childInfo = null;
-        if (!allMergedAnnotations.isEmpty()) {
-            childInfo = createRequestMappingInfo(allMergedAnnotations, method);
-        }
-
-        final RequestMappingInfo parentInfo = getMappingInfoFromType(handlerType);
+        final RequestMappingInfo childInfo = getRequestMappingInfo(method);
+        final RequestMappingInfo parentInfo = getRequestMappingInfo(handlerType);
         if (childInfo != null || parentInfo != null) {
             return combine(parentInfo, childInfo);
         } else {
@@ -84,10 +77,10 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<R
         return child;
     }
 
-    private RequestMappingInfo getMappingInfoFromType(Class<?> handlerType) {
-        Set<RequestMapping> typeAnnotations = AnnotatedElementUtils.getAllMergedAnnotations(handlerType, RequestMapping.class);
-        if (!typeAnnotations.isEmpty()) {
-            return createRequestMappingInfo(typeAnnotations, handlerType);
+    private RequestMappingInfo getRequestMappingInfo(AnnotatedElement element) {
+        RequestMapping requestMapping = AnnotatedElementUtils.getMergedAnnotation(element, RequestMapping.class);
+        if (requestMapping != null) {
+            return createRequestMappingInfo(requestMapping);
         }
 
         return null;
@@ -115,14 +108,9 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<R
         return new RequestMappingInfo(values);
     }
 
-    private RequestMappingInfo createRequestMappingInfo(Set<RequestMapping> annotations, Method customCondition) {
-        LOGGER.debug("createRequestMappingInfo by method : {}", annotations);
-        return getAnnotationAttributes(annotations.iterator().next());
-    }
-
-    private RequestMappingInfo createRequestMappingInfo(Set<RequestMapping> annotations, Class<?> handlerType) {
-        LOGGER.debug("createRequestMappingInfo by class : {}", annotations);
-        return getAnnotationAttributes(annotations.iterator().next());
+    private RequestMappingInfo createRequestMappingInfo(RequestMapping annotation) {
+        LOGGER.debug("createRequestMappingInfo by method : {}", annotation);
+        return getAnnotationAttributes(annotation);
     }
 
     @Override
