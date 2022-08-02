@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ import java.util.Set;
 public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<RequestMappingInfo> implements HandlerMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingHandlerMapping.class);
+
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     private static Set<String> prependLeadingSlash(Collection<String> patterns) {
         if (patterns == null) {
@@ -43,23 +46,42 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping<R
         // RequestMapping methodAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
         final Set<RequestMapping> allMergedAnnotations = AnnotatedElementUtils.getAllMergedAnnotations(method, RequestMapping.class);
 
-        RequestMappingInfo info = null;
+        RequestMappingInfo childInfo = null;
         if (!allMergedAnnotations.isEmpty()) {
-            info = createRequestMappingInfo(allMergedAnnotations, method);
+            childInfo = createRequestMappingInfo(allMergedAnnotations, method);
         }
 
-        final RequestMappingInfo mappingInfo = getMappingInfoFromType(handlerType);
-        if (info != null || mappingInfo != null) {
-            return mergeMappingInfo(info, mappingInfo);
+        final RequestMappingInfo parentInfo = getMappingInfoFromType(handlerType);
+        if (childInfo != null || parentInfo != null) {
+            return combine(parentInfo, childInfo);
         } else {
             logger.debug("method is not a handler request mapping : " + method.getName());
             return null;
         }
     }
 
-    private RequestMappingInfo mergeMappingInfo(RequestMappingInfo info, RequestMappingInfo mappingInfo) {
-        // ignore class mapping info for simplicity
-        return info != null ? info : mappingInfo;
+    private RequestMappingInfo combine(RequestMappingInfo parent, RequestMappingInfo child) {
+        if (parent == null) {
+            return child;
+        } else if (child == null) {
+            return parent;
+        }
+
+        final String[] parentPath = parent.getPath();
+        final String[] childPath = child.getPath();
+        Set<String> result = new LinkedHashSet<>();
+        for (String pattern1 : parentPath) {
+            for (String pattern2 : childPath) {
+                result.add(antPathMatcher.combine(pattern1, pattern2));
+            }
+        }
+
+        LOGGER.debug("path before combine is {}", Arrays.toString(child.getPath()));
+        final String[] combinedPath = result.toArray(new String[0]);
+
+        child.put("path", combinedPath);
+        LOGGER.debug("path after combine is {}", Arrays.toString(child.getPath()));
+        return child;
     }
 
     private RequestMappingInfo getMappingInfoFromType(Class<?> handlerType) {

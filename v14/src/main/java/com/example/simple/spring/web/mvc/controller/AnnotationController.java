@@ -1,11 +1,12 @@
 package com.example.simple.spring.web.mvc.controller;
 
 import com.example.simple.spring.web.mvc.bind.annotation.RequestMapping;
+import com.example.simple.spring.web.mvc.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 
-@Controller
+@RestController
+@RequestMapping("/rest")
 public class AnnotationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationController.class);

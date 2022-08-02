@@ -50,6 +50,7 @@
 2. AbstractGenericHttpMessageConverter
 3. AbstractJackson2HttpMessageConverter
 4. MappingJackson2HttpMessageConverter
+5. StringHttpMessageConverter
 
 # HandlerMethodReturnValueHandler
 
@@ -60,6 +61,7 @@
 5. MapMethodProcessor
 6. ModelAttributeMethodProcessor
 7. ServletModelAttributeMethodProcessor
+8. ViewNameMethodReturnValueHandler
 
 # HandlerMethodArgumentResolver
 

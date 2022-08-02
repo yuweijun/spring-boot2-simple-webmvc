@@ -11,6 +11,30 @@ import static org.springframework.util.MimeTypeUtils.TEXT_HTML_VALUE;
 public class JstlViewControllerTest {
 
     @Test
+    public void jstlViewByReturnViewName() {
+        final RequestSpecification request = given();
+        request.header("Content-Type", TEXT_HTML_VALUE);
+
+        request.get("/jstl/view")
+               .prettyPeek()
+               .then()
+               .statusCode(HttpStatus.OK.code())
+               .body(containsString("<h2>Hello World</h2>"));
+    }
+
+    @Test
+    public void redirectViewByReturnViewName() {
+        final RequestSpecification request = given();
+        request.header("Content-Type", TEXT_HTML_VALUE);
+
+        request.get("/redirect/view")
+               .prettyPeek()
+               .then()
+               .statusCode(HttpStatus.OK.code())
+               .body(containsString("<h2>Hello World</h2>"));
+    }
+
+    @Test
     public void jstlView() {
         final RequestSpecification request = given();
         request.header("Content-Type", TEXT_HTML_VALUE);

@@ -41,9 +41,7 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
         HandlerMethodReturnValueHandler result = this.returnValueHandlerCache.get(returnType);
         if (result == null) {
             for (HandlerMethodReturnValueHandler returnValueHandler : returnValueHandlers) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Testing if return value handler [" + returnValueHandler + "] supports [" + returnType.getGenericParameterType() + "]");
-                }
+                logger.debug("Testing if return value handler [" + returnValueHandler + "] supports [" + returnType.getGenericParameterType() + "]");
                 if (returnValueHandler.supportsReturnType(returnType)) {
                     result = returnValueHandler;
                     this.returnValueHandlerCache.put(returnType, returnValueHandler);

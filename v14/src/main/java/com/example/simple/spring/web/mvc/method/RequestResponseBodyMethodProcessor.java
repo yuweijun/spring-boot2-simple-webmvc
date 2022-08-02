@@ -7,6 +7,7 @@ import com.example.simple.spring.web.mvc.http.converter.HttpMessageConverter;
 import com.example.simple.spring.web.mvc.http.server.ServletServerHttpRequest;
 import com.example.simple.spring.web.mvc.http.server.ServletServerHttpResponse;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +33,8 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 
     public boolean supportsReturnType(MethodParameter returnType) {
         logger.debug("returnType is " + returnType);
-        return returnType.hasMethodAnnotation(ResponseBody.class);
+        return (AnnotatedElementUtils.hasAnnotation(returnType.getContainingClass(), ResponseBody.class) ||
+            returnType.hasMethodAnnotation(ResponseBody.class));
     }
 
     @Override

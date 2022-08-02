@@ -29,6 +29,7 @@ import com.example.simple.spring.web.mvc.method.ServletResponseMethodArgumentRes
 import com.example.simple.spring.web.mvc.method.SessionAttributeMethodArgumentResolver;
 import com.example.simple.spring.web.mvc.servlet.HandlerAdapter;
 import com.example.simple.spring.web.mvc.servlet.support.HandlerMethodReturnValueHandlerComposite;
+import com.example.simple.spring.web.mvc.servlet.view.ViewNameMethodReturnValueHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -143,6 +144,7 @@ public class RequestMappingHandlerAdapter extends WebApplicationObjectSupport im
             returnValueHandlers.addHandler(new RequestResponseBodyMethodProcessor(messageConverters));
             returnValueHandlers.addHandler(new HttpEntityMethodProcessor(messageConverters));
             returnValueHandlers.addHandler(new ModelAttributeMethodProcessor());
+            returnValueHandlers.addHandler(new ViewNameMethodReturnValueHandler());
         }
 
         return this.returnValueHandlers;

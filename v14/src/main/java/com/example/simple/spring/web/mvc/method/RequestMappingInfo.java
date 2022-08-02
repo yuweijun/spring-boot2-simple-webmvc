@@ -33,12 +33,16 @@ public class RequestMappingInfo {
         return map.get(key);
     }
 
+    public void put(String key, Object value) {
+        this.map.put(key, value);
+    }
+
     public String getName() {
         return (String) map.get("name");
     }
 
     public String[] getValue() {
-        return (String[]) map.get("value");
+        return (String[]) map.get("path");
     }
 
     public String[] getPath() {
